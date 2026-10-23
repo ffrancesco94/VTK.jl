@@ -1,3 +1,62 @@
-# VTK
+# VTK.jl
 
-[![Build Status](https://github.com/ffrancesco94/VTK.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/ffrancesco94/VTK.jl/actions/workflows/CI.yml?query=branch%3Amain)
+Julia bindings for a CFD-oriented subset of [VTK](https://vtk.org) 9.7: data
+model, XML I/O, and manipulation filters (clip, slice, cell↔point data
+conversion, contour, surface extraction). No rendering, no MPI-aware API.
+
+Status: early development (phase 0/1). Built on `VTK_jll` (binaries) +
+`CxxWrap.jl` (bindings).
+
+## Building
+
+The C++ binding module must be built once against the `VTK_jll` artifact:
+
+```sh
+julia --project=. gen/build_wrapper.jl
+```
+
+This produces `wrapper/build/libvtk_julia.so` (override the location with the
+`VTKJL_LIB` environment variable).
+
+## Usage
+
+```julia
+using VTK
+
+ug = VTK.read_vtu("case.vtu")          # vtkUnstructuredGrid
+arr = VTK.field_array(VTK.point_data(ug), "p")
+
+# zero-copy view of the raw storage: (ncomponents, ntuples)
+p = VTK.data(arr)
+p[1, 1:10] .= 0.0                      # writes through to the VTK array
+
+pl = VTK.plane((0.5, 0.0, 0.0), (1.0, 0.0, 0.0))
+clipped = VTK.clip(ug, pl)             # vtkUnstructuredGrid
+sl = VTK.slice(ug, pl)                 # vtkPolyData cross-section
+cvt = VTK.UnstructuredGrid(VTK.cell_to_point(ug))
+VTK.write_vtu(clipped, "clipped.vtu")  # zlib-compressed XML output
+```
+
+## Design notes
+
+- **Ownership**: factories and outputs return `vtkSmartPointer{T}`, registered
+  with CxxWrap as a smart pointer; Julia finalizers release references.
+  Borrowed raw pointers are never exposed in the public API.
+- **vtkDataArray**: a flat zero-copy view of the AOS storage is exposed via
+  `raw_data`/`data` (component-fastest layout, i.e. `(ncomp, ntuples)`
+  column-major). The view does not yet keep the owning array alive — keep a
+  reference while using it.
+- **Type hierarchy**: wrapped types mirror the VTK inheritance chain, so
+  `vtkUnstructuredGrid <: vtkPointSet <: vtkDataSet` etc. on the Julia side.
+- **Error handling**: `update!` (used by all high-level filter calls) throws
+  if VTK reported any error during execution.
+
+## Testing
+
+```sh
+julia --project=. -e 'using Pkg; Pkg.test()'
+```
+
+Tests include analytic oracles (clip of a unit hex against a plane yields the
+tetrahedron x+y+z ≤ 1) and cross-validation against ReadVTK.jl/WriteVTK.jl,
+independent pure-Julia VTK readers/writers.

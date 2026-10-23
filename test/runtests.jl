@@ -2,5 +2,7 @@ using VTK
 using Test
 
 @testset "VTK.jl" begin
-    # Write your tests here.
+    include("dataarray.jl")
+    include("filters.jl")
+    include("oracle.jl")
 end

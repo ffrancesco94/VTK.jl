@@ -1,7 +1,15 @@
 name = "VTK"
 uuid = "edae8264-62cc-4a28-b386-35547e921c71"
-authors = ["Francesco"]
 version = "1.0.0-DEV"
+authors = ["Francesco"]
+
+[deps]
+CxxWrap = "1f15a43c-97ca-5a2a-ae31-89f07a497df4"
+Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+VTK_jll = "74d5c060-2aa8-5f16-b7f5-964146ffbc58"
 
 [compat]
+CxxWrap = "0.17.5"
+Libdl = "1.11.0"
+VTK_jll = "9.7.1"
 julia = "1.10"
