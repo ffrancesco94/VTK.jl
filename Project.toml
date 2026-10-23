@@ -1,0 +1,7 @@
+name = "VTK"
+uuid = "edae8264-62cc-4a28-b386-35547e921c71"
+authors = ["Francesco"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.10"
