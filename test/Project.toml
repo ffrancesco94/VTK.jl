@@ -3,3 +3,6 @@ ReadVTK = "dc215faf-f008-4882-a9f7-a79a826fadc3"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 VTK = "edae8264-62cc-4a28-b386-35547e921c71"
 WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192"
+
+[sources]
+VTK = {path = ".."}
