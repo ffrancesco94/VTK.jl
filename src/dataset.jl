@@ -45,11 +45,11 @@ The points object of a point set.
 points(grid) = GetPoints(_cp(vtkPointSet, grid))
 
 """
-    points_array(pts) -> vtkDataArray (owning reference)
+    points_array(pts) -> VTKDataArray{T}
 
 The coordinate array of a vtkPoints object (3 components).
 """
-points_array(pts) = GetPointData(_cp(vtkPoints, pts))
+points_array(pts) = VTKDataArray(GetPointData(_cp(vtkPoints, pts)))
 point_data(grid) = GetPointData(_cp(vtkDataSet, grid))
 cell_data(grid) = GetCellData(_cp(vtkDataSet, grid))
 
@@ -57,16 +57,23 @@ field_array_names(fd) =
     [GetArrayNameOf(_cp(vtkFieldData, fd), i) for i in 0:GetNumberOfArrays(_cp(vtkFieldData, fd))-1]
 
 """
-    field_array(fd, name) -> vtkDataArray or nothing
+    field_array(fd, name) -> VTKDataArray{T} or nothing
 
-Reference to the named array in field data `fd`.
+Typed zero-copy view of the named array in field data `fd`.
 """
 function field_array(fd, name)
-    try
-        return GetArray(_cp(vtkFieldData, fd), String(name))
-    catch
-        return nothing
-    end
+    HasArray(_cp(vtkFieldData, fd), String(name)) || return nothing
+    return VTKDataArray(GetArray(_cp(vtkFieldData, fd), String(name)))
+end
+
+"""
+    field_array_raw(fd, name) -> vtkDataArray smart pointer or nothing
+
+Untyped variant of `field_array`.
+"""
+function field_array_raw(fd, name)
+    HasArray(_cp(vtkFieldData, fd), String(name)) || return nothing
+    return GetArray(_cp(vtkFieldData, fd), String(name))
 end
 
 function add_array!(fd, da)

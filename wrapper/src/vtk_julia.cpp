@@ -342,6 +342,25 @@ JLCXX_MODULE define_julia_module(jlcxx::Module& mod)
   mod.method("GetArray", [](vtkFieldData* f, const std::string& name) {
     return take_ref<vtkDataArray>(vtkDataArray::SafeDownCast(f->GetAbstractArray(name.c_str())));
   });
+  mod.method("HasArray", [](vtkFieldData* f, const std::string& name) {
+    return f->GetAbstractArray(name.c_str()) != nullptr;
+  });
+  // Generic typed array factory over the VTK scalar type ids (see vtkType.h).
+  mod.method("CreateDataArray", [](int dataType, int64_t ncomp) {
+    vtkAbstractArray* raw = vtkAbstractArray::CreateArray(dataType);
+    auto* da = vtkDataArray::SafeDownCast(raw);
+    if (da == nullptr)
+    {
+      if (raw != nullptr)
+      {
+        raw->Delete();
+      }
+      throw std::runtime_error("CreateDataArray: unsupported data type id");
+    }
+    da->SetNumberOfComponents(static_cast<int>(ncomp));
+    return take_ref(da);
+  });
+  mod.method("GetDataType", [](vtkAbstractArray* a) { return a->GetDataType(); });
   mod.method("AddArray", [](vtkFieldData* f, vtkDataArray* a) {
     return f->AddArray(a);
   });

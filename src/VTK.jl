@@ -32,6 +32,7 @@ end
 
 # Include order matters: dataarray.jl defines helpers used by the rest.
 include("dataarray.jl")
+include("typedarray.jl")
 include("dataset.jl")
 include("filters.jl")
 

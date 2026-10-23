@@ -24,11 +24,15 @@ This produces `wrapper/build/libvtk_julia.so` (override the location with the
 using VTK
 
 ug = VTK.read_vtu("case.vtu")          # vtkUnstructuredGrid
-arr = VTK.field_array(VTK.point_data(ug), "p")
+p = VTK.field_array(VTK.point_data(ug), "p")   # VTKDataArray{Float64}
 
-# zero-copy view of the raw storage: (ncomponents, ntuples)
-p = VTK.data(arr)
+# typed, zero-copy AbstractMatrix of shape (ncomponents, ntuples)
 p[1, 1:10] .= 0.0                      # writes through to the VTK array
+sum_p = sum(p)                         # type-stable indexing
+
+# creating arrays from Julia
+T = VTK.data_array(Float64, 3)         # new 3-component Float64 array
+VTK.resize!(T, 1000)
 
 pl = VTK.plane((0.5, 0.0, 0.0), (1.0, 0.0, 0.0))
 clipped = VTK.clip(ug, pl)             # vtkUnstructuredGrid
