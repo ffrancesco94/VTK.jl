@@ -6,3 +6,7 @@ WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192"
 
 [sources]
 VTK = {path = ".."}
+
+[compat]
+Test = "1"
+julia = "1.11"
