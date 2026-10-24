@@ -10,3 +10,4 @@ wrapper/build/
 # Documentation build artifacts
 /docs/build/
 /docs/node_modules/
+/test/Manifest.toml
