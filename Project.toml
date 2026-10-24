@@ -11,7 +11,7 @@ VTK_jll = "74d5c060-2aa8-5f16-b7f5-964146ffbc58"
 
 [compat]
 CxxWrap = "0.17.5"
-Libdl = "1.11.0"
+Libdl = "1"
 VTKBase = "1"
 VTK_jll = "9.7.1"
 julia = "1.10"
