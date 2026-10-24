@@ -1,8 +1,7 @@
 # VTK.jl — Status & Implementation Plan
 
-Last updated: 2026-10-24 (cell registry/iterators, WriteVTK converters;
-finalizer-based view ownership tried and reverted — GC-thread hazard; see
-§4.1/§5).
+Last updated: 2026-10-24 (WrapIt spike: verdict WrapIt+shim, driver in
+`gen/wrapit/`, report in `docs/wrapit-spike.md`).
 
 ## 1. Goal
 
@@ -132,8 +131,10 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 7. **Distribution**: wrapper builds locally via system CMake; no
    `VTK_julia_jll` BinaryBuilder recipe yet — every user needs a C++17
    toolchain.
-8. **vtkWrapJulia / WrapIt**: automation spike deferred; the hand-written
-   layer is the conformance spec.
+8. **vtkWrapJulia / WrapIt**: spike completed 2026-10-24 — WrapIt 1.8.0
+   generates the conformance subset (63 classes / 1253 methods) with a
+   driver + 10-line post-processor + 24-LOC shim; 4 upstream bugs filed as
+   report candidates. Hand-written layer remains the shipped generator.
 
 ## 5. Risks
 
@@ -164,8 +165,11 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 
 ### Phase 2 — breadth + automation
 
-- [ ] WrapIt spike on the conformance subset (must reproduce §2's surface);
+- [x] WrapIt spike on the conformance subset (must reproduce §2's surface);
       decide WrapIt vs hand-rolled `vtkWrapJulia` emitting CxxWrap code
+      — **done 2026-10-24: WrapIt+shim viable, `vtkWrapJulia` rejected**;
+      full report `docs/wrapit-spike.md`, driver `gen/wrapit/` (experimental,
+      not yet the generator for the shipped module)
 - [ ] More readers/writers: `.vti/.vtr/.vts`, legacy `.vtk`, multiblock
 - [ ] More filters: calculator, gradient, threshold, stream tracer (as CFD
       needs arise)
