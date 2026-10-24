@@ -6,3 +6,7 @@ wrapper/build/
 # WrapIt driver build products
 /gen/wrapit/build/
 /gen/wrapit/Manifest.toml
+
+# Documentation build artifacts
+/docs/build/
+/docs/node_modules/

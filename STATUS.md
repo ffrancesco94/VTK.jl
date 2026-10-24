@@ -136,6 +136,14 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
    driver + 10-line post-processor + 24-LOC shim; 4 upstream bugs filed as
    report candidates. Hand-written layer remains the shipped generator.
 
+## 8. Documentation
+
+- Tutorials (mesh building, arrays/fields, I/O, filters), implementation
+  notes (architecture, ownership/GC hazard, zero-copy, WrapIt driver), and
+  an autodoc API reference, built with DocumenterVitepress.jl:
+  `julia --project=docs docs/make.jl` → `docs/build/1/`.
+- WrapIt spike report with upstream bug repros: `docs/wrapit-spike.md`.
+
 ## 5. Risks
 
 - CxxWrap attaches `delete` finalizers to smart pointers, so C++ VTK
