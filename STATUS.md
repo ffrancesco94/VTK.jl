@@ -1,6 +1,8 @@
 # VTK.jl — Status & Implementation Plan
 
-Last updated: 2026-10-23 (typed array wrapper landed; 61 tests passing on `main`).
+Last updated: 2026-10-24 (cell registry/iterators, WriteVTK converters;
+finalizer-based view ownership tried and reverted — GC-thread hazard; see
+§4.1/§5).
 
 ## 1. Goal
 
@@ -28,8 +30,11 @@ Wrapped surface (hand-written in `wrapper/src/vtk_julia.cpp`):
 
 - `vtkDataArray` family: abstract API (components, tuples, names, resize),
   factories for Float32/Float64/Int32, **zero-copy views** via
-  `vtkArrayDispatch` → `GetVoidPointer` → `jl_ptr_to_array` (AOS-only,
-  mirroring VTK's own buffer-protocol caveat).
+  `vtkArrayDispatch` → `GetVoidPointer` → CxxWrap `make_julia_array`
+  (AOS-only, mirroring VTK's own buffer-protocol caveat). Views are created
+  directly at the target dimensionality (flat vector or `(ncomp, ntuples)`
+  matrix) as plain `Array`s; `create_if_not_exists<ArrayRef<V,2>>` is needed since CxxWrap
+  pre-registers only 1-D array wrapper types.
 - Data model: `vtkPoints`, `vtkUnstructuredGrid`, `vtkPolyData`,
   `vtkImageData` (types registered; construction currently exposed for
   unstructured grids), field data (`vtkPointData`/`vtkCellData`) with
@@ -47,21 +52,42 @@ Wrapped surface (hand-written in `wrapper/src/vtk_julia.cpp`):
 - Error handling: VTK's output window is redirected into a buffer;
   `update!` throws on any VTK error (used by all high-level calls).
 
-Julian layer (`src/dataarray.jl`, `src/dataset.jl`, `src/filters.jl`):
+Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
+`src/cells.jl`, `src/filters.jl`):
 
-- `data(da)`/`raw_data(da)`: zero-copy `(ncomp, ntuples)` / flat views.
+- `data(da)`/`raw_data(da)`: zero-copy `(ncomp, ntuples)` / flat views that
+  **borrow** the storage — valid while the owning smart pointer/dataset is
+  alive (see §4.1 and §5 for why views must not own via finalizers).
 - Grid construction: `Points()`, `UnstructuredGrid()`, `pts[i] = (x,y,z)`,
-  `insert_cell!`, `set_points!`, `allocate!`.
+  `insert_cell!` (accepts raw ids or `VTKCellTypes.VTKCellType`),
+  `set_points!`, `allocate!`; `UnstructuredGrid(points, cells)` from a 3×n
+  matrix + `MeshCell` vector.
 - `read_vtu`/`read_vtp`/`write_vtu`/`write_vtp`, `field_array`, `point_data`,
   `cell_data`, `activate_point_data!`.
+- Cell/point access: `cell_type`/`cell`/`cells`/`eachcell` (VTKBase
+  `MeshCell`, 1-based connectivity), `eachpoint`, `coordinates` (zero-copy
+  typed 3×n view). Cell vocabulary comes from VTKBase (`VTKCellTypes`), the
+  shared registry of ReadVTK/WriteVTK — `cells(grid)` is directly consumable
+  by `WriteVTK.vtk_grid`.
 - `plane`, `clip`, `slice`, `cell_to_point`, `point_to_cell`, `contour`,
   `extract_surface`, `update!`.
 
-## 3. Test suite (61 tests, all passing)
+## 3. Test suite (91 tests, all passing)
 
 - **Array core**: typed creation, zero-copy write-through both directions,
   multi-component reshape, names, Int32 element type, GC churn with
   survivors.
+- **Typed wrapper**: type-stable indexing, value round-trips through the
+  typed API, zero-copy visibility, resize invalidation, type mismatches
+  rejected, discovery from untyped factories.
+- **Cells/iterators/converters**: VTKBase registry ids and names, 1-based
+  connectivity, `eachcell`/`eachpoint`/`coordinates`, round-trip
+  `UnstructuredGrid(coordinates, cells)` reconstruction, WriteVTK writes our
+  mesh description and our reader reads it back.
+- **Views vs GC**: views stay valid across aggressive `GC.gc()` churn
+  (finalizers of *other* objects running) while the owner is referenced —
+  through the untyped API, the typed wrapper's cached view, and grid field
+  arrays.
 - **Analytic oracles**: clip of unit hex against plane x+y+z=1 (inside-out)
   yields exactly the tetrahedron (1 cell, 4 points, max coordinate sum 1.0);
   default clip side verified as complement; constant-field c2p stays
@@ -75,9 +101,16 @@ Julian layer (`src/dataarray.jl`, `src/dataset.jl`, `src/filters.jl`):
 
 ## 4. Known limitations / design debt
 
-1. **Array interface**: `VTKDataArray{T}` exists and is the preferred API
-   (it owns the underlying smart pointer), but the untyped `data()`/`raw_data()`
-   still return unguarded raw views for smart-pointer inputs.
+1. **Array interface**: zero-copy views (typed wrapper and untyped
+   `data`/`raw_data`) **borrow** the vtkDataArray storage; they are valid
+   only while the owning smart pointer/dataset is alive. Views must NOT own
+   the array via finalizer closures: an experiment attaching
+   owner-capturing finalizers made C++ VTK objects die on GC finalizer
+   threads and reproducibly corrupted concurrently running pipelines
+   (~25% heisenbug test failures; clean with `--gcthreads=1`). Proper fix
+   is wrapper-owns-everything (see Phase 3). After `resize!`, previously
+   obtained views are invalidated by VTK reallocation; and the grown region
+   is NOT zero-initialized.
 2. **Argument-passing pattern**: C++ methods take raw `T*` and the Julian
    layer converts via `_cp(T, obj)` (`CxxPtr{T}(obj[])`). CxxWrap's by-value
    smart-pointer argument path is unusable for custom smart pointers
@@ -104,6 +137,12 @@ Julian layer (`src/dataarray.jl`, `src/dataset.jl`, `src/filters.jl`):
 
 ## 5. Risks
 
+- CxxWrap attaches `delete` finalizers to smart pointers, so C++ VTK
+  objects can die on GC finalizer threads whenever Julia collects the
+  wrapper; adding *more* finalizer-driven deletions (owner-capturing view
+  finalizers) empirically corrupts concurrent VTK work (see §4.1). Until the
+  wrapper-owns-everything redesign, avoid patterns that defer C++ object
+  death into GC.
 - WrapIt may hit the same smart-pointer argument issues; mitigated by the
   `_cp` pattern and `const T&` overload fallback.
 - VTK_jll has no Windows build; Windows support requires our own VTK build.
@@ -131,13 +170,23 @@ Julian layer (`src/dataarray.jl`, `src/dataset.jl`, `src/filters.jl`):
 - [ ] More filters: calculator, gradient, threshold, stream tracer (as CFD
       needs arise)
 - [ ] Generic name-based `downcast`
-- [ ] Cell type registry ( names → VTK ids, matching VTKBase.jl vocabulary )
+- [x] Cell type registry via VTKBase (`VTKCellTypes`, a zero-dep hard dep:
+      names ↔ VTK ids, singletons per id)
 
 ### Phase 3 — Julian layer
 
-- [ ] Cell/point iterators, `UnstructuredGrid` ⇄ WriteVTK/VTKBase converters,
-      Meshes.jl/GeometryBasics bridges
-- [ ] Memory-management hardening: views that own parent references
+- [x] Cell/point iterators (`cell`/`cells`/`eachcell`/`eachpoint`),
+      `UnstructuredGrid(points, cells)` constructor; `cells`/`coordinates`
+      interop with WriteVTK (`vtk_grid(filename, coordinates, cells)`)
+- [ ] Memory-management hardening: views that own parent references.
+      Finalizer-on-view approach FAILED (C++ objects died on GC finalizer
+      threads, corrupting concurrent pipelines — §4.1/§5); the safe design
+      is wrapper-owns-everything: `data`/`raw_data` return the owning
+      `VTKDataArray` wrapper (deletion then happens on the main thread when
+      the user drops it).
+- [ ] Meshes.jl/GeometryBasics bridges — deferred (mixed-cell grids vs
+      homogeneous-typed Julia meshes need a target-representation decision);
+      plain `(points, cells)` data already feeds both manually
 - [ ] Performance pass: typed accessors via `vtkArrayDispatch` if profiling
       demands it
 
@@ -148,18 +197,15 @@ Julian layer (`src/dataarray.jl`, `src/dataset.jl`, `src/filters.jl`):
 
 ## 7. Next sprint: detailed task list
 
-1. Add `GetDataType`/`CreateArray`/`HasArray` to `wrapper/src/vtk_julia.cpp`
-   (scalar type id discovery, generic typed factory, field-membership query).
-2. Implement `src/typedarray.jl`:
-   - `VTKDataArray{T} <: AbstractMatrix{T}` holding `SmartPointer{vtkDataArray}`
-     + cached zero-copy `Matrix{T}` view
-   - constructors from any array smart pointer (type id → Julia type);
-     `data_array(::Type{T}, ncomp)` factory; VTK↔Julia type-id maps
-   - `Base.size/getindex/setindex!/IndexStyle/iterate/resize!`
-   - `field_array`, `points_array` return `VTKDataArray{T}`; keep
-     untyped `*_raw` variants for the old behavior
-3. Re-point existing tests at the typed wrapper where natural; add typed
-   tests: type stability (`@inferred`), value round-trips through the typed
-   API, zero-copy visibility, resize invalidation, GC stress with views.
-4. Docs: README example with the typed interface; STATUS.md update.
-5. Full test run; commit.
+Completed 2026-10-24 (see git log); kept for reference. Outstanding roadmap
+items, roughly in priority order:
+
+1. WrapIt spike on the conformance subset (Phase 2) — decide WrapIt vs
+   hand-rolled `vtkWrapJulia` emitting CxxWrap code.
+2. More I/O: `.vti/.vtr/.vts` readers/writers, legacy `.vtk`, multiblock
+   `.vtm` (Phase 2).
+3. More filters: calculator, gradient, threshold, stream tracer (Phase 2).
+4. Generic name-based `downcast` (Phase 2).
+5. Meshes.jl/GeometryBasics bridges, once a target representation is chosen
+   (Phase 3).
+6. `VTK_julia_jll` BinaryBuilder recipe (Phase 4).

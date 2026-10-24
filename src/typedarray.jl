@@ -55,9 +55,7 @@ function _typed_view(::Type{T}, obj) where {T}
     ncomp = GetNumberOfComponents(_cp(vtkDataArray, obj))
     nt = GetNumberOfTuples(_cp(vtkDataArray, obj))
     nt == 0 && return Matrix{T}(undef, ncomp, 0)
-    v = zero_copy_data(_cp(vtkDataArray, obj))
-    raw = eltype(v) == T ? v : reinterpret(T, v)
-    return reshape(raw, (ncomp, nt))
+    return zero_copy_matrix(_cp(vtkDataArray, obj))
 end
 
 """
@@ -95,6 +93,10 @@ name!(a::VTKDataArray, s) = name!(a.obj, s)
 ntuples(a::VTKDataArray) = size(a.view, 2)
 ncomponents(a::VTKDataArray) = size(a.view, 1)
 Base.length(a::VTKDataArray) = length(a.view)
+
+# The typed wrapper is accepted anywhere the underlying smart pointer is.
+_cp(::Type{T}, a::VTKDataArray) where {T} = _cp(T, a.obj)
+add_array!(fd, a::VTKDataArray) = add_array!(fd, a.obj)
 
 Base.Array(a::VTKDataArray{T}) where {T} = Matrix{T}(a.view)
 

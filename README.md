@@ -39,6 +39,14 @@ clipped = VTK.clip(ug, pl)             # vtkUnstructuredGrid
 sl = VTK.slice(ug, pl)                 # vtkPolyData cross-section
 cvt = VTK.UnstructuredGrid(VTK.cell_to_point(ug))
 VTK.write_vtu(clipped, "clipped.vtu")  # zlib-compressed XML output
+
+# cells and coordinates as plain Julia data (VTKBase MeshCells, 1-based)
+cs = VTK.cells(ug)                     # Vector{MeshCell}
+xy = VTK.coordinates(ug)               # zero-copy 3×n VTKDataArray
+copy = VTK.UnstructuredGrid(xy, cs)    # reconstruct from (points, cells)
+
+# the same description feeds WriteVTK directly:
+#   WriteVTK.vtk_grid("copy", Matrix(xy), cs) |> WriteVTK.vtk_save
 ```
 
 ## Design notes
@@ -48,8 +56,13 @@ VTK.write_vtu(clipped, "clipped.vtu")  # zlib-compressed XML output
   Borrowed raw pointers are never exposed in the public API.
 - **vtkDataArray**: a flat zero-copy view of the AOS storage is exposed via
   `raw_data`/`data` (component-fastest layout, i.e. `(ncomp, ntuples)`
-  column-major). The view does not yet keep the owning array alive — keep a
-  reference while using it.
+  column-major). Views carry a finalizer that keeps the owning array alive,
+  so they stay valid even if the dataset is dropped (after `resize!`,
+  previously obtained views are invalidated by reallocation).
+- **Cell types**: the cell vocabulary is VTKBase's `VTKCellTypes` registry
+  (shared with ReadVTK/WriteVTK); `cell`/`cells`/`eachcell` return VTKBase
+  `MeshCell`s with 1-based connectivity, directly consumable by
+  `WriteVTK.vtk_grid`.
 - **Type hierarchy**: wrapped types mirror the VTK inheritance chain, so
   `vtkUnstructuredGrid <: vtkPointSet <: vtkDataSet` etc. on the Julia side.
 - **Error handling**: `update!` (used by all high-level filter calls) throws

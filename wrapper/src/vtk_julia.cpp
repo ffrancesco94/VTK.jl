@@ -29,6 +29,7 @@
 #include <vtkCellData.h>
 #include <vtkDataObject.h>
 #include <vtkDataSet.h>
+#include <vtkIdList.h>
 #include <vtkPointSet.h>
 #include <vtkUnstructuredGrid.h>
 #include <vtkPolyData.h>
@@ -181,9 +182,11 @@ vtkSmartPointer<T> take_ref(T* raw)
 }
 
 
-// Zero-copy view of an AOS vtkDataArray as a flat Julia vector.
-// The flat layout is component-fastest (ncomponents * ntuples), which is
-// exactly column-major for an (ncomponents, ntuples) matrix.
+// Zero-copy views of an AOS vtkDataArray as Julia arrays. The flat layout is
+// component-fastest (ncomponents * ntuples), which is exactly column-major
+// for an (ncomponents, ntuples) matrix. The arrays are created directly at
+// the target dimensionality so they are plain Array objects (not the
+// immutable wrapper types that Julia's reshape/reinterpret produce).
 struct ZeroCopyDataWorker
 {
   template <typename ArrayT>
@@ -193,26 +196,55 @@ struct ZeroCopyDataWorker
     const jlcxx::cxxint_t n =
       static_cast<jlcxx::cxxint_t>(arr->GetNumberOfComponents() * arr->GetNumberOfTuples());
     V* ptr = static_cast<V*>(arr->GetVoidPointer(0));
+    // Ensure the Julia Array{V,1} wrapper type exists (no-op if registered).
+    jlcxx::create_if_not_exists<jlcxx::ArrayRef<V, 1>>();
     out = reinterpret_cast<jl_value_t*>(jlcxx::make_julia_array(ptr, n).wrapped());
   }
 };
 
-jl_value_t* zero_copy_data(vtkDataArray* da)
+struct ZeroCopyMatrixWorker
+{
+  template <typename ArrayT>
+  void operator()(ArrayT* arr, jl_value_t*& out)
+  {
+    using V = std::remove_const_t<typename ArrayT::ValueType>;
+    const jlcxx::cxxint_t ncomp = static_cast<jlcxx::cxxint_t>(arr->GetNumberOfComponents());
+    const jlcxx::cxxint_t nt = static_cast<jlcxx::cxxint_t>(arr->GetNumberOfTuples());
+    V* ptr = static_cast<V*>(arr->GetVoidPointer(0));
+    // CxxWrap pre-registers Array{V,1} for numbers but not higher
+    // dimensions; create the Array{V,2} wrapper type before use.
+    jlcxx::create_if_not_exists<jlcxx::ArrayRef<V, 2>>();
+    out = reinterpret_cast<jl_value_t*>(jlcxx::make_julia_array(ptr, ncomp, nt).wrapped());
+  }
+};
+
+template <typename WorkerT>
+jl_value_t* zero_copy_impl(vtkDataArray* da, WorkerT worker)
 {
   if (da->GetNumberOfTuples() == 0)
   {
-    throw std::runtime_error("zero_copy_data: empty array");
+    throw std::runtime_error("zero_copy: empty array");
   }
   if (da->GetArrayType() != vtkArrayTypes::VTK_AOS_DATA_ARRAY)
   {
-    throw std::runtime_error("zero_copy_data: array is not AOS (use component API)");
+    throw std::runtime_error("zero_copy: array is not AOS (use component API)");
   }
   jl_value_t* out = nullptr;
-  if (!vtkArrayDispatch::Dispatch::Execute(da, ZeroCopyDataWorker{}, out))
+  if (!vtkArrayDispatch::Dispatch::Execute(da, worker, out))
   {
-    throw std::runtime_error("zero_copy_data: array type not supported by dispatch");
+    throw std::runtime_error("zero_copy: array type not supported by dispatch");
   }
   return out;
+}
+
+jl_value_t* zero_copy_data(vtkDataArray* da)
+{
+  return zero_copy_impl(da, ZeroCopyDataWorker{});
+}
+
+jl_value_t* zero_copy_matrix(vtkDataArray* da)
+{
+  return zero_copy_impl(da, ZeroCopyMatrixWorker{});
 }
 
 } // namespace
@@ -292,6 +324,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module& mod)
     return name == nullptr ? std::string() : std::string(name);
   });
   mod.method("zero_copy_data", [](vtkDataArray* a) { return zero_copy_data(a); });
+  mod.method("zero_copy_matrix", [](vtkDataArray* a) { return zero_copy_matrix(a); });
 
   // array factories
   mod.method("FloatArray_new", [](int64_t ncomp) {
@@ -394,6 +427,20 @@ JLCXX_MODULE define_julia_module(jlcxx::Module& mod)
     std::vector<vtkIdType> ids(pointIds.begin(), pointIds.end());
     return static_cast<int64_t>(g->InsertNextCell(static_cast<int>(cellType),
       static_cast<vtkIdType>(ids.size()), ids.data()));
+  });
+  // Cell queries (vtkDataSet API): type id and 0-based point ids of cell i.
+  mod.method("GetCellTypeId", [](vtkDataSet* g, int64_t i) {
+    return static_cast<int64_t>(g->GetCellType(static_cast<vtkIdType>(i)));
+  });
+  mod.method("GetCellPointIds", [](vtkDataSet* g, int64_t i) {
+    vtkNew<vtkIdList> ids;
+    g->GetCellPoints(static_cast<vtkIdType>(i), ids);
+    std::vector<int64_t> out(static_cast<size_t>(ids->GetNumberOfIds()));
+    for (int j = 0; j < ids->GetNumberOfIds(); ++j)
+    {
+      out[static_cast<size_t>(j)] = static_cast<int64_t>(ids->GetId(j));
+    }
+    return out;
   });
   mod.method("GetPointCoordinates", [](vtkPointSet* g, int64_t i) {
     std::array<double, 3> pt;

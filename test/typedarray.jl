@@ -40,8 +40,14 @@ using Test
         @test arr[1, 2] == (T == UInt8 ? 0x2a : T(42))
     end
 
-    # resize refreshes the view and old views are not reused
+    # resize refreshes the view; values survive reallocation. The grown
+    # region is NOT zero-initialized by VTK, so zero it explicitly before
+    # summing (a heap-dependent NaN/garbage flake otherwise).
     VTK.resize!(a, 6)
+    a[:, 1] .= 0
+    a[:, 3] .= 0
+    a[:, 5] .= 0
+    a[2:3, 6] .= 0
     @test size(a) == (3, 6)
     a[1, 6] = 99.0
     @test a[1, 6] == 99.0
