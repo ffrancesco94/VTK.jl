@@ -1,0 +1,51 @@
+name: Documentation
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
+
+# Allow Documenter to push to gh-pages via GITHUB_TOKEN as a fallback.
+permissions:
+  contents: write
+
+concurrency:
+  group: documentation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    name: Build & deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: julia-actions/setup-julia@v2
+        with:
+          version: "1"
+
+      - uses: julia-actions/cache@v2
+
+      # VitePress (DocumenterVitepress.jl renders the site with node).
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # VTK.jl's docs do `using VTK`, which needs the compiled C++ wrapper.
+      # ubuntu-latest ships cmake + g++; VTK itself comes from VTK_jll.
+      - name: Instantiate project and build C++ wrapper
+        run: |
+          julia --project=. -e 'using Pkg; Pkg.instantiate()'
+          julia --project=. gen/build_wrapper.jl
+
+      - name: Instantiate docs environment
+        run: julia --project=docs -e 'using Pkg; Pkg.instantiate()'
+
+      - name: Build and deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}
+          DOCS_DEPLOY: "true"
+        run: julia --project=docs docs/make.jl
