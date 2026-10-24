@@ -77,3 +77,17 @@ julia --project=. -e 'using Pkg; Pkg.test()'
 Tests include analytic oracles (clip of a unit hex against a plane yields the
 tetrahedron x+y+z ≤ 1) and cross-validation against ReadVTK.jl/WriteVTK.jl,
 independent pure-Julia VTK readers/writers.
+
+## Documentation
+
+The documentation (tutorials, implementation notes, API reference) is built
+with [DocumenterVitepress.jl](https://github.com/LuxDL/DocumenterVitepress.jl):
+
+```sh
+julia --project=docs -e 'using Pkg; Pkg.instantiate()'   # once
+julia --project=docs docs/make.jl                        # renders to docs/build/1/
+```
+
+Deployment to GitHub Pages is opt-in (`DOCS_DEPLOY=true julia --project=docs docs/make.jl`).
+The full WrapIt spike write-up with upstream bug reports lives in
+[docs/wrapit-spike.md](docs/wrapit-spike.md).
