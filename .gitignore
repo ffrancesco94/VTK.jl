@@ -2,3 +2,7 @@
 wrapper/build/
 *.vtu
 *.vtp
+
+# WrapIt driver build products
+/gen/wrapit/build/
+/gen/wrapit/Manifest.toml

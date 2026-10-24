@@ -1,0 +1,74 @@
+# WrapIt configuration for the VTKGen spike/driver.
+# Rendered by build.jl: __VTK_INCLUDE__, __MPI_INCLUDE__ and __VETO_LIST__
+# are replaced with runtime artifact paths. See docs/wrapit-spike.md.
+module_name = "VTKGen"
+uuid = "b25c3a5e-7abd-d1ba-3670-c950568681d3"
+out_cxx_dir = "cxx"
+out_jl_dir = "jl"
+input = [
+  # object/data-model hierarchy
+  "vtkObject.h",
+  "vtkDataObject.h",
+  "vtkDataSet.h",
+  "vtkPointSet.h",
+  "vtkPoints.h",
+  "vtkUnstructuredGrid.h",
+  "vtkUnstructuredGridBase.h",
+  "vtkPolyData.h",
+  # arrays + field data
+  "vtkAbstractArray.h",
+  "vtkDataArray.h",
+  "vtkDoubleArray.h",
+  "vtkFloatArray.h",
+  "vtkIntArray.h",
+  "vtkIdList.h",
+  "vtkFieldData.h",
+  "vtkDataSetAttributes.h",
+  "vtkPointData.h",
+  "vtkCellData.h",
+  # implicit function + filters (full vtkAlgorithm chain)
+  "vtkAlgorithm.h",
+  "vtkDataObjectAlgorithm.h",
+  "vtkUnstructuredGridAlgorithm.h",
+  "vtkPolyDataAlgorithm.h",
+  "vtkImplicitFunction.h",
+  "vtkPlane.h",
+  "vtkContourFilter.h",
+  "vtkTableBasedClipDataSet.h",
+  "vtkCutter.h",
+  # XML I/O (full reader/writer chains)
+  "vtkXMLWriterBase.h",
+  "vtkXMLWriter.h",
+  "vtkXMLUnstructuredDataWriter.h",
+  "vtkXMLReader.h",
+  "vtkXMLDataReader.h",
+  "vtkXMLUnstructuredDataReader.h",
+  "vtkXMLUnstructuredGridReader.h",
+  "vtkXMLUnstructuredGridWriter.h",
+  "vtkXMLPolyDataWriter.h",
+]
+extra_headers = [
+  "vtkInformation.h",
+  "vtkInformationVector.h",
+  "vtkExecutive.h",
+  "vtkAlgorithmOutput.h",
+  "vtkCellIterator.h",
+  "vtkCollection.h",
+  "vtkCommand.h",
+  "vtkAbstractCellLocator.h",
+  "vtkAbstractTransform.h",
+  "vtkScalarTree.h",
+  "vtkProgressObserver.h",
+]
+include_dirs = [
+  "__VTK_INCLUDE__",
+  __MPI_INCLUDE__
+]
+cxx-std = "c++17"
+veto_list = "__VETO_LIST__"
+n_classes_per_file = 1
+export = "all"
+# Bug 3 workaround (docs/wrapit-spike.md): never export Julia keywords.
+export_blacklist = ["begin", "end", "assign", "copy", "empty", "iterator", "collect"]
+# Field accessors trigger macro-generated getters on VTK (Bug 1); not needed.
+fields_and_variables = false
