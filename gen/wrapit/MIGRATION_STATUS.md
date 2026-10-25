@@ -89,9 +89,9 @@ Single shared library `gen/wrapit/build/shipped/libvtk_julia.so`, one
 
 ## TODO (tomorrow, in order)
 
-1. **Stability**: confirm the 6-run background loop result (expected 0/6);
-   then flip CI to exercise BOTH libs (matrix env var) or at least the merged
-   one.
+1. **Stability**: ✅ confirmed — 6 consecutive full-suite runs on the merged
+   lib, 0 failures (same discipline as the hand wrapper). Next: flip CI to
+   exercise BOTH libs (matrix env var) or at least the merged one.
 2. **Conformance**: `gen/wrapit/conformance.jl` references
    `VTKGen.VTKDataArray` which does not exist (typed wrapper is Julian-layer;
    the file was mid-edit when paused — it likely errors). Rewrite it to load
