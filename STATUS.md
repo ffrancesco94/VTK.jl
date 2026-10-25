@@ -178,6 +178,11 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
       — **done 2026-10-24: WrapIt+shim viable, `vtkWrapJulia` rejected**;
       full report `docs/wrapit-spike.md`, driver `gen/wrapit/` (experimental,
       not yet the generator for the shipped module)
+- [~] WrapIt migration: the generated+shim-merged library
+      (`gen/wrapit/build/shipped/libvtk_julia.so`) passes the full suite as
+      a drop-in replacement (A/B via `VTKJL_LIB`), but the shipped default
+      still loads the hand-written wrapper. In progress — see
+      `gen/wrapit/MIGRATION_STATUS.md` for exact state and next steps.
 - [ ] More readers/writers: `.vti/.vtr/.vts`, legacy `.vtk`, multiblock
 - [ ] More filters: calculator, gradient, threshold, stream tracer (as CFD
       needs arise)

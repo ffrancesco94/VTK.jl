@@ -39,6 +39,18 @@ const JULIA_TO_VTK_TYPE = Dict{Type,Int}(
     UInt64 => 17,
 )
 
+const SP = CxxWrap.CxxWrapCore.SmartPointer
+
+# SmartPointer{vtkDataArray} view of any array smart pointer. The AOS leaf
+# types lack CxxWrap's smart-pointer up-cast (their Julia types pre-exist,
+# disabling lazy cast registration), so route them through the shim's
+# explicit C++-side up-casts.
+_as_dataarray_sp(p::SP{vtkDataArray}) = p
+_asdataarray_upcast(p) = upcast_dataarray(CxxWrap.CxxWrapCore.ConstCxxRef(p))
+_as_dataarray_sp(p::SP{vtkDoubleArray}) = _asdataarray_upcast(p)
+_as_dataarray_sp(p::SP{vtkFloatArray}) = _asdataarray_upcast(p)
+_as_dataarray_sp(p::SP{vtkIntArray}) = _asdataarray_upcast(p)
+
 """
     scalar_type(da) -> Type
 
@@ -72,7 +84,7 @@ mutable struct VTKDataArray{T} <: AbstractMatrix{T}
     view::Matrix{T}
 
     function VTKDataArray{T}(obj::CxxWrap.CxxWrapCore.SmartPointer) where {T}
-        p = convert(CxxWrap.CxxWrapCore.SmartPointer{vtkDataArray}, obj)
+        p = _as_dataarray_sp(obj)
         actual = scalar_type(p)
         actual == T || throw(ArgumentError("array stores $actual values, not $T"))
         return new{T}(p, _typed_view(T, p))
@@ -80,7 +92,7 @@ mutable struct VTKDataArray{T} <: AbstractMatrix{T}
 end
 
 VTKDataArray(obj::CxxWrap.CxxWrapCore.SmartPointer) =
-    VTKDataArray{scalar_type(convert(CxxWrap.CxxWrapCore.SmartPointer{vtkDataArray}, obj))}(obj)
+    VTKDataArray{scalar_type(_as_dataarray_sp(obj))}(obj)
 
 Base.size(a::VTKDataArray) = size(a.view)
 Base.getindex(a::VTKDataArray, i::Int, j::Int) = a.view[i, j]
