@@ -54,11 +54,13 @@ copy = VTK.UnstructuredGrid(xy, cs)    # reconstruct from (points, cells)
 - **Ownership**: factories and outputs return `vtkSmartPointer{T}`, registered
   with CxxWrap as a smart pointer; Julia finalizers release references.
   Borrowed raw pointers are never exposed in the public API.
-- **vtkDataArray**: a flat zero-copy view of the AOS storage is exposed via
+- **vtkDataArray**: zero-copy views of the AOS storage are exposed via
   `raw_data`/`data` (component-fastest layout, i.e. `(ncomp, ntuples)`
-  column-major). Views carry a finalizer that keeps the owning array alive,
-  so they stay valid even if the dataset is dropped (after `resize!`,
-  previously obtained views are invalidated by reallocation).
+  column-major). Views are derived from an owning `VTKDataArray` wrapper
+  ("wrapper-owns-everything"), so they stay valid even if the dataset or
+  original handle is dropped — no finalizers on views (see the docs for
+  why). After `resize!`, previously obtained views are invalidated by
+  reallocation.
 - **Cell types**: the cell vocabulary is VTKBase's `VTKCellTypes` registry
   (shared with ReadVTK/WriteVTK); `cell`/`cells`/`eachcell` return VTKBase
   `MeshCell`s with 1-based connectivity, directly consumable by

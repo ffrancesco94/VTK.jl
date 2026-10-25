@@ -54,9 +54,10 @@ Wrapped surface (hand-written in `wrapper/src/vtk_julia.cpp`):
 Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 `src/cells.jl`, `src/filters.jl`):
 
-- `data(da)`/`raw_data(da)`: zero-copy `(ncomp, ntuples)` / flat views that
-  **borrow** the storage — valid while the owning smart pointer/dataset is
-  alive (see §4.1 and §5 for why views must not own via finalizers).
+- `data(da)`/`raw_data(da)`: zero-copy `(ncomp, ntuples)` / flat views
+  derived from an **owning** `VTKDataArray` wrapper ("wrapper-owns-
+  everything"): the underlying array stays alive as long as any derived
+  view does, even if the original handle is dropped.
 - Grid construction: `Points()`, `UnstructuredGrid()`, `pts[i] = (x,y,z)`,
   `insert_cell!` (accepts raw ids or `VTKCellTypes.VTKCellType`),
   `set_points!`, `allocate!`; `UnstructuredGrid(points, cells)` from a 3×n
@@ -83,10 +84,10 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
   connectivity, `eachcell`/`eachpoint`/`coordinates`, round-trip
   `UnstructuredGrid(coordinates, cells)` reconstruction, WriteVTK writes our
   mesh description and our reader reads it back.
-- **Views vs GC**: views stay valid across aggressive `GC.gc()` churn
-  (finalizers of *other* objects running) while the owner is referenced —
-  through the untyped API, the typed wrapper's cached view, and grid field
-  arrays.
+- **Views vs GC**: views obtained via `data`/`raw_data` survive collection
+  of the owner (wrapper, array, or entire grid) — dropping the last owner
+  reference is safe under aggressive `GC.gc()` churn, through the untyped
+  API, the typed wrapper, and grid field arrays.
 - **Analytic oracles**: clip of unit hex against plane x+y+z=1 (inside-out)
   yields exactly the tetrahedron (1 cell, 4 points, max coordinate sum 1.0);
   default clip side verified as complement; constant-field c2p stays
@@ -100,16 +101,15 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 
 ## 4. Known limitations / design debt
 
-1. **Array interface**: zero-copy views (typed wrapper and untyped
-   `data`/`raw_data`) **borrow** the vtkDataArray storage; they are valid
-   only while the owning smart pointer/dataset is alive. Views must NOT own
-   the array via finalizer closures: an experiment attaching
-   owner-capturing finalizers made C++ VTK objects die on GC finalizer
-   threads and reproducibly corrupted concurrently running pipelines
-   (~25% heisenbug test failures; clean with `--gcthreads=1`). Proper fix
-   is wrapper-owns-everything (see Phase 3). After `resize!`, previously
-   obtained views are invalidated by VTK reallocation; and the grown region
-   is NOT zero-initialized.
+1. **Array interface**: zero-copy views are ownership-safe — `data`/`raw_data`
+   return views derived from an OWNING `VTKDataArray` wrapper (the
+   "wrapper-owns-everything" design), so the owner handle may be dropped.
+   Owner-capturing finalizers on views remain forbidden: an experiment
+   attaching them made C++ VTK objects die on GC finalizer threads and
+   reproducibly corrupted concurrently running pipelines (~25% heisenbug
+   test failures; clean with `--gcthreads=1`). Remaining caveats: after
+   `resize!`, previously obtained views are invalidated by VTK
+   reallocation; and the grown region is NOT zero-initialized.
 2. **Argument-passing pattern**: C++ methods take raw `T*` and the Julian
    layer converts via `_cp(T, obj)` (`CxxPtr{T}(obj[])`). CxxWrap's by-value
    smart-pointer argument path is unusable for custom smart pointers
@@ -190,12 +190,9 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 - [x] Cell/point iterators (`cell`/`cells`/`eachcell`/`eachpoint`),
       `UnstructuredGrid(points, cells)` constructor; `cells`/`coordinates`
       interop with WriteVTK (`vtk_grid(filename, coordinates, cells)`)
-- [ ] Memory-management hardening: views that own parent references.
-      Finalizer-on-view approach FAILED (C++ objects died on GC finalizer
-      threads, corrupting concurrent pipelines — §4.1/§5); the safe design
-      is wrapper-owns-everything: `data`/`raw_data` return the owning
-      `VTKDataArray` wrapper (deletion then happens on the main thread when
-      the user drops it).
+- [x] Memory-management hardening, "wrapper-owns-everything" design:
+      `data`/`raw_data` return views derived from an owning `VTKDataArray`
+      (structural lifetime, no view finalizers; §4.1/§5)
 - [ ] Meshes.jl/GeometryBasics bridges — deferred (mixed-cell grids vs
       homogeneous-typed Julia meshes need a target-representation decision);
       plain `(points, cells)` data already feeds both manually

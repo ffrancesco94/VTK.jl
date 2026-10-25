@@ -88,14 +88,14 @@ model.
 
 ## Low-level access
 
-The untyped API (`raw_data`/`data` on a smart pointer) returns plain
-zero-copy `Vector`/`Matrix` views — handy when the type is irrelevant:
+`raw_data`/`data` are ownership-safe convenience views over any array smart
+pointer: `data` returns the owning `VTKDataArray` wrapper, `raw_data` a
+flat `vec` of it. Both keep the underlying storage alive for as long as
+they're referenced — the original handle may be dropped:
 
 ```julia
-flat = VTK.raw_data(arr.obj)       # flat component-fastest Vector
-mat  = VTK.data(arr.obj)           # (ncomp, ntuples) Matrix
+flat = VTK.raw_data(arr.obj)       # flat component-fastest view (owns)
+mat  = VTK.data(arr.obj)           # owning VTKDataArray (ncomp, ntuples)
 ```
-
-These borrow the storage: keep the owner alive while using them.
 
 Next: [reading & writing files](io.md).

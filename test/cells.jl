@@ -78,31 +78,36 @@ end
     rm(path * ".vtu")
 end
 
-@testset "views survive GC (owner kept alive)" begin
-    # views borrow the storage; while the owner is alive, GC must not
-    # invalidate them (finalizers of *other* objects run during these GCs)
+@testset "views own their storage (wrapper-owns)" begin
+    # Hardened ownership: views handed out by data()/raw_data() are derived
+    # from an OWNING VTKDataArray wrapper, so dropping every direct owner
+    # reference must not invalidate them. Finalizers of *other* objects run
+    # during these GCs; the view -> wrapper -> smart-pointer chain must keep
+    # the C++ array alive structurally (no finalizers on views, see STATUS).
     da = VTK.data_array(Float64, 1)
     VTK.resize!(da, 4)
     da[1, :] = [1.0, 2.0, 3.0, 4.0]
-    flat = VTK.raw_data(da.obj)
-    mat = VTK.data(da.obj)
+    flat = VTK.raw_data(da.obj)   # flat view of an owning wrapper
+    mat = VTK.data(da.obj)        # owning wrapper itself
+    da = nothing
     for _ in 1:3
         GC.gc(true)
     end
     @test flat == [1.0, 2.0, 3.0, 4.0]
     @test mat == [1.0 2.0 3.0 4.0]
 
-    # same through the typed wrapper's cached view
+    # same through the typed wrapper: raw_data(a) is now a flat vec(a)
     a = VTK.data_array(Float64, 1)
     VTK.resize!(a, 2)
     a[1, :] = [10.0, 20.0]
-    v = VTK.raw_data(a)  # a.view itself
+    v = VTK.raw_data(a)
+    a = nothing
     for _ in 1:3
         GC.gc(true)
     end
-    @test v == [10.0 20.0]
+    @test v == [10.0, 20.0]
 
-    # and through a grid's field arrays
+    # and through a grid's field arrays: drop the whole grid
     grid = VTK.UnstructuredGrid()
     pts = VTK.Points()
     VTK.npoints!(pts, 3)
@@ -114,6 +119,7 @@ end
     VTK.name!(arr, "myvals")
     VTK.add_array!(VTK.point_data(grid), arr)
     view_of_grid = VTK.data(VTK.field_array_raw(VTK.point_data(grid), "myvals"))
+    grid = nothing
     for _ in 1:3
         GC.gc(true)
     end

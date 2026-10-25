@@ -5,11 +5,14 @@
 # created directly as plain jl_array_t. Component-fastest layout is exactly
 # column-major for the matrix shape.
 #
-# Ownership: views do NOT own the vtkDataArray — they are valid only while
-# the owning smart pointer/dataset is alive (see §4 of STATUS.md). Do NOT
-# attach owner-capturing finalizers to views: empirical testing showed that
-# destroying VTK C++ objects from GC finalizer threads corrupts concurrently
-# running VTK pipelines (heisenbug failures under multi-threaded GC).
+# Ownership: this module hands out OWNING handles. `data` returns a
+# VTKDataArray wrapper (holds the smart pointer as a field); `raw_data`
+# returns a flat view derived from that wrapper. The derivation chain
+# (ReshapedArray -> VTKDataArray -> SmartPointer) keeps the C++ object
+# alive structurally — no finalizers are attached to views (see §4.1 of
+# STATUS.md: C++ VTK objects must not be destroyed from GC finalizer
+# threads). Dropping all references releases through CxxWrap's standard
+# SmartPointer finalizer, the baseline behavior this package has always had.
 
 # Convert a wrapped object (smart pointer) to a raw C++ pointer of the
 # requested static type, for calling low-level methods that take T*.
@@ -22,22 +25,23 @@ Base.size(da) = (ncomponents(da), ntuples(da))
 Base.length(da) = ncomponents(da) * ntuples(da)
 
 """
-    raw_data(da) -> Vector
+    raw_data(da) -> AbstractVector
 
 Zero-copy flat view of the array storage (component-fastest, length
 `ncomponents * ntuples`). The element type matches the array's storage type.
-The view borrows the storage: keep `da` (or the owning dataset) alive while
-using it.
+The view is derived from an owning `VTKDataArray` wrapper, so the underlying
+storage stays alive as long as the view does — the owner may be dropped.
 """
-raw_data(da::CxxWrap.CxxWrapCore.SmartPointer) = zero_copy_data(_cp(vtkDataArray, da))
+raw_data(da::CxxWrap.CxxWrapCore.SmartPointer) = vec(VTKDataArray(da))
 
 """
-    data(da) -> Matrix
+    data(da) -> VTKDataArray{T}
 
-Zero-copy (ncomponents, ntuples) view of the array storage. Borrows the
-storage: keep `da` (or the owning dataset) alive while using it.
+Owning, typed, zero-copy `(ncomponents, ntuples)` view of the array storage.
+Holds the underlying smart pointer, so it (and views derived from it, e.g.
+`vec`) stay valid after the original handle is dropped.
 """
-data(da::CxxWrap.CxxWrapCore.SmartPointer) = zero_copy_matrix(_cp(vtkDataArray, da))
+data(da::CxxWrap.CxxWrapCore.SmartPointer) = VTKDataArray(da)
 
 name(da) = GetArrayName(_cp(vtkDataArray, da))
 name!(da, s) = SetArrayName(_cp(vtkDataArray, da), String(s))

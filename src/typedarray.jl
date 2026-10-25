@@ -86,8 +86,8 @@ Base.size(a::VTKDataArray) = size(a.view)
 Base.getindex(a::VTKDataArray, i::Int, j::Int) = a.view[i, j]
 Base.setindex!(a::VTKDataArray{T}, v, i::Int, j::Int) where {T} = (a.view[i, j] = v)
 
-raw_data(a::VTKDataArray) = a.view
-data(a::VTKDataArray) = a.view
+raw_data(a::VTKDataArray) = vec(a)
+data(a::VTKDataArray) = a
 name(a::VTKDataArray) = name(a.obj)
 name!(a::VTKDataArray, s) = name!(a.obj, s)
 ntuples(a::VTKDataArray) = size(a.view, 2)
