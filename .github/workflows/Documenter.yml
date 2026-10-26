@@ -38,6 +38,14 @@ jobs:
       - name: Install libclang + OpenSSL headers (wrapit build)
         run: sudo apt-get update && sudo apt-get install -y libclang-dev clang libssl-dev
 
+      # Ubuntu keeps libclang.so under /usr/lib/llvm-*/lib, outside CMake's
+      # default find_library path; derive CLANG_PREFIX from the installed
+      # clang's resource dir (wrapit_src.jl forwards it as -DCLANG_PREFIX).
+      - name: Detect CLANG_PREFIX for wrapit
+        run: |
+          res="$(clang -print-resource-dir)"   # e.g. /usr/lib/llvm-18/lib/clang/18
+          echo "VTKJL_CLANG_PREFIX=${res%/lib/clang/*}" >> "$GITHUB_ENV"
+
       # VTK.jl's docs do `using VTK`, which needs the compiled C++ wrapper.
       # ubuntu-latest ships g++; VTK itself comes from VTK_jll. The default
       # build is the WrapIt-driven generator (gen/build_wrapper.jl).
