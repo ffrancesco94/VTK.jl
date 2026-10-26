@@ -48,11 +48,20 @@ jobs:
       - name: Install libclang + OpenSSL headers (wrapit build)
         if: matrix.wrapper == 'generated'
         run: sudo apt-get update && sudo apt-get install -y libclang-dev clang libssl-dev
-      - name: Detect CLANG_PREFIX for wrapit
+      - name: Prepare libclang for wrapit
         if: matrix.wrapper == 'generated'
         run: |
-          res="$(clang -print-resource-dir)"   # e.g. /usr/lib/llvm-18/lib/clang/18
-          echo "VTKJL_CLANG_PREFIX=${res%/lib/clang/*}" >> "$GITHUB_ENV"
+          res="$(clang -print-resource-dir)"   # e.g. /usr/lib/llvm-21/lib/clang/21
+          prefix="${res%/lib/clang/*}"
+          # Ubuntu ships only versioned libclang-cpp/libLLVM; wrapit's CMake
+          # looks for unversioned names. Provide symlinks.
+          llvm_lib="$prefix/lib"
+          for lib in libclang-cpp libLLVM; do
+            if [ ! -e "$llvm_lib/$lib.so" ]; then
+              sudo ln -s "$(ls "$llvm_lib/$lib".so.* | head -n1)" "$llvm_lib/$lib.so"
+            fi
+          done
+          echo "VTKJL_CLANG_PREFIX=$prefix" >> "$GITHUB_ENV"
       # The C++ wrapper must exist before julia-buildpkg precompiles VTK.jl
       # (@wrapmodule dlopens the library at module definition time).
       - name: Build C++ wrapper (${{ matrix.wrapper }})
