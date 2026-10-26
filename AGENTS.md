@@ -26,6 +26,13 @@ workflow changes.
 
 ## Gotchas (learned the hard way)
 
+- **CI (ubuntu-latest): Ubuntu splits LLVM into versioned dirs.** `libclang.so`
+  lives in `/usr/lib/llvm-*/lib` (outside CMake's default `find_library` path)
+  and the debs ship only *versioned* `libclang-cpp`/`libLLVM` — wrapit's CMake
+  wants unversioned names. Both workflows derive `VTKJL_CLANG_PREFIX` from
+  `clang -print-resource-dir` and symlink the versioned libs. Validated on
+  ubuntu-latest with clang 21 (works despite local validation being on 13/22).
+
 - **Precompile cache does not track `VTKJL_LIB` or the .so content.** Always
   `rm -rf ~/.julia/compiled/v1.12/VTK` when switching libraries, or Julia may
   keep method tables (e.g. `GetOutput`, `InsideOutOn`) from the previous lib.
