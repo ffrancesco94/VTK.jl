@@ -1,50 +1,62 @@
 # VTK.jl — Status & Implementation Plan
 
-Last updated: 2026-10-26 (WrapIt migration **flipped**: the shipped
-`libvtk_julia.so` is now the WrapIt-generated + shim-merged library built by
-`gen/build_wrapper.jl`; the hand-written CMake wrapper is the fallback.
-CI exercises both, A/B via `VTKJL_LIB`.
+Last updated: 2026-10-26 (second session). WrapIt migration **complete and
+CI-green**: the shipped `libvtk_julia.so` is the WrapIt-generated +
+shim-merged library built by `gen/build_wrapper.jl`; the hand-written CMake
+wrapper is the fallback. CI exercises both variants (matrix `wrapper:
+[generated, hand]` × Julia 1.11/1.12, A/B via `VTKJL_LIB`), and the
+Documentation workflow builds and deploys. Two Ubuntu-specific wrapit build
+fixes landed in CI (`CLANG_PREFIX` derivation + versioned-libclang symlinks);
+validated on ubuntu-latest's clang 21. Durable gotchas live in `AGENTS.md`,
+an ELI5 of the wrapping pipeline in `ELI5_WRAPPING.md`.
 
 ## 1. Goal
 
 Julia bindings for a CFD-oriented subset of VTK 9.7: data model, XML I/O, and
 manipulation filters (clip, slice, cell↔point conversion, contour, surface
 extraction). No rendering, no MPI-aware API. Long-term: a maintainable
-binding-generation pipeline (WrapIt or a `vtkWrapJulia` back-end) and an
-idiomatic "Julian" layer on top of the raw bindings.
+binding-generation pipeline (WrapIt + shim) and an idiomatic "Julian" layer
+on top of the raw bindings.
 
 ## 2. Current state (what works)
 
 Binary/runtime foundations:
 
 - `VTK_jll` 9.7.1 provides full headers, `lib/cmake/vtk-9.7` configs, and the
-  `vtkWrap*` tools; we build our binding module against it with CMake
-  (`gen/build_wrapper.jl`). No local VTK build needed.
+  `vtkWrap*` tools; we build our binding module against it. No local VTK
+  build needed.
 - Binding generation: the **default build is the WrapIt driver**
   (`gen/build_wrapper.jl` → `gen/wrapit/build.jl`): it builds **wrapit from
   source** ([`ffrancesco94/wrapit`](https://github.com/ffrancesco94/wrapit),
-  containing the macro-truncation fix, PR #1 — no `WrapIt_jll`, no veto
-  loop), generates the CxxWrap bindings from VTK headers plus a
-  header-derived mechanical shim, merges the hand shim, and installs the
-  result at `wrapper/build/libvtk_julia.so`. Requires git, CMake, a C++17
-  compiler, libclang + OpenSSL dev headers. The legacy hand-written CMake
-  wrapper (`gen/build_wrapper_cmake.jl`, `wrapper/`) remains a fallback;
-  CI tests both variants (matrix `wrapper: [generated, hand]`, A/B via
-  `VTKJL_LIB`). Gotcha: the precompile cache does not track `VTKJL_LIB` —
+  containing the validated Bug-1 macro-truncation fix, PR #1 — no
+  `WrapIt_jll`, no veto loop), generates the CxxWrap bindings from VTK
+  headers, merges the hand shim + auto-shim, and installs the result at
+  `wrapper/build/libvtk_julia.so`. Requires git, CMake, a C++17 compiler,
+  libclang + OpenSSL dev headers. The legacy hand-written CMake wrapper
+  (`gen/build_wrapper_cmake.jl`, `wrapper/`) remains a fallback; CI tests
+  both variants. Gotcha: the precompile cache does not track `VTKJL_LIB` —
   clear `~/.julia/compiled/v1.*/VTK` when switching.
-- Shim automation: the merged library also embeds an **auto-generated
-  mechanical shim** (`gen/wrapit/auto_shim.jl` → `shim_auto.cpp`, ~25
-  methods): owning `X_new` factories and gap-filling/string accessors
-  derived from the VTK headers, deduplicated against hand shim and WrapIt
-  output. A single generic `SetInputData`/`GetOutput` on `vtkAlgorithm`
-  covers all readers/writers/filters (downcasts in the Julian layer), so
-  adding a class usually needs no shim edits. Hand-written remainder:
-  ownership policy, error window, zero-copy workers, downcasts, up-casts.
-  Issue-ready WrapIt bug reports + a validated Bug-1 patch (merged as
-  `ffrancesco94/wrapit#1`): `docs/wrapit-upstream-bugs.md`,
-  `docs/patches/`.
-- MPI: VTK_jll is an MPI-enabled build; `libmpi` (MPICH/OpenMPI/MPIABI flavor)
-  is pre-loaded in `VTK.jl` before the wrapper library is dlopened.
+- Generated surface: **72 classes registered, ~3,150 generated methods** +
+  25 auto-shim methods (18 classes) + ~90 hand-shim methods, all in one
+  library. The auto-shim (`gen/wrapit/auto_shim.jl` → `shim_auto.cpp`)
+  derives owning `X_new` factories and macro accessors (`vtkSetMacro`,
+  `vtkBooleanMacro`, …) from the VTK headers textually — these are invisible
+  to libclang because they only exist after the C preprocessor runs; 282
+  more were skipped because WrapIt already emitted them. A single generic
+  `SetInputData`/`GetOutput` on `vtkAlgorithm` covers all
+  readers/writers/filters (downcasts in the Julian layer), so adding a class
+  usually needs no shim edits. Hand-written remainder (`shim_vtkjl.cpp`,
+  ~460 lines): ownership policy, error window, zero-copy workers, downcasts,
+  up-casts, convenience adapters.
+- Self-healing clash vetoes: when the shim and WrapIt would register the same
+  method, `veto_shim_clashes!()` mechanically adds the generated overload to
+  `veto.txt` (11 hand-maintained lines + ~65 auto-derived) and regenerates
+  until converged.
+- Upstream engagement: issue-ready WrapIt bug reports + validated patches
+  (Bug-1 merged as `ffrancesco94/wrapit#1`, upstream how-to documented):
+  `docs/wrapit-upstream-bugs.md`, `docs/patches/`.
+- MPI: VTK_jll is an MPI-enabled build; `libmpi` (MPICH/OpenMPI/MPIABI
+  flavor) is pre-loaded in `VTK.jl` before the wrapper library is dlopened.
 - Ownership: all factories/outputs return `vtkSmartPointer{T}` registered via
   CxxWrap's custom smart-pointer traits (`IsSmartPointerType`,
   `ConstructorPointerType`). Julia finalizers drive `UnRegister`; GC-stress
@@ -54,16 +66,18 @@ Wrapped surface (generated by the WrapIt driver + merged shim; the retired
 hand-written equivalent lives in `wrapper/src/vtk_julia.cpp`):
 
 - `vtkDataArray` family: abstract API (components, tuples, names, resize),
-  factories for Float32/Float64/Int32, **zero-copy views** via
+  factories for Float32/Float64/Int32 plus a **generic typed factory**
+  `data_array(T, ncomp)` covering all of VTK's scalar types via
+  `vtkAbstractArray::CreateArray`, **zero-copy views** via
   `vtkArrayDispatch` → `GetVoidPointer` → CxxWrap `make_julia_array`
   (AOS-only, mirroring VTK's own buffer-protocol caveat). Views are created
   directly at the target dimensionality (flat vector or `(ncomp, ntuples)`
-  matrix) as plain `Array`s; `create_if_not_exists<ArrayRef<V,2>>` is needed since CxxWrap
-  pre-registers only 1-D array wrapper types.
+  matrix) as plain `Array`s; `create_if_not_exists<ArrayRef{V,2}>` is needed
+  since CxxWrap pre-registers only 1-D array wrapper types.
 - Data model: `vtkPoints`, `vtkUnstructuredGrid`, `vtkPolyData`,
-  `vtkImageData` (types registered; construction currently exposed for
-  unstructured grids), field data (`vtkPointData`/`vtkCellData`) with
-  `AddArray`/`GetArray`/`SetActiveScalars`.
+  `vtkImageData` (types registered with true VTK inheritance; construction
+  currently exposed for unstructured grids), field data (`vtkPointData`/
+  `vtkCellData`) with `AddArray`/`GetArray`/`SetActiveScalars`.
 - I/O: `vtkXML{UnstructuredGrid,PolyData}{Reader,Writer}`; writers emit
   zlib-compressed appended data by default, or raw appended data
   (`raw_appended=true`) which ReadVTK.jl can parse.
@@ -84,6 +98,10 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
   derived from an **owning** `VTKDataArray` wrapper ("wrapper-owns-
   everything"): the underlying array stays alive as long as any derived
   view does, even if the original handle is dropped.
+- `VTKDataArray{T}`: parametric `AbstractMatrix{T}` of shape
+  `(ncomp, ntuples)` holding the smart pointer (ownership), zero-copy cached
+  view, typed `getindex`/`setindex!`, `resize!`; `field_array`/`points_array`
+  return typed wrappers or `nothing`.
 - Grid construction: `Points()`, `UnstructuredGrid()`, `pts[i] = (x,y,z)`,
   `insert_cell!` (accepts raw ids or `VTKCellTypes.VTKCellType`),
   `set_points!`, `allocate!`; `UnstructuredGrid(points, cells)` from a 3×n
@@ -145,10 +163,9 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
    (`Type{Dereferenced{T}}` dispatch is impossible — Julia's `Type` is
    invariant). Any future generator must emit this pattern or register
    `const T&` overloads.
-3. **Arrays**: only Float32/Float64/Int32 factories; no typed get/set
-   accessors (all access goes through zero-copy views or the slow
-   double-based virtual API); SOA/variant arrays unsupported for zero-copy
-   (guarded, throws).
+3. **Arrays**: no typed get/set accessors (all access goes through zero-copy
+   views or the slow double-based virtual API); SOA/variant arrays
+   unsupported for zero-copy (guarded, throws).
 4. **I/O**: XML only (`.vtu/.vtp`); `.vti/.vtr/.vts`, legacy `.vtk`,
    multiblock `.vtm`, parallel readers are unwrapped. Writer only emits
    appended data (fine for CFD).
@@ -160,21 +177,9 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 7. **Distribution**: wrapper builds locally via system CMake; no
    `VTK_julia_jll` BinaryBuilder recipe yet — every user needs a C++17
    toolchain.
-8. **vtkWrapJulia / WrapIt**: spike completed 2026-10-24 — WrapIt 1.8.0
-   generates the conformance subset (63 classes / 1253 methods) with a
-   driver + 10-line post-processor + shim; 4 upstream bugs filed as
-   report candidates. **Migration flipped 2026-10-26**: the merged
-   generated+shim library is the shipped default (`gen/build_wrapper.jl`),
-   the CMake wrapper is the fallback, and CI runs the full suite against
-   both. Details: `gen/wrapit/MIGRATION_STATUS.md`.
-
-## 8. Documentation
-
-- Tutorials (mesh building, arrays/fields, I/O, filters), implementation
-  notes (architecture, ownership/GC hazard, zero-copy, WrapIt driver), and
-  an autodoc API reference, built with DocumenterVitepress.jl:
-  `julia --project=docs docs/make.jl` → `docs/build/1/`.
-- WrapIt spike report with upstream bug repros: `docs/wrapit-spike.md`.
+8. **WrapIt upstream**: Bug 1 fixed only in our fork (patch + upstream
+   how-to ready); Bugs 2–4 worked around in the driver (AOS post-processor,
+   `export_blacklist`, ostream vetoes). See `docs/wrapit-upstream-bugs.md`.
 
 ## 5. Risks
 
@@ -184,44 +189,43 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
   finalizers) empirically corrupts concurrent VTK work (see §4.1). Until the
   wrapper-owns-everything redesign, avoid patterns that defer C++ object
   death into GC.
-- WrapIt may hit the same smart-pointer argument issues; mitigated by the
-  `_cp` pattern and `const T&` overload fallback.
+- WrapIt is pinned to our fork until the Bug-1 patch lands upstream; the
+  driver builds it from source, so CI depends on network (clone +
+  FetchContent) and a working libclang toolchain.
 - VTK_jll has no Windows build; Windows support requires our own VTK build.
 - VTK_jll's MPI flavor complicates end-user installs; escape hatch is a
   custom non-MPI VTK build (defer until requested).
 
 ## 6. Roadmap
 
-### Phase 1 completion (this sprint)
+### Phase 1 — core (complete)
 
 - [x] `SetActiveScalars` plumbing for `contour` (`scalars=` kwarg)
 - [x] ReadVTK-compatible raw-appended writer mode
-- [x] **`VTKDataArray{T}` parametric wrapper** (decided design):
-      `AbstractMatrix{T}` of shape `(ncomp, ntuples)` holding the smart
-      pointer (ownership), zero-copy cached view, typed `getindex`/`setindex!`,
-      `resize!`; `field_array`/`points_array` return typed wrappers; generic
-      typed factory `data_array(T, ncomp)` via `vtkAbstractArray::CreateArray`
+- [x] **`VTKDataArray{T}` parametric wrapper**: `AbstractMatrix{T}` of shape
+      `(ncomp, ntuples)` holding the smart pointer (ownership), zero-copy
+      cached view, typed `getindex`/`setindex!`, `resize!`;
+      `field_array`/`points_array` return typed wrappers; generic typed
+      factory `data_array(T, ncomp)` via `vtkAbstractArray::CreateArray`
 - [x] `HasArray` C++ helper; `field_array` returns typed wrapper or `nothing`
 
-### Phase 2 — breadth + automation
+### Phase 2 — breadth + automation (generator done)
 
-- [x] WrapIt spike on the conformance subset (must reproduce §2's surface);
-      decide WrapIt vs hand-rolled `vtkWrapJulia` emitting CxxWrap code
-      — **done 2026-10-24: WrapIt+shim viable, `vtkWrapJulia` rejected**;
-      full report `docs/wrapit-spike.md`, driver `gen/wrapit/` (experimental,
-      not yet the generator for the shipped module)
-- [x] WrapIt migration: the generated+shim-merged library
-      (`gen/wrapit/build/shipped/libvtk_julia.so`) is the **shipped default**
-      (`gen/build_wrapper.jl` installs it at `wrapper/build/`); the CMake
-      wrapper is the fallback (`gen/build_wrapper_cmake.jl`) and CI runs the
-      full suite against both (A/B via `VTKJL_LIB`). Flipped 2026-10-26 —
-      see `gen/wrapit/MIGRATION_STATUS.md`.
+- [x] WrapIt spike on the conformance subset — **done 2026-10-24: WrapIt+shim
+      viable, `vtkWrapJulia` rejected**; full report `docs/wrapit-spike.md`
+- [x] WrapIt migration: the generated+shim-merged library is the **shipped
+      default** (`gen/build_wrapper.jl` installs it at `wrapper/build/`);
+      the CMake wrapper is the fallback and CI runs the full suite against
+      both (A/B via `VTKJL_LIB`). Flipped 2026-10-26; CI green on all four
+      matrix jobs + docs deploy — see `gen/wrapit/MIGRATION_STATUS.md`
+- [x] Cell type registry via VTKBase (`VTKCellTypes`, a zero-dep hard dep:
+      names ↔ VTK ids, singletons per id)
 - [ ] More readers/writers: `.vti/.vtr/.vts`, legacy `.vtk`, multiblock
+      `.vtm` (mostly config + Julian plumbing now — the generator covers the
+      methods)
 - [ ] More filters: calculator, gradient, threshold, stream tracer (as CFD
       needs arise)
 - [ ] Generic name-based `downcast`
-- [x] Cell type registry via VTKBase (`VTKCellTypes`, a zero-dep hard dep:
-      names ↔ VTK ids, singletons per id)
 
 ### Phase 3 — Julian layer
 
@@ -242,17 +246,25 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 - [ ] `VTK_julia_jll` via BinaryBuilder (Geant4.jl pattern), CI binary cache
 - [ ] Registration in General
 
-## 7. Next sprint: detailed task list
+## 7. Next sprint: candidate task list
 
-Completed 2026-10-24 (see git log); kept for reference. Outstanding roadmap
-items, roughly in priority order:
+The generator migration is done and CI-green, so the next sprint is about
+**breadth** (more VTK surface through the now-working pipeline) and
+**upstream** (reducing our fork delta). Roughly in priority order:
 
-1. WrapIt spike on the conformance subset (Phase 2) — decide WrapIt vs
-   hand-rolled `vtkWrapJulia` emitting CxxWrap code.
-2. More I/O: `.vti/.vtr/.vts` readers/writers, legacy `.vtk`, multiblock
-   `.vtm` (Phase 2).
-3. More filters: calculator, gradient, threshold, stream tracer (Phase 2).
-4. Generic name-based `downcast` (Phase 2).
-5. Meshes.jl/GeometryBasics bridges, once a target representation is chosen
-   (Phase 3).
-6. `VTK_julia_jll` BinaryBuilder recipe (Phase 4).
+1. **More I/O** (Phase 2): `.vti/.vtr/.vts` readers/writers, legacy `.vtk`,
+   multiblock `.vtm`. With the generator in place this is mostly
+   `wrapit.toml.template` + Julian plumbing (`read_vti`/`write_vti`, …).
+2. **Upstream WrapIt Bug 1** (Phase 2/4 hygiene): submit
+   `docs/patches/wrapit-bug1-null-cstring.patch` to `grasph/wrapit` per the
+   how-to in `docs/wrapit-upstream-bugs.md`; unblocks dropping the fork.
+   Then Bugs 3 (easy) and 2 (deletes the AOS post-processor).
+3. **More filters** (Phase 2): calculator, gradient, threshold, stream
+   tracer — as CFD needs arise; each is config + a thin `src/filters.jl`
+   wrapper.
+4. **Generic name-based `downcast`** (Phase 2): replace the hand-written
+   per-type downcasts with a registry-driven `downcast(obj, "vtkPolyData")`.
+5. **Meshes.jl/GeometryBasics bridges** (Phase 3): needs a target-representation
+   decision for mixed-cell grids.
+6. **`VTK_julia_jll` BinaryBuilder recipe** (Phase 4): removes the local
+   C++17 toolchain requirement for end users.
