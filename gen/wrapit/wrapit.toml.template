@@ -17,6 +17,8 @@ input = [
   "vtkUnstructuredGridBase.h",
   "vtkPolyData.h",
   "vtkImageData.h",
+  "vtkRectilinearGrid.h",
+  "vtkStructuredGrid.h",
   # arrays + field data
   "vtkAbstractArray.h",
   "vtkDataArray.h",
@@ -53,6 +55,15 @@ input = [
   "vtkXMLUnstructuredGridWriter.h",
   "vtkXMLPolyDataReader.h",
   "vtkXMLPolyDataWriter.h",
+  # structured-grid XML I/O (image / rectilinear / structured)
+  "vtkXMLStructuredDataReader.h",
+  "vtkXMLStructuredDataWriter.h",
+  "vtkXMLImageDataReader.h",
+  "vtkXMLImageDataWriter.h",
+  "vtkXMLRectilinearGridReader.h",
+  "vtkXMLRectilinearGridWriter.h",
+  "vtkXMLStructuredGridReader.h",
+  "vtkXMLStructuredGridWriter.h",
 ]
 extra_headers = [
   "vtkInformation.h",

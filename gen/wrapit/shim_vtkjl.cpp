@@ -33,6 +33,8 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkPolyData.h>
 #include <vtkImageData.h>
+#include <vtkRectilinearGrid.h>
+#include <vtkStructuredGrid.h>
 #include <vtkAlgorithm.h>
 #include <vtkImplicitFunction.h>
 #include <vtkPlane.h>
@@ -40,6 +42,12 @@
 #include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
+#include <vtkXMLImageDataReader.h>
+#include <vtkXMLImageDataWriter.h>
+#include <vtkXMLRectilinearGridReader.h>
+#include <vtkXMLRectilinearGridWriter.h>
+#include <vtkXMLStructuredGridReader.h>
+#include <vtkXMLStructuredGridWriter.h>
 #include <vtkTableBasedClipDataSet.h>
 #include <vtkCutter.h>
 #include <vtkCellDataToPointData.h>
@@ -398,6 +406,18 @@ void register_shim_methods(jlcxx::Module& mod)
     [](vtkXMLPolyDataWriter* w, const std::string& name) {
       w->SetFileName(name.c_str());
     });
+  mod.method("SetFileName",
+    [](vtkXMLImageDataWriter* w, const std::string& name) {
+      w->SetFileName(name.c_str());
+    });
+  mod.method("SetFileName",
+    [](vtkXMLRectilinearGridWriter* w, const std::string& name) {
+      w->SetFileName(name.c_str());
+    });
+  mod.method("SetFileName",
+    [](vtkXMLStructuredGridWriter* w, const std::string& name) {
+      w->SetFileName(name.c_str());
+    });
 
   // ---- XML writers ----
   mod.method("XMLUnstructuredGridWriter_new", []() {
@@ -406,6 +426,9 @@ void register_shim_methods(jlcxx::Module& mod)
   mod.method("XMLPolyDataWriter_new", []() { return vtkSmartPointer<vtkXMLPolyDataWriter>::New(); });
   mod.method("Write", [](vtkXMLUnstructuredGridWriter* w) { return w->Write(); });
   mod.method("Write", [](vtkXMLPolyDataWriter* w) { return w->Write(); });
+  mod.method("Write", [](vtkXMLImageDataWriter* w) { return w->Write(); });
+  mod.method("Write", [](vtkXMLRectilinearGridWriter* w) { return w->Write(); });
+  mod.method("Write", [](vtkXMLStructuredGridWriter* w) { return w->Write(); });
   // zlib-compressed appended output (interoperable with ReadVTK.jl)
   mod.method("EnableCompression",
     [](vtkXMLUnstructuredGridWriter* w) { w->SetCompressorTypeToZLib(); });
@@ -413,6 +436,12 @@ void register_shim_methods(jlcxx::Module& mod)
     [](vtkXMLUnstructuredGridWriter* w) { w->SetEncodeAppendedData(0); });
   mod.method("EnableCompression",
     [](vtkXMLPolyDataWriter* w) { w->SetCompressorTypeToZLib(); });
+  mod.method("EnableCompression",
+    [](vtkXMLImageDataWriter* w) { w->SetCompressorTypeToZLib(); });
+  mod.method("EnableCompression",
+    [](vtkXMLRectilinearGridWriter* w) { w->SetCompressorTypeToZLib(); });
+  mod.method("EnableCompression",
+    [](vtkXMLStructuredGridWriter* w) { w->SetCompressorTypeToZLib(); });
 
   // ---- filters ----
   mod.method("TableBasedClipDataSet_new", []() {
@@ -457,5 +486,17 @@ void register_shim_methods(jlcxx::Module& mod)
   });
   mod.method("downcast_imagedata", [](vtkDataObject* o) {
     return take_ref(vtkImageData::SafeDownCast(o));
+  });
+  mod.method("downcast_rectilineargrid", [](vtkDataObject* o) {
+    return take_ref(vtkRectilinearGrid::SafeDownCast(o));
+  });
+  mod.method("downcast_structuredgrid", [](vtkDataObject* o) {
+    return take_ref(vtkStructuredGrid::SafeDownCast(o));
+  });
+  // Dynamic class name, e.g. "vtkPolyData" — drives the generic downcast
+  // in the Julian layer.
+  mod.method("GetClassName", [](vtkObjectBase* o) -> std::string {
+    const char* name = o->GetClassName();
+    return name == nullptr ? std::string() : std::string(name);
   });
 }

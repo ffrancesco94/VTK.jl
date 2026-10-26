@@ -172,6 +172,11 @@ end
 const AOS_LEAF_ARRAYS =
     ["vtkDoubleArray", "vtkFloatArray", "vtkIntArray", "vtkUnsignedCharArray"]
 
+# Structured-grid data model: WrapIt drops the vtkStructuredData base (pure
+# template mixin, bug 2 same family); re-point vtkStructuredGrid at
+# vtkPointSet, exactly like the AOS leaf arrays.
+const STRUCTURED_GRID_PARENT = "vtkPointSet"
+
 function postprocess!()
     classes = joinpath(BUILD_DIR, "cxx", "JlClasses.cxx")
     s = read(classes, String)
@@ -191,7 +196,13 @@ function postprocess!()
     # ToAOSDataArray in this file returns vtkSmartPointer<vtkDataArray>.
     s = replace(s, "#include \"jlVTKGen.h\"" =>
         "#include \"jlVTKGen.h\"\n#include \"shim_vtkjl.h\"\n" * shim; count = 1)
-    # (2) strip WrapIt's parametric vtkSmartPointer wrapper (the merged
+    # (2) structured grid: WrapIt drops the vtkStructuredData template base;
+    # re-point at vtkPointSet (fake-superclass trick, same as (1)).
+    s = replace(s,
+        "add_type<vtkStructuredGrid>(\"vtkStructuredGrid\")" =>
+        "add_type<vtkStructuredGrid>(\"vtkStructuredGrid\", jlcxx::julia_base_type<vtkPointSet>())")
+    shim = "\nnamespace jlcxx {\n  template<> struct SuperType<vtkStructuredGrid> { typedef vtkPointSet type; };\n}\n" * shim
+    # (3) strip WrapIt's parametric vtkSmartPointer wrapper (the merged
     # module registers REAL smart-pointer support instead).
     s = strip_vtksmartpointer(s)
     write(classes, s)
