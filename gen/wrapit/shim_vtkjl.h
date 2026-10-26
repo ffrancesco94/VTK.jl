@@ -23,3 +23,4 @@ struct ConstructorPointerType<vtkSmartPointer<T>>
 }
 
 void register_shim_methods(jlcxx::Module& mod);
+void register_auto_shim_methods(jlcxx::Module& mod);

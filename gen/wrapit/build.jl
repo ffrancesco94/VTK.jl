@@ -5,20 +5,23 @@
 #
 # Pipeline (see docs/wrapit-spike.md):
 #   1. render wrapit.toml from the template with runtime artifact paths
-#   2. run wrapit; auto-vetoes macro-generated methods that would truncate
-#      the output (WrapIt bug 1) until generation completes
-#   3. post-process the generated C++ (AOS leaf-array fake superclasses,
+#   2. build wrapit from source (wrapit_src.jl, our fork with the macro
+#      truncation fix) and run it on the input headers
+#   3. generate the mechanical shim from the headers (auto_shim.jl)
+#   4. post-process the generated C++ (AOS leaf-array fake superclasses,
 #      WrapIt bug 2 workaround)
-#   4. compile the generated module + the accessor shim against VTK_jll
+#   5. compile the generated module + shims against VTK_jll
 #
-# Products land in gen/wrapit/build/{cxx,jl}; nothing outside gen/wrapit
-# and the depot is touched.
+# Products land in gen/wrapit/build/{cxx,jl,shipped,wrapit-src,wrapit-build};
+# nothing outside gen/wrapit and the depot is touched.
 using VTK_jll
 using CxxWrap
-using WrapIt_jll
 
 const DRIVER_DIR = @__DIR__
 const BUILD_DIR = joinpath(DRIVER_DIR, "build")
+
+include(joinpath(DRIVER_DIR, "auto_shim.jl"))
+include(joinpath(DRIVER_DIR, "wrapit_src.jl"))
 
 # ---- artifact paths --------------------------------------------------------
 
@@ -47,47 +50,29 @@ function render_config!()
     write(joinpath(BUILD_DIR, "wrapit.toml"), s)
 end
 
-# ---- step 2: generate, with the Bug 1 veto loop ----------------------------
-
-truncated_signature() = let f = joinpath(BUILD_DIR, "cxx", "JlClasses.cxx")
-    isfile(f) || return nothing
-    lines = readlines(f)
-    any(l -> l == "    // defined in ", lines) || return nothing
-    sig = nothing
-    for l in lines
-        m = match(r"signature to use in the veto list: (.*)$", l)
-        m !== nothing && (sig = m.captures[1])
-    end
-    sig   # last complete signature = the method that killed generation
-end
+# ---- step 2: generate (wrapit built from our fork, Bug 1 fixed) ----------
 
 function run_wrapit()
-    WrapIt_jll.wrapit() do exe
-        cd(() -> run(Cmd([exe, "--force", "-v", "0", "wrapit.toml"])), BUILD_DIR)
-    end
+    exe = ensure_wrapit!()
+    cd(() -> run(Cmd([exe, "--force", "-v", "0", "wrapit.toml"])), BUILD_DIR)
+end
+
+# Guard against a regression of WrapIt bug 1 (silent truncation): the
+# generated file must not contain a bare `// defined in ` line (empty
+# source location followed by end-of-file).
+function check_generation_complete!()
+    f = joinpath(BUILD_DIR, "cxx", "JlClasses.cxx")
+    isfile(f) || error("wrapit did not produce $f")
+    any(l -> l == "    // defined in ", readlines(f)) &&
+        error("wrapit output truncated (bug-1 marker found in $f)")
 end
 
 function generate!()
     mkpath(BUILD_DIR)
     render_config!()
-    vetoes = readlines(joinpath(DRIVER_DIR, "veto.txt"))
-    for iter in 0:200
-        run_wrapit()
-        sig = truncated_signature()
-        if sig === nothing
-            println(iter == 0 ? "generation complete (no new vetoes)" :
-                               "generation complete after $iter new vetoes")
-            write(joinpath(DRIVER_DIR, "veto.txt"), join(vetoes, "\n") * "\n")
-            check_shim_types_registered!()
-            return
-        end
-        sig in vetoes && error("veto had no effect: $sig")
-        push!(vetoes, sig)
-        # wrapit reads the file on every run; persist each veto immediately
-        write(joinpath(DRIVER_DIR, "veto.txt"), join(vetoes, "\n") * "\n")
-        println("vetoed (WrapIt bug 1): $sig")
-    end
-    error("veto loop did not converge in 200 iterations")
+    run_wrapit()
+    check_generation_complete!()
+    check_shim_types_registered!()
 end
 
 # Every vtk class type referenced by the merged shim must be registered by
@@ -116,31 +101,53 @@ end
 # vetoed: CxxWrap rejects double registration and Julia forbids method
 # overwriting during precompilation. Detect mechanically; persist vetoes.
 function veto_shim_clashes!()
-    shim = read(joinpath(DRIVER_DIR, "shim_vtkjl.cpp"), String)
+    shim = read(joinpath(DRIVER_DIR, "shim_vtkjl.cpp"), String) *
+           read(joinpath(BUILD_DIR, "cxx", "shim_auto.cpp"), String)
     gen = read(joinpath(BUILD_DIR, "cxx", "JlClasses.cxx"), String)
-    norm(a) = a == "" ? String[] :
-        [let p = replace(strip(split(p, r"\s+(?:const\s+)?[\w:]+\s*$")[1] * ""), r"\s+" => " ")
-             p = replace(p, r"^const\s+" => "", "&" => "", "*" => "")
-             p == "vtkIdType" && (p = "int64_t")
-             p == "vtkTypeBool" && (p = "int64_t")
-             p == "int" && (p = "int32_t")
-             p
-         end for p in split(a, ',')]
     shim_sigs = Dict{String,Vector{Tuple}}()
     for m in eachmatch(r"mod\.method\(\"(\w+)\",\s*\[\]\((.*?)\)\s*(?:->| \{)"s, shim)
         push!(get!(shim_sigs, m.captures[1], Tuple[]),
-              Tuple(norm(m.captures[2])))
+              Tuple(norm_shim_args(m.captures[2]; strip_names = true)))
     end
     veto_file = joinpath(DRIVER_DIR, "veto.txt")
     vetoes = Set(filter(!isempty, strip.(readlines(veto_file))))
+    # class → direct base map (for base/derived string ambiguities)
+    parent = Dict{String,String}()
+    for m in eachmatch(r"add_type<(vtk\w+)>\(\"[^\"]+\"(?:,\s*jlcxx::julia_base_type<(vtk\w+)>\(\))?\s*\)", gen)
+        m.captures[2] === nothing || (parent[m.captures[1]] = m.captures[2])
+    end
+    function is_derived(child, ancestor)
+        c = child
+        while haskey(parent, c)
+            c = parent[c]
+            c == ancestor && return true
+        end
+        return false
+    end
     added = String[]
     for m in eachmatch(r"// signature to use in the veto list: (.+?) ([\w:]+)::(\w+)\((.*?)\)\s*$"m, gen)
         ret, cls, name, args = m.captures
         name in keys(shim_sigs) || continue
-        full = Tuple(vcat([cls], norm(args)))
+        full = Tuple(vcat([cls], norm_shim_args(args)))
         hit = any(shim_sigs[name]) do s
             length(s) <= length(full) && s == full[1:length(s)]
         end
+        # The shim is preferred whenever it offers the same method on a
+        # related class (same class, or base/derived): exact-type matches
+        # would double-register, and std::string (shim) vs const char*
+        # (generated) — which WrapIt maps to Julia String too — would make
+        # calls ambiguous (e.g. SetActiveScalars on vtkDataSetAttributes vs
+        # our vtkPointData/vtkCellData versions, or the generic
+        # SetInputData/GetOutput on vtkAlgorithm vs per-class generated
+        # ones). Veto the generated overload; the shim version wins.
+        hit || (hit = any(shim_sigs[name]) do s
+            length(s) <= length(full) &&
+                (s[1] == full[1] || is_derived(s[1], full[1]) ||
+                 is_derived(full[1], s[1])) &&
+                all(i -> s[i] == full[i] ||
+                         (s[i] == "std::string" && full[i] == "int8_t"),
+                    2:length(s))
+        end)
         if hit
             v = "$ret $cls::$name($args)"
             if v ∉ vetoes
@@ -205,7 +212,8 @@ function postprocess!()
     loop = "for(const auto& w: wrappers) w->add_methods();"
     occursin(loop, t) || error("add_methods loop not found")
     t = replace(t, loop =>
-        "  register_shim_methods(jlModule); // merged ownership/shim layer\n" * loop,
+        "  register_shim_methods(jlModule); // merged ownership/shim layer\n" *
+        "  register_auto_shim_methods(jlModule); // generated factories+accessors\n" * loop,
         count = 1)
     write(steer, t)
     println("post-processed JlClasses.cxx + jlVTKGen.cxx")
@@ -266,13 +274,15 @@ function compile!()
              "-o"; joinpath(shipped, "libvtk_julia.so");
              joinpath(BUILD_DIR, "cxx", "jlVTKGen.cxx");
              joinpath(BUILD_DIR, "cxx", "JlClasses.cxx");
-             joinpath(DRIVER_DIR, "shim_vtkjl.cpp"); libs]))
+             joinpath(DRIVER_DIR, "shim_vtkjl.cpp");
+             joinpath(BUILD_DIR, "cxx", "shim_auto.cpp"); libs]))
     println("built: ", joinpath(shipped, "libvtk_julia.so"))
 end
 
 # ---- main --------------------------------------------------------------------
 
 generate!()
+generate_auto_shim!(DRIVER_DIR, BUILD_DIR, vtk_include_dir())
 veto_shim_clashes!()
 postprocess!()
 compile!()

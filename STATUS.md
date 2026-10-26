@@ -21,15 +21,28 @@ Binary/runtime foundations:
   `vtkWrap*` tools; we build our binding module against it with CMake
   (`gen/build_wrapper.jl`). No local VTK build needed.
 - Binding generation: the **default build is the WrapIt driver**
-  (`gen/build_wrapper.jl` → `gen/wrapit/build.jl`): WrapIt generates the
-  CxxWrap bindings from VTK headers, a hand shim (smart-pointer traits,
-  ownership factories, error window, zero-copy, macro accessors) is merged
-  into the same library, and the result is installed at
-  `wrapper/build/libvtk_julia.so`. The legacy hand-written CMake wrapper
-  (`gen/build_wrapper_cmake.jl`, `wrapper/`) remains a fallback; CI tests
-  both variants (matrix `wrapper: [generated, hand]`, A/B via `VTKJL_LIB`).
-  Gotcha: the precompile cache does not track `VTKJL_LIB` — clear
-  `~/.julia/compiled/v1.*/VTK` when switching.
+  (`gen/build_wrapper.jl` → `gen/wrapit/build.jl`): it builds **wrapit from
+  source** ([`ffrancesco94/wrapit`](https://github.com/ffrancesco94/wrapit),
+  containing the macro-truncation fix, PR #1 — no `WrapIt_jll`, no veto
+  loop), generates the CxxWrap bindings from VTK headers plus a
+  header-derived mechanical shim, merges the hand shim, and installs the
+  result at `wrapper/build/libvtk_julia.so`. Requires git, CMake, a C++17
+  compiler, libclang + OpenSSL dev headers. The legacy hand-written CMake
+  wrapper (`gen/build_wrapper_cmake.jl`, `wrapper/`) remains a fallback;
+  CI tests both variants (matrix `wrapper: [generated, hand]`, A/B via
+  `VTKJL_LIB`). Gotcha: the precompile cache does not track `VTKJL_LIB` —
+  clear `~/.julia/compiled/v1.*/VTK` when switching.
+- Shim automation: the merged library also embeds an **auto-generated
+  mechanical shim** (`gen/wrapit/auto_shim.jl` → `shim_auto.cpp`, ~25
+  methods): owning `X_new` factories and gap-filling/string accessors
+  derived from the VTK headers, deduplicated against hand shim and WrapIt
+  output. A single generic `SetInputData`/`GetOutput` on `vtkAlgorithm`
+  covers all readers/writers/filters (downcasts in the Julian layer), so
+  adding a class usually needs no shim edits. Hand-written remainder:
+  ownership policy, error window, zero-copy workers, downcasts, up-casts.
+  Issue-ready WrapIt bug reports + a validated Bug-1 patch (merged as
+  `ffrancesco94/wrapit#1`): `docs/wrapit-upstream-bugs.md`,
+  `docs/patches/`.
 - MPI: VTK_jll is an MPI-enabled build; `libmpi` (MPICH/OpenMPI/MPIABI flavor)
   is pre-loaded in `VTK.jl` before the wrapper library is dlopened.
 - Ownership: all factories/outputs return `vtkSmartPointer{T}` registered via
@@ -85,7 +98,7 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 - `plane`, `clip`, `slice`, `cell_to_point`, `point_to_cell`, `contour`,
   `extract_surface`, `update!`.
 
-## 3. Test suite (91 tests, all passing)
+## 3. Test suite (97 tests, all passing; 91 on the hand-written fallback)
 
 - **Array core**: typed creation, zero-copy write-through both directions,
   multi-component reshape, names, Int32 element type, GC churn with
@@ -111,6 +124,9 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
   Julia); our reader verifies WriteVTK.jl output — both directions.
 - **Robustness**: GC/finalizer stress across full pipelines; missing field
   names return `nothing`.
+- **Auto-shim** (generated library only): macro accessors
+  (`InsideOutOn/Off`, `GetInsideOut`, `GetUseValueAsOffset`, `GetFileName`)
+  and auto factories (`PolyData_new`); skipped on the hand-written fallback.
 
 ## 4. Known limitations / design debt
 

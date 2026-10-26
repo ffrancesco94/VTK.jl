@@ -106,3 +106,38 @@ end
     GC.gc(true)
     @test VTK.npoints(ug) == 8
 end
+
+# Auto-generated shim (gen/wrapit/auto_shim.jl): factories and macro
+# accessors derived from the VTK headers. Present only in the WrapIt-built
+# library, not in the legacy hand-written CMake wrapper.
+@testset "auto-generated shim accessors and factories" begin
+    if !isdefined(VTK, :InsideOutOn)
+        @info "auto-shim not present (hand-written wrapper) — skipping"
+        return
+    end
+    ug = hex_mesh_with_temperature()
+    f = VTK.TableBasedClipDataSet_new()
+    VTK.SetInputData(VTK._cp(VTK.vtkAlgorithm, f), VTK._cp(VTK.vtkDataObject, ug))
+    p = VTK.plane((1.0, 0.0, 0.0), (1.0, 1.0, 1.0))
+    VTK.SetClipFunction(VTK._cp(VTK.vtkTableBasedClipDataSet, f),
+                        VTK._cp(VTK.vtkImplicitFunction, p))
+    # vtkBooleanMacro: On/Off + typed getter
+    VTK.InsideOutOn(VTK._cp(VTK.vtkTableBasedClipDataSet, f))
+    @test VTK.GetInsideOut(VTK._cp(VTK.vtkTableBasedClipDataSet, f)) == 1
+    VTK.InsideOutOff(VTK._cp(VTK.vtkTableBasedClipDataSet, f))
+    @test VTK.GetInsideOut(VTK._cp(VTK.vtkTableBasedClipDataSet, f)) == 0
+    # vtkBooleanMacro with a C++ bool
+    VTK.SetUseValueAsOffset(VTK._cp(VTK.vtkTableBasedClipDataSet, f), true)
+    @test VTK.GetUseValueAsOffset(VTK._cp(VTK.vtkTableBasedClipDataSet, f)) == true
+    # vtkSetFilePathMacro/vtkGetFilePathMacro on the XML base classes
+    mktempdir() do dir
+        path = joinpath(dir, "x.vtu")
+        w = VTK.XMLUnstructuredGridWriter_new()
+        VTK.SetFileName(VTK._cp(VTK.vtkXMLWriterBase, w), path)
+        @test VTK.GetFileName(VTK._cp(VTK.vtkXMLWriterBase, w)) == path
+    end
+    # auto-generated factory for a class without a hand-written one
+    pd = VTK.PolyData_new()
+    @test VTK.ncells(pd) == 0
+    @test VTK.npoints(pd) == 0
+end

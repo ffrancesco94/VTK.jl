@@ -59,12 +59,13 @@ plane = Conf.Plane_new()
 Conf.SetOrigin(cp(Conf.vtkPlane, plane), 1.0, 0.0, 0.0)
 Conf.SetNormal(cp(Conf.vtkPlane, plane), 1.0, 1.0, 1.0)
 clip = Conf.TableBasedClipDataSet_new()
-Conf.SetInputData(cp(Conf.vtkTableBasedClipDataSet, clip), cp(Conf.vtkDataSet, ug))
+Conf.SetInputData(cp(Conf.vtkAlgorithm, clip), cp(Conf.vtkDataObject, ug))
 Conf.SetClipFunction(cp(Conf.vtkTableBasedClipDataSet, clip),
                      cp(Conf.vtkImplicitFunction, plane))
 Conf.SetInsideOut(cp(Conf.vtkTableBasedClipDataSet, clip), true)  # bool-macro accessor
 Conf.Update(cp(Conf.vtkAlgorithm, clip))
-out = Conf.GetOutput(cp(Conf.vtkTableBasedClipDataSet, clip))     # owning output
+out = Conf.downcast_unstructuredgrid(
+    cp(Conf.vtkDataObject, Conf.GetOutput(cp(Conf.vtkAlgorithm, clip))))  # owning output
 @assert Conf.GetNumberOfPoints(cp(Conf.vtkPointSet, out)) == 4 &&
         Conf.GetNumberOfCells(cp(Conf.vtkDataSet, out)) == 1
 println("clip output: npts=", Conf.GetNumberOfPoints(cp(Conf.vtkPointSet, out)),
@@ -73,8 +74,7 @@ println("clip output: npts=", Conf.GetNumberOfPoints(cp(Conf.vtkPointSet, out)),
 # --- write + read back ---
 path = joinpath(@__DIR__, "build", "spike_out.vtu")
 writer = Conf.XMLUnstructuredGridWriter_new()
-Conf.SetInputData(cp(Conf.vtkXMLUnstructuredGridWriter, writer),
-                  cp(Conf.vtkUnstructuredGrid, out))
+Conf.SetInputData(cp(Conf.vtkAlgorithm, writer), cp(Conf.vtkDataObject, out))
 Conf.SetFileName(cp(Conf.vtkXMLUnstructuredGridWriter, writer), path)
 @assert Conf.Write(cp(Conf.vtkXMLUnstructuredGridWriter, writer)) == 1 && isfile(path)
 println("writer returned 1; file exists")
@@ -82,7 +82,8 @@ println("writer returned 1; file exists")
 reader = Conf.XMLUnstructuredGridReader_new()
 Conf.SetFileName(cp(Conf.vtkXMLUnstructuredGridReader, reader), path)
 Conf.Update(cp(Conf.vtkAlgorithm, reader))
-ug2 = Conf.GetOutput(cp(Conf.vtkXMLUnstructuredGridReader, reader))
+ug2 = Conf.downcast_unstructuredgrid(
+    cp(Conf.vtkDataObject, Conf.GetOutput(cp(Conf.vtkAlgorithm, reader))))
 @assert Conf.GetNumberOfPoints(cp(Conf.vtkPointSet, ug2)) == 4 &&
         Conf.GetNumberOfCells(cp(Conf.vtkDataSet, ug2)) == 1
 da2 = Conf.GetArray(cp(Conf.vtkFieldData, Conf.GetPointData(cp(Conf.vtkDataSet, ug2))),
