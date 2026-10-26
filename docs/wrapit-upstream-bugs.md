@@ -232,3 +232,21 @@ WrapIt `main@aff970b` needed one *unrelated* build fix —
 `CodeTree.cpp` was replaced by the public C-API type spelling (debug output
 only; patch `docs/patches/wrapit-clang22-build.patch`). CMake flags used:
 `-DCLANG_JLL=ON -DCLANG_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release`.
+
+## Submitting Bug 1 upstream (draft PR how-to)
+
+Bug 1 is fixed only in our fork; to propose it to
+[grasph/wrapit](https://github.com/grasph/wrapit):
+
+1. **Issue first** (optional but polite): the "Bug 1" section above is
+   issue-ready — paste it as-is into a new issue; it has the summary, root
+   cause, and reproducer.
+2. **Branch**: our fork keeps the fix on
+   [`ffrancesco94/wrapit`](https://github.com/ffrancesco94/wrapit), branch
+   `fix-null-cstring-truncation` (3-line null-`CXString` guard in
+   `src/utils.cpp`, plus the clang-22 build fix on `main`). Open the PR from
+   that branch to `grasph/wrapit:main`.
+3. **Patch file** (if a plain patch is preferred): `docs/patches/wrapit-bug1-null-cstring.patch`.
+4. **PR body**: the Bug 1 section + the A/B validation note (45 methods
+   restored on VTK headers, generation no longer truncates, exit code still
+   0). Mention it is validated on clang 13 (jll) and clang 21/22 (system).
