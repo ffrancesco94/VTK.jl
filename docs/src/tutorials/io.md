@@ -1,7 +1,8 @@
 # Tutorial: reading & writing files
 
-VTK.jl speaks VTK XML formats (`.vtu` unstructured grids, `.vtp` poly
-data) and interops cleanly with the pure-Julia ecosystem.
+VTK.jl speaks the VTK XML formats — unstructured (`.vtu`), poly data
+(`.vtp`), image data (`.vti`), rectilinear (`.vtr`), and structured
+(`.vts`) grids — and interops cleanly with the pure-Julia ecosystem.
 
 ## Reading VTK files
 
@@ -16,8 +17,9 @@ names = VTK.field_array_names(pd)
 p = VTK.field_array(pd, "p")         # typed zero-copy view, or nothing
 ```
 
-`read_vtp` does the same for poly data. Readers return owning smart
-pointers, so the grid stays alive as long as you hold it.
+`read_vtp` does the same for poly data; `read_vti`/`read_vtr`/`read_vts`
+read image, rectilinear, and curvilinear structured grids. Readers return
+owning smart pointers, so the grid stays alive as long as you hold it.
 
 ## Writing VTK files
 
@@ -25,6 +27,9 @@ pointers, so the grid stays alive as long as you hold it.
 VTK.write_vtu(ug, "out.vtu")                      # zlib-compressed appended
 VTK.write_vtu(ug, "out_raw.vtu"; raw_appended = true)  # uncompressed appended
 VTK.write_vtp(poly, "surf.vtp")
+VTK.write_vti(img, "img.vti")                     # structured formats
+VTK.write_vtr(rg, "rg.vtr")
+VTK.write_vts(sg, "sg.vts")
 ```
 
 The default mode writes zlib-compressed appended data — ideal for ParaView.

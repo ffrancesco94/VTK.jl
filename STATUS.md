@@ -78,9 +78,10 @@ hand-written equivalent lives in `wrapper/src/vtk_julia.cpp`):
   `vtkImageData` (types registered with true VTK inheritance; construction
   currently exposed for unstructured grids), field data (`vtkPointData`/
   `vtkCellData`) with `AddArray`/`GetArray`/`SetActiveScalars`.
-- I/O: `vtkXML{UnstructuredGrid,PolyData}{Reader,Writer}`; writers emit
-  zlib-compressed appended data by default, or raw appended data
-  (`raw_appended=true`) which ReadVTK.jl can parse.
+- I/O: `vtkXML{UnstructuredGrid,PolyData,ImageData,RectilinearGrid,StructuredGrid}{Reader,Writer}`
+  (`.vtu/.vtp/.vti/.vtr/.vts`); writers emit zlib-compressed appended data by
+  default, or raw appended data (`raw_appended=true`) which ReadVTK.jl can
+  parse.
 - Filters: `vtkTableBasedClipDataSet`, `vtkCutter`, `vtkCellDataToPointData`,
   `vtkPointDataToCellData`, `vtkContourFilter`, `vtkDataSetSurfaceFilter`,
   plus `vtkPlane` implicit function.
@@ -106,8 +107,12 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
   `insert_cell!` (accepts raw ids or `VTKCellTypes.VTKCellType`),
   `set_points!`, `allocate!`; `UnstructuredGrid(points, cells)` from a 3×n
   matrix + `MeshCell` vector.
-- `read_vtu`/`read_vtp`/`write_vtu`/`write_vtp`, `field_array`, `point_data`,
-  `cell_data`, `activate_point_data!`.
+- `read_vtu`/`read_vtp`/`read_vti`/`read_vtr`/`read_vts`,
+  `write_vtu`/`write_vtp`/`write_vti`/`write_vtr`/`write_vts`, `field_array`,
+  `point_data`, `cell_data`, `activate_point_data!`.
+- Generic name-based `downcast(obj)` dispatching on the VTK dynamic class
+  name via `GetClassName` and a registry (`DOWNCAST_REGISTRY`); adding a
+  grid type = one registry entry + its `downcast_foo` shim binding.
 - Cell/point access: `cell_type`/`cell`/`cells`/`eachcell` (VTKBase
   `MeshCell`, 1-based connectivity), `eachpoint`, `coordinates` (zero-copy
   typed 3×n view). Cell vocabulary comes from VTKBase (`VTKCellTypes`), the
@@ -116,7 +121,7 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 - `plane`, `clip`, `slice`, `cell_to_point`, `point_to_cell`, `contour`,
   `extract_surface`, `update!`.
 
-## 3. Test suite (97 tests, all passing; 91 on the hand-written fallback)
+## 3. Test suite (118 tests, all passing; 91 on the hand-written fallback)
 
 - **Array core**: typed creation, zero-copy write-through both directions,
   multi-component reshape, names, Int32 element type, GC churn with
@@ -145,6 +150,12 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 - **Auto-shim** (generated library only): macro accessors
   (`InsideOutOn/Off`, `GetInsideOut`, `GetUseValueAsOffset`, `GetFileName`)
   and auto factories (`PolyData_new`); skipped on the hand-written fallback.
+- **Structured XML I/O** (generated library only): `.vti/.vtr/.vts`
+  round-trips through VTK.jl's own readers/writers, with WriteVTK.jl output
+  read by VTK.jl and VTK.jl output re-read by VTK.jl (ReadVTK.jl does not
+  parse zlib-compressed appended data, so the write-side oracle is limited
+  to geometry/header checks); generic `downcast` dispatch on reader outputs;
+  skipped on the hand-written fallback.
 
 ## 4. Known limitations / design debt
 
@@ -166,14 +177,17 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 3. **Arrays**: no typed get/set accessors (all access goes through zero-copy
    views or the slow double-based virtual API); SOA/variant arrays
    unsupported for zero-copy (guarded, throws).
-4. **I/O**: XML only (`.vtu/.vtp`); `.vti/.vtr/.vts`, legacy `.vtk`,
-   multiblock `.vtm`, parallel readers are unwrapped. Writer only emits
-   appended data (fine for CFD).
+4. **I/O**: XML only; legacy `.vtk`, multiblock `.vtm`, parallel readers are
+   unwrapped. Writer only emits appended data (fine for CFD). ReadVTK.jl
+   (the pure-Julia oracle) does not parse zlib-compressed appended blocks,
+   so compressed output is verified by re-reading with VTK.jl itself.
 5. **Data model**: unstructured grids fully constructible from Julia; other
    grid types readable but not constructible. Cell types are bare integers
    (`VTK_HEXAHEDRON = 12`).
-6. **Downcasts**: hand-written per type (`UnstructuredGrid(obj)` etc.); no
-   generic `downcast` based on class name.
+6. **Downcasts**: generic name-based `downcast(obj)` exists
+   (`DOWNCAST_REGISTRY` on `GetClassName`); per-type constructors
+   (`UnstructuredGrid(obj)` etc.) remain as thin wrappers. Unregistered
+   classes raise `KeyError`.
 7. **Distribution**: wrapper builds locally via system CMake; no
    `VTK_julia_jll` BinaryBuilder recipe yet — every user needs a C++17
    toolchain.
@@ -220,12 +234,12 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
       matrix jobs + docs deploy — see `gen/wrapit/MIGRATION_STATUS.md`
 - [x] Cell type registry via VTKBase (`VTKCellTypes`, a zero-dep hard dep:
       names ↔ VTK ids, singletons per id)
-- [ ] More readers/writers: `.vti/.vtr/.vts`, legacy `.vtk`, multiblock
-      `.vtm` (mostly config + Julian plumbing now — the generator covers the
-      methods)
+- [x] More readers/writers: `.vti/.vtr/.vts` XML (2026-10-26; `.vtu/.vtp`
+      already existed) — mostly `wrapit.toml.template` + Julian plumbing
+- [ ] More readers/writers: legacy `.vtk`, multiblock `.vtm`
 - [ ] More filters: calculator, gradient, threshold, stream tracer (as CFD
       needs arise)
-- [ ] Generic name-based `downcast`
+- [x] Generic name-based `downcast` (2026-10-26)
 
 ### Phase 3 — Julian layer
 
