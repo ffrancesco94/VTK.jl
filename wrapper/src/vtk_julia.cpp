@@ -294,6 +294,17 @@ JLCXX_MODULE define_julia_module(jlcxx::Module& mod)
   // Registers the parametric type; concrete instantiations
   // (vtkSmartPointer{T}) are created lazily on first use.
   jlcxx::add_smart_pointer<vtkSmartPointer>(mod, "vtkSmartPointer");
+  // Explicit C++-side up-casts for the AOS leaf arrays: their Julia types are
+  // pre-registered, which disables CxxWrap's lazy smart-pointer cast
+  // registration, so SmartPointer{vtkDataArray} conversions need these.
+  // (Same workaround as the WrapIt-merged shim; const& args because by-value
+  // custom smart-pointer args are undispatchable from Julia — STATUS.md §4.2.)
+  mod.method("upcast_dataarray",
+    [](const vtkSmartPointer<vtkDoubleArray>& p) { return vtkSmartPointer<vtkDataArray>(p); });
+  mod.method("upcast_dataarray",
+    [](const vtkSmartPointer<vtkFloatArray>& p) { return vtkSmartPointer<vtkDataArray>(p); });
+  mod.method("upcast_dataarray",
+    [](const vtkSmartPointer<vtkIntArray>& p) { return vtkSmartPointer<vtkDataArray>(p); });
 
   // ---- error capture ----
   mod.method("install_error_window",

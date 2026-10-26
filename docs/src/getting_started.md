@@ -15,15 +15,19 @@ MPI flavor, `CxxWrap`) come from the Julia binary repository automatically.
 
 ## Building the C++ wrapper
 
-One compile step is required: the C++ binding module must be built against
-the `VTK_jll` artifact (needs a C++17 toolchain — `g++` or `clang`):
+One compile step is required: the C++ binding module is generated from the
+VTK headers by the WrapIt driver and built against the `VTK_jll` artifact
+(needs a C++17 toolchain — `g++` or `clang`):
 
 ```shell
 julia --project=. gen/build_wrapper.jl
 ```
 
-This produces `wrapper/build/libvtk_julia.so`. Override the location with the
-`VTKJL_LIB` environment variable if you build it elsewhere:
+This produces `wrapper/build/libvtk_julia.so`. The legacy hand-written CMake
+wrapper remains available as `julia --project=. gen/build_wrapper_cmake.jl`.
+Override the location with the `VTKJL_LIB` environment variable if you build
+it elsewhere — and after switching libraries, clear the precompile cache
+(`rm -rf ~/.julia/compiled/v1.*/VTK`), which does not track `VTKJL_LIB`:
 
 ```julia
 ENV["VTKJL_LIB"] = "/path/to/libvtk_julia.so"

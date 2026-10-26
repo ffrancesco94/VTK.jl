@@ -8,10 +8,15 @@ makedocs(;
     repo = "https://github.com/ffrancesco94/VTK.jl",
     sitename = "VTK.jl",
     format = DocumenterVitepress.MarkdownVitepress(;
-        repo = "https://github.com/ffrancesco94/VTK.jl",
+        # No scheme: DocumenterVitepress prepends "https://" itself when
+        # building the "Edit this page" links.
+        repo = "github.com/ffrancesco94/VTK.jl",
         devbranch = "main",
         devurl = "dev",
-        deploy_url = "ffrancesco94.github.io/VTK.jl",
+        # WITH scheme: DocumenterVitepress strips the domain to derive the
+        # VitePress `base` path; without it the base becomes
+        # "/ffrancesco94.github.io/VTK.jl" and the deployed site loads no CSS.
+        deploy_url = "https://ffrancesco94.github.io/VTK.jl",
     ),
     pages = [
         "Home" => "index.md",

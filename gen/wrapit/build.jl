@@ -245,9 +245,8 @@ function compile!()
     julia_inc = joinpath(Sys.BINDIR, Base.INCLUDEDIR, "julia")
     isdir(julia_inc) ||
         error("julia headers not found at $julia_inc (source build?)")
-    deps = joinpath(BUILD_DIR, "jl", "deps")
     shipped = joinpath(BUILD_DIR, "shipped")
-    mkpath.((deps, shipped))
+    mkpath(shipped)
     common = String["-shared", "-fPIC", "-std=c++17",
                     "-I$(joinpath(BUILD_DIR, "cxx"))",
                     "-I$DRIVER_DIR",
@@ -268,9 +267,6 @@ function compile!()
              joinpath(BUILD_DIR, "cxx", "jlVTKGen.cxx");
              joinpath(BUILD_DIR, "cxx", "JlClasses.cxx");
              joinpath(DRIVER_DIR, "shim_vtkjl.cpp"); libs]))
-    # the generated VTKGen.jl package loads ../deps/libjlVTKGen.so
-    cp(joinpath(shipped, "libvtk_julia.so"),
-       joinpath(deps, "libjlVTKGen.so"); force = true)
     println("built: ", joinpath(shipped, "libvtk_julia.so"))
 end
 

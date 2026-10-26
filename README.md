@@ -9,14 +9,25 @@ Status: early development (phase 0/1). Built on `VTK_jll` (binaries) +
 
 ## Building
 
-The C++ binding module must be built once against the `VTK_jll` artifact:
+The C++ binding module must be built once against the `VTK_jll` artifact
+(needs a C++17 toolchain — `g++` or `clang`):
 
 ```sh
 julia --project=. gen/build_wrapper.jl
 ```
 
-This produces `wrapper/build/libvtk_julia.so` (override the location with the
-`VTKJL_LIB` environment variable).
+This drives the WrapIt-based generator ([`gen/wrapit`](gen/wrapit)) —
+generate CxxWrap bindings from the VTK headers, merge the hand shim, compile —
+and installs the result at `wrapper/build/libvtk_julia.so`, the default
+location loaded by the package.
+
+- Fallback: the legacy hand-written CMake wrapper is still available via
+  `julia --project=. gen/build_wrapper_cmake.jl`.
+- Override the loaded library with the `VTKJL_LIB` environment variable.
+  Note Julia's precompile cache does **not** track `VTKJL_LIB`: after
+  switching libraries, clear the package cache
+  (`rm -rf ~/.julia/compiled/v1.*/VTK`) or you silently keep testing the
+  previous one.
 
 ## Usage
 

@@ -1,24 +1,58 @@
-# WrapIt migration — status & handover (2026-10-25)
+# WrapIt migration — status & handover (2026-10-26)
 
-**One-line state: the WrapIt-generated + shim-merged library passes the full
-91-test suite as a drop-in replacement for the hand-written wrapper (A/B via
-`VTKJL_LIB`). The migration is NOT flipped yet — the shipped default still
-loads `wrapper/build/libvtk_julia.so` (CMake/hand build).**
+**One-line state: FLIPPED. The WrapIt-generated + shim-merged library built by
+`gen/build_wrapper.jl` is the shipped default (`wrapper/build/libvtk_julia.so`).
+The hand-written CMake wrapper (`gen/build_wrapper_cmake.jl`, `wrapper/`) is
+the fallback; CI exercises both (matrix `wrapper: [generated, hand]`, A/B via
+`VTKJL_LIB`). Full suite: 91/91 on both libraries (verified 2026-10-26).**
+
+## Post-flip state (2026-10-26)
+
+- `gen/build_wrapper.jl` — thin entry point: instantiates the driver env, runs
+  `gen/wrapit/build.jl`, installs the merged library into `wrapper/build/`.
+- `gen/build_wrapper_cmake.jl` — the legacy CMake build, same output path
+  (so it stays a drop-in fallback).
+- CI (`.github/workflows/CI.yml`): matrix `version × wrapper`; `VTKJL_LIB` is
+  pinned at job level **before** `julia-buildpkg` because `@wrapmodule`
+  dlopens the library at module-definition (precompile) time. The C++ build
+  step runs before `julia-buildpkg` for the same reason.
+- `conformance.jl`: rewritten to load the merged library directly via
+  `@wrapmodule` in a scratch module (no VTKGen.jl package, no `LOAD_PATH`
+  tricks); uses the shim's owning `*_new` factories and the Julian layer's
+  `_cp` raw-pointer pattern. The stale `build/jl/deps/libjlVTKGen.so` copy was
+  removed from `build.jl`.
+- `wrapper/src/vtk_julia.cpp`: back-ported the three `upcast_dataarray`
+  overloads (the Julian layer's `_as_dataarray_sp` requires them; their
+  absence made CI red on main).
+- Docs deployment CSS bug: **fixed** — root cause was
+  `deploy_url = "ffrancesco94.github.io/VTK.jl"` (no scheme) in `docs/make.jl`;
+  DocumenterVitepress only strips the domain when the scheme is present, so
+  the VitePress base became `/ffrancesco94.github.io/VTK.jl/dev/` and every
+  asset 404'd. Now `https://ffrancesco94.github.io/VTK.jl`. Also fixed the
+  doubled `https://https://` in "Edit this page" links by passing
+  `repo = "github.com/..."` (DocumenterVitepress prepends the scheme itself).
+- Cleanup: the dead-regex-veto-line cleanup was attempted and **reverted**
+  (see finding 1 — the regex lines veto ostream wrappers and are required);
+  `__debug_sp_state` was already gone.
 
 ## How to reproduce the current green state
 
 ```sh
-julia --project=gen/wrapit -e 'using Pkg; Pkg.instantiate()'   # once
-julia --project=gen/wrapit gen/wrapit/build.jl                 # generate+merge+compile (~2 min)
-rm -rf ~/.julia/compiled/v1.12/VTK                              # kill stale cache!
+julia --project=. gen/build_wrapper.jl            # default (WrapIt) build + install
+julia --project=. gen/build_wrapper_cmake.jl      # fallback (CMake/hand) build
+rm -rf ~/.julia/compiled/v1.12/VTK                # kill stale cache!
+julia --project=test test/runtests.jl             # 91/91 (default path)
 VTKJL_LIB=$PWD/gen/wrapit/build/shipped/libvtk_julia.so \
-  julia --project=test test/runtests.jl                         # expect 91/91
+  julia --project=test test/runtests.jl           # 91/91 (explicit merged lib)
+julia --project=gen/wrapit gen/wrapit/conformance.jl  # analytic-oracle gate
 ```
 
 **CRITICAL GOTCHA (cost a debugging session):** Julia's precompile cache does
 not track `ENV["VTKJL_LIB"]`. After building, ALWAYS
 `rm -rf ~/.julia/compiled/v1.12/VTK` before an A/B run, or you silently test
 the previously-cached library (this masked failures for several iterations).
+Also: never precompile the VTK package in one environment and run tests with
+a different `VTKJL_LIB` — bake the env var into the whole job/session.
 
 ## Architecture of the merged library (what build.jl produces)
 
@@ -45,15 +79,19 @@ Single shared library `gen/wrapit/build/shipped/libvtk_julia.so`, one
    `SetFileName`/`SetInsideOut`/`SetArrayName`/... macro accessors, downcasts,
    `CreateDataArray`, `HasArray`, `GetArrayNameOf`, `InsertNextCell`
    (vector overload), `GetCellTypeId`/`GetCellPointIds`, writer compression
-   conveniences — and now also `upcast_dataarray` (see below).
+   conveniences — and `upcast_dataarray` (also back-ported into the hand
+   wrapper, which is now the shim's twin).
 
 ## Hard-won findings (read before touching anything)
 
-1. **Regex vetoes in WrapIt do NOT work** (at least 1.8.0). All successful
-   vetoes are exact signature matches. The ostream/PrintSelf removals in the
-   original spike were auto-veto (undefined type), not regex effect.
-   `veto.txt` now contains some dead regex lines (harmless; `/std::basic_ostream.*/`
-   line 1, `/.*/ostream.*/` removed already — audit when convenient).
+1. **Regex veto lines in veto.txt are load-bearing — do not "clean them up".**
+   Removing `/std::basic_ostream.*/` (and the other regex lines) makes
+   generation emit ostream-related wrappers (74 classes / 1442 methods
+   instead of 72 / 1397, "Failed to find type declaration of ostream"),
+   which then breaks the build (WrapIt bug 4 territory). The earlier belief
+   that "regex vetoes do not work" was wrong: at least these patterns match.
+   The exact-signature duplicates of `/::GetOutput()/`, `GetPointData()` etc.
+   were kept anyway — they document the clashing signatures explicitly.
 2. **vtkObjectBase.h must stay in input** — but it includes `<iostream>`,
    which *defines* `std::ostream`, which DISABLES the auto-veto of
    ostream-methods. Exact vetoes for `vtkObjectBase::Print/PrintHeader/
@@ -64,8 +102,9 @@ Single shared library `gen/wrapit/build/shipped/libvtk_julia.so`, one
    factory path is skipped. Fix shipped: explicit C++-side
    `upcast_dataarray(const vtkSmartPointer{Double,Float,Int}&) →
    vtkSmartPointer<vtkDataArray>` shim methods + Julia `_as_dataarray_sp`
-   router in `src/typedarray.jl`. `force_sp_instantiation` (calling jlcxx
-   internals directly) was tried and DID NOT work — reverted.
+   router in `src/typedarray.jl` (present in BOTH the merged shim and the
+   hand wrapper). `force_sp_instantiation` (calling jlcxx internals
+   directly) was tried and DID NOT work — reverted.
 4. **Ambiguities to veto** (both shim & generated define near-identical
    methods): exact-signature vetoes in veto.txt for `GetOutput()`,
    `GetPointData()`, `GetCellData()`, `vtkPointSet::GetPoints()`,
@@ -86,63 +125,44 @@ Single shared library `gen/wrapit/build/shipped/libvtk_julia.so`, one
 8. Duplicate Julia methods (even identical) are **fatal during
    precompilation** ("Method overwriting is not permitted") — hence the
    clash vetoes must be complete.
+9. **Precompile-time dlopen**: `@wrapmodule` dlopens at module definition,
+   i.e. during `Pkg.precompile` too. CI must build the C++ wrapper before
+   `julia-buildpkg` (or tolerate a non-strict precompile failure and compile
+   at test time, slower and noisier).
 
-## TODO (tomorrow, in order)
+## Files touched by the migration (all committed at flip)
 
-1. **Stability**: ✅ confirmed — 6 consecutive full-suite runs on the merged
-   lib, 0 failures (same discipline as the hand wrapper). Next: flip CI to
-   exercise BOTH libs (matrix env var) or at least the merged one.
-2. **Conformance**: `gen/wrapit/conformance.jl` references
-   `VTKGen.VTKDataArray` which does not exist (typed wrapper is Julian-layer;
-   the file was mid-edit when paused — it likely errors). Rewrite it to load
-   the merged lib directly (`@wrapmodule` like `src/VTK.jl` does, no
-   VTKGen.jl package) and run the oracle; or simplest: make it a thin wrapper
-   that runs the main suite against the merged lib.
-3. **THE FLIP**: make the driver the default build path:
-   - `gen/build_wrapper.jl` → thin wrapper calling `gen/wrapit/build.jl`,
-     then `cp gen/wrapit/build/shipped/libvtk_julia.so wrapper/build/`.
-   - CI + docs workflows: add `julia --project=gen/wrapit -e 'using Pkg;
-     Pkg.instantiate()'` before the wrapper build step.
-   - Keep CMake/`wrapper/` as fallback until the generated lib proves itself
-     in CI; document `VTKJL_LIB` as the escape hatch.
-   - Decide fate of `wrapper/src/vtk_julia.cpp`: it is now the *source* from
-     which `shim_vtkjl.cpp` was extracted; keep as reference or retire.
-4. **Docs deployment CSS bug (user-reported)**: https://ffrancesco94.github.io/VTK.jl/
-   renders unstyled. Hypotheses, cheapest first:
-   - VitePress `base` mismatch: for project pages it must be `/VTK.jl/`;
-     check `gen/wrapit/build/jl/.vitepress/config.*` or the generated
-     `docs/build/.documenter/.vitepress/config.mts` `base` field vs the
-     actual served path. Locally the site renders fine, which points at
-     base/deploy_url rather than missing assets.
-   - `MarkdownVitepress(deploy_url = "ffrancesco94.github.io/VTK.jl")` in
-     docs/make.jl — verify DocumenterVitepress derived the right base.
-   - Check gh-pages content: does `dev/index.html` reference
-     `/assets/...` (wrong, implies base `/`) vs `/VTK.jl/assets/...`?
-   - The multi-base build dirs (`build/1` + `bases.txt`) and how deploydocs
-     maps them — possibly the site root vs `dev/` mismatch.
-5. **Cleanup**: dead regex veto lines in veto.txt; `__debug_sp_state`
-   removed already? (verify); stale `build/jl/deps/libjlVTKGen.so` copy
-   mechanism in build.jl (still needed for VTKGen.jl — see TODO 2).
-6. Update `STATUS.md` (WrapIt item → migration in progress → done after flip),
-   `gen/wrapit/README.md` (single merged lib architecture), and the docs
-   implementation page (wrapit.md) when the flip lands.
-
-## Files touched by the migration (uncommitted at pause)
-
+- `gen/build_wrapper.jl` — now the thin WrapIt-driver entry point.
+- `gen/build_wrapper_cmake.jl` — NEW: legacy CMake build (fallback).
 - `gen/wrapit/build.jl` — clash/type audits, steering postprocess, merged
-  compile, veto-loop persistence fix.
-- `gen/wrapit/shim_vtkjl.{h,cpp}` — NEW merged shim (extracted from hand
+  compile, veto-loop persistence fix; VTKGen-package `.so` copy removed.
+- `gen/wrapit/shim_vtkjl.{h,cpp}` — merged shim (extracted from hand
   wrapper + upcast_dataarray).
-- `gen/wrapit/shim.cpp` — DELETED (superseded).
-- `gen/wrapit/veto.txt` — +~90 entries (new classes' macro methods, clash
-  vetoes, ostream exact vetoes).
-- `gen/wrapit/wrapit.toml.template` — +vtkXMLPolyDataReader, vtkObjectBase,
-  vtkImageData, vtkDataSetAlgorithm, c2p/p2c/surface headers.
-- `gen/wrapit/conformance.jl` — mid-rewrite (see TODO 2; currently broken).
-- `src/typedarray.jl` — `_as_dataarray_sp` routing + SP alias (works, 91/91).
+- `gen/wrapit/conformance.jl` — direct `@wrapmodule` oracle gate.
+- `gen/wrapit/veto.txt` — exact-signature vetoes PLUS load-bearing regex
+  lines (`/std::basic_ostream.*/` and friends — see finding 1; do not remove).
+- `wrapper/src/vtk_julia.cpp` — + `upcast_dataarray` (3 overloads).
+- `.github/workflows/CI.yml` — `version × wrapper` matrix, job-level
+  `VTKJL_LIB`, wrapper build before buildpkg.
+- `.github/workflows/Documenter.yml` — instantiate the driver env, default
+  build.
+- `docs/make.jl` — `deploy_url` scheme fix (CSS) + `repo` scheme fix
+  (edit links).
+- `STATUS.md`, `README.md`, `gen/wrapit/README.md`,
+  `docs/src/implementation/wrapit.md`, `docs/src/getting_started.md` —
+  updated for the flipped default.
 
 ## Known-good references
 
-- Hand wrapper still builds/pass: default path `julia --project=.` +
-  `gen/build_wrapper.jl` (CMake) → suite passes 91/91 (verified this session).
-- Merged lib: `gen/wrapit/build/shipped/libvtk_julia.so` → 91/91.
+- Default build (`gen/build_wrapper.jl`, WrapIt-merged): suite 91/91,
+  conformance PASSED (2026-10-26).
+- Fallback build (`gen/build_wrapper_cmake.jl`, hand-written): suite 91/91
+  (2026-10-26).
+
+## Not done / next
+
+- Retire `wrapper/` entirely once the generated lib proves itself over a
+  few weeks of CI (keep `VTKJL_LIB` as the documented escape hatch).
+- WrapIt upstream bug reports (4 candidates, repros in `docs/wrapit-spike.md`).
+- Remaining roadmap items are unchanged (more I/O formats/filters, generic
+  `downcast`, jll packaging — see `STATUS.md` §6).

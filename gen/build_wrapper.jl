@@ -1,19 +1,23 @@
-# Build the C++ wrapper module against VTK_jll.
+# Build the C++ binding module against VTK_jll.
 # Usage: julia --project=. gen/build_wrapper.jl
-using VTK_jll
-using CxxWrap
+#
+# This drives the WrapIt-based generator in gen/wrapit (generate CxxWrap
+# bindings from the VTK 9.7 headers, merge the hand shim, compile) and
+# installs the merged library at wrapper/build/libvtk_julia.so — the default
+# location loaded by src/VTK.jl.
+#
+# Fallback: the legacy hand-written CMake wrapper remains available via
+# `julia --project=. gen/build_wrapper_cmake.jl`; ENV["VTKJL_LIB"] overrides
+# which library VTK.jl loads (see README).
+const ROOT = dirname(@__DIR__)
+const DRIVER = joinpath(ROOT, "gen", "wrapit")
 
-wrapper_src = joinpath(@__DIR__, "..", "wrapper")
-build_dir = joinpath(wrapper_src, "build")
-mkpath(build_dir)
+# The driver has its own environment (WrapIt_jll et al.).
+run(`$(Base.julia_cmd()) --project=$DRIVER -e 'using Pkg; Pkg.instantiate()'`)
+run(`$(Base.julia_cmd()) --project=$DRIVER $(joinpath(DRIVER, "build.jl"))`)
 
-prefix = CxxWrap.prefix_path()
-println("JlCxx prefix: ", prefix)
-println("VTK artifact: ", VTK_jll.artifact_dir)
-
-run(`cmake -S $(wrapper_src) -B $(build_dir)
-     -DCMAKE_BUILD_TYPE=Release
-     -DVTK_JLL_DIR=$(VTK_jll.artifact_dir)
-     -DCMAKE_PREFIX_PATH=$(prefix)`)
-run(`cmake --build $(build_dir) -j $(Sys.CPU_THREADS)`)
-println("Built: ", joinpath(build_dir, "libvtk_julia.so"))
+const TARGET_DIR = joinpath(ROOT, "wrapper", "build")
+mkpath(TARGET_DIR)
+cp(joinpath(DRIVER, "build", "shipped", "libvtk_julia.so"),
+   joinpath(TARGET_DIR, "libvtk_julia.so"); force = true)
+println("Installed: ", joinpath(TARGET_DIR, "libvtk_julia.so"))
