@@ -3,6 +3,22 @@
 Date: 2026-10-26 (evening). This is a handover for the next session; delete
 once the items below are done.
 
+## Update 2026-10-26 (second session): items 1–2 done, with a discovery
+
+- Item 1 done properly: the CMake cache pinned Julia 1.12.6 (replaced by
+  juliaup with 1.12.7), so `wrapper/build` was deleted entirely and rebuilt
+  via `gen/build_wrapper_cmake.jl`. Hand-written fallback verified: **91/91**
+  with the auto-shim skip line. (New gotcha recorded in AGENTS.md.)
+- Discovery: `gen/wrapit/build/shipped/libvtk_julia.so` was **stale** — it
+  predated the auto-shim work (no `shim_auto.cpp`, no `InsideOutOn`/
+  `register_auto_shim_methods` in the lib), so the 97/97 from the previous
+  session ran against an artifact that no longer exists on disk. Rebuilt via
+  `gen/build_wrapper.jl` (wrapit binary was cached; auto-shim: 25 methods for
+  18 classes). Merged lib re-installed at `wrapper/build/libvtk_julia.so`:
+  conformance **PASSED**, suite **97/97**.
+- The new AGENTS.md at the repo root records the durable gotchas.
+- Item 3 (watch CI) requires a push — not done yet, awaiting confirmation.
+
 ## State at commit (all verified locally unless noted)
 
 - **WrapIt fork**: `ffrancesco94/wrapit` PR **#1 merged** into `main`
