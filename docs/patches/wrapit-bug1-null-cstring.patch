@@ -1,0 +1,18 @@
+diff --git a/src/utils.cpp b/src/utils.cpp
+index 9428730..73d0174 100644
+--- a/src/utils.cpp
++++ b/src/utils.cpp
+@@ -72,7 +72,12 @@ std::ostream& indent(std::ostream& o, int n){
+   return o;
+ }
+ std::ostream& operator<<(std::ostream& stream, const CXString& str){
+-  stream << clang_getCString(str);
++  const char* s = clang_getCString(str);
++  // A null C string streamed to a std::ostream sets badbit (libstdc++),
++  // which silently discards all subsequent output. This happens for the
++  // file name of macro-expansion cursors and used to truncate the
++  // generated files while wrapit kept reporting success.
++  stream << (s ? s : "");
+   clang_disposeString(str);
+   return stream;
+ }

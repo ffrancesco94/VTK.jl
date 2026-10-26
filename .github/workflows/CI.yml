@@ -39,6 +39,11 @@ jobs:
           version: ${{ matrix.version }}
           arch: x64
       - uses: julia-actions/cache@v3
+      # The generated wrapper builds wrapit from source (ffrancesco94/wrapit),
+      # which needs libclang + OpenSSL headers (cmake/git/g++ are preinstalled).
+      - name: Install libclang + OpenSSL headers (wrapit build)
+        if: matrix.wrapper == 'generated'
+        run: sudo apt-get update && sudo apt-get install -y libclang-dev clang libssl-dev
       # The C++ wrapper must exist before julia-buildpkg precompiles VTK.jl
       # (@wrapmodule dlopens the library at module definition time).
       - name: Build C++ wrapper (${{ matrix.wrapper }})

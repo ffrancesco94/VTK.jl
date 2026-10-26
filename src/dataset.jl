@@ -102,14 +102,14 @@ function read_vtu(path)
     reader = XMLUnstructuredGridReader_new()
     SetFileName(_cp(vtkXMLUnstructuredGridReader, reader), String(path))
     update!(reader)
-    return GetOutput(_cp(vtkXMLUnstructuredGridReader, reader))
+    return UnstructuredGrid(GetOutput(_cp(vtkAlgorithm, reader)))
 end
 
 function read_vtp(path)
     reader = XMLPolyDataReader_new()
     SetFileName(_cp(vtkXMLPolyDataReader, reader), String(path))
     update!(reader)
-    return GetOutput(_cp(vtkXMLPolyDataReader, reader))
+    return PolyData(GetOutput(_cp(vtkAlgorithm, reader)))
 end
 
 """
@@ -123,7 +123,7 @@ function write_vtu(grid, path; raw_appended = false)
     else
         EnableCompression(_cp(vtkXMLUnstructuredGridWriter, writer))
     end
-    SetInputData(_cp(vtkXMLUnstructuredGridWriter, writer), _cp(vtkUnstructuredGrid, grid))
+    SetInputData(_cp(vtkAlgorithm, writer), _cp(vtkDataObject, grid))
     SetFileName(_cp(vtkXMLUnstructuredGridWriter, writer), String(path))
     err = Write(_cp(vtkXMLUnstructuredGridWriter, writer))
     err == 1 || error("vtkXMLUnstructuredGridWriter failed: $(vtk_last_error())")
@@ -133,7 +133,7 @@ end
 function write_vtp(pd, path)
     writer = XMLPolyDataWriter_new()
     EnableCompression(_cp(vtkXMLPolyDataWriter, writer))
-    SetInputData(_cp(vtkXMLPolyDataWriter, writer), _cp(vtkPolyData, pd))
+    SetInputData(_cp(vtkAlgorithm, writer), _cp(vtkDataObject, pd))
     SetFileName(_cp(vtkXMLPolyDataWriter, writer), String(path))
     err = Write(_cp(vtkXMLPolyDataWriter, writer))
     err == 1 || error("vtkXMLPolyDataWriter failed: $(vtk_last_error())")

@@ -9,17 +9,22 @@ Status: early development (phase 0/1). Built on `VTK_jll` (binaries) +
 
 ## Building
 
-The C++ binding module must be built once against the `VTK_jll` artifact
-(needs a C++17 toolchain — `g++` or `clang`):
+The C++ binding module must be built once against the `VTK_jll` artifact.
+Requirements: a C++17 toolchain (`g++` or `clang`), `git`, `CMake`, libclang
+development headers (and its resource directory), and OpenSSL development
+headers — on Debian/Ubuntu:
+`sudo apt-get install g++ cmake git libclang-dev clang libssl-dev`.
 
 ```sh
 julia --project=. gen/build_wrapper.jl
 ```
 
-This drives the WrapIt-based generator ([`gen/wrapit`](gen/wrapit)) —
-generate CxxWrap bindings from the VTK headers, merge the hand shim, compile —
-and installs the result at `wrapper/build/libvtk_julia.so`, the default
-location loaded by the package.
+This drives the WrapIt-based generator ([`gen/wrapit`](gen/wrapit)): it
+builds **wrapit from source** ([`ffrancesco94/wrapit`](https://github.com/ffrancesco94/wrapit),
+which contains the macro-truncation fix), generates CxxWrap bindings from
+the VTK headers plus a header-derived mechanical shim, merges the hand
+shim, compiles, and installs the result at `wrapper/build/libvtk_julia.so`,
+the default location loaded by the package.
 
 - Fallback: the legacy hand-written CMake wrapper is still available via
   `julia --project=. gen/build_wrapper_cmake.jl`.

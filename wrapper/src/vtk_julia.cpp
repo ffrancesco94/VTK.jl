@@ -469,7 +469,16 @@ JLCXX_MODULE define_julia_module(jlcxx::Module& mod)
   });
 
   // ---- generic algorithm plumbing ----
+  // One generic SetInputData/GetOutput for every algorithm (readers,
+  // writers, filters): no per-class plumbing needed. Outputs are owning
+  // vtkDataObject smart pointers; downcast in the Julian layer.
   mod.method("Update", [](vtkAlgorithm* a) { a->Update(); });
+  mod.method("SetInputData", [](vtkAlgorithm* a, vtkDataObject* d) {
+    a->SetInputDataObject(0, d);
+  });
+  mod.method("GetOutput", [](vtkAlgorithm* a) {
+    return take_ref(a->GetOutputDataObject(0));
+  });
 
   // ---- XML readers ----
   mod.method("XMLUnstructuredGridReader_new", []() {
@@ -492,26 +501,12 @@ JLCXX_MODULE define_julia_module(jlcxx::Module& mod)
     [](vtkXMLPolyDataWriter* w, const std::string& name) {
       w->SetFileName(name.c_str());
     });
-  mod.method("GetOutput", [](vtkXMLUnstructuredGridReader* r) {
-    return take_ref(r->GetOutput());
-  });
-  mod.method("GetOutput", [](vtkXMLPolyDataReader* r) {
-    return take_ref(r->GetOutput());
-  });
 
   // ---- XML writers ----
   mod.method("XMLUnstructuredGridWriter_new", []() {
     return vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
   });
   mod.method("XMLPolyDataWriter_new", []() { return vtkSmartPointer<vtkXMLPolyDataWriter>::New(); });
-  mod.method("SetInputData",
-    [](vtkXMLUnstructuredGridWriter* w, vtkUnstructuredGrid* d) {
-      w->SetInputData(d);
-    });
-  mod.method("SetInputData",
-    [](vtkXMLPolyDataWriter* w, vtkPolyData* d) {
-      w->SetInputData(d);
-    });
   mod.method("Write", [](vtkXMLUnstructuredGridWriter* w) { return w->Write(); });
   mod.method("Write", [](vtkXMLPolyDataWriter* w) { return w->Write(); });
   // zlib-compressed appended output (interoperable with ReadVTK.jl)
@@ -526,10 +521,6 @@ JLCXX_MODULE define_julia_module(jlcxx::Module& mod)
   mod.method("TableBasedClipDataSet_new", []() {
     return vtkSmartPointer<vtkTableBasedClipDataSet>::New();
   });
-  mod.method("SetInputData",
-    [](vtkTableBasedClipDataSet* f, vtkDataSet* d) {
-      f->SetInputData(d);
-    });
   mod.method("SetClipFunction",
     [](vtkTableBasedClipDataSet* f, vtkImplicitFunction* fn) {
       f->SetClipFunction(fn);
@@ -537,59 +528,27 @@ JLCXX_MODULE define_julia_module(jlcxx::Module& mod)
   mod.method("SetInsideOut", [](vtkTableBasedClipDataSet* f, bool b) {
     f->SetInsideOut(b);
   });
-  mod.method("GetOutput", [](vtkTableBasedClipDataSet* f) {
-    return take_ref(f->GetOutput());
-  });
 
   mod.method("Cutter_new", []() { return vtkSmartPointer<vtkCutter>::New(); });
-  mod.method("SetInputData", [](vtkCutter* f, vtkDataSet* d) {
-    f->SetInputData(d);
-  });
   mod.method("SetCutFunction", [](vtkCutter* f, vtkImplicitFunction* fn) {
     f->SetCutFunction(fn);
   });
-  mod.method("GetOutput", [](vtkCutter* f) { return take_ref(f->GetOutput()); });
 
   mod.method("CellDataToPointData_new", []() {
     return vtkSmartPointer<vtkCellDataToPointData>::New();
-  });
-  mod.method("SetInputData",
-    [](vtkCellDataToPointData* f, vtkDataSet* d) {
-      f->SetInputData(d);
-    });
-  mod.method("GetOutput", [](vtkCellDataToPointData* f) {
-    return take_ref<vtkDataSet>(f->GetOutput());
   });
 
   mod.method("PointDataToCellData_new", []() {
     return vtkSmartPointer<vtkPointDataToCellData>::New();
   });
-  mod.method("SetInputData",
-    [](vtkPointDataToCellData* f, vtkDataSet* d) {
-      f->SetInputData(d);
-    });
-  mod.method("GetOutput", [](vtkPointDataToCellData* f) {
-    return take_ref<vtkDataSet>(f->GetOutput());
-  });
 
   mod.method("ContourFilter_new", []() { return vtkSmartPointer<vtkContourFilter>::New(); });
-  mod.method("SetInputData", [](vtkContourFilter* f, vtkDataSet* d) {
-    f->SetInputData(d);
-  });
   mod.method("SetContourValue", [](vtkContourFilter* f, int64_t i, double v) {
     f->SetValue(static_cast<int>(i), v);
   });
-  mod.method("GetOutput", [](vtkContourFilter* f) { return take_ref(f->GetOutput()); });
 
   mod.method("DataSetSurfaceFilter_new", []() {
     return vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-  });
-  mod.method("SetInputData",
-    [](vtkDataSetSurfaceFilter* f, vtkDataSet* d) {
-      f->SetInputData(d);
-    });
-  mod.method("GetOutput", [](vtkDataSetSurfaceFilter* f) {
-    return take_ref(f->GetOutput());
   });
 
   // ---- downcasts (throws if the object has the wrong dynamic type) ----
