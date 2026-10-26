@@ -41,10 +41,19 @@ jobs:
       # Ubuntu keeps libclang.so under /usr/lib/llvm-*/lib, outside CMake's
       # default find_library path; derive CLANG_PREFIX from the installed
       # clang's resource dir (wrapit_src.jl forwards it as -DCLANG_PREFIX).
-      - name: Detect CLANG_PREFIX for wrapit
+      - name: Prepare libclang for wrapit
         run: |
-          res="$(clang -print-resource-dir)"   # e.g. /usr/lib/llvm-18/lib/clang/18
-          echo "VTKJL_CLANG_PREFIX=${res%/lib/clang/*}" >> "$GITHUB_ENV"
+          res="$(clang -print-resource-dir)"   # e.g. /usr/lib/llvm-21/lib/clang/21
+          prefix="${res%/lib/clang/*}"
+          # Ubuntu ships only versioned libclang-cpp/libLLVM; wrapit's CMake
+          # looks for unversioned names. Provide symlinks.
+          llvm_lib="$prefix/lib"
+          for lib in libclang-cpp libLLVM; do
+            if [ ! -e "$llvm_lib/$lib.so" ]; then
+              sudo ln -s "$(ls "$llvm_lib/$lib".so.* | head -n1)" "$llvm_lib/$lib.so"
+            fi
+          done
+          echo "VTKJL_CLANG_PREFIX=$prefix" >> "$GITHUB_ENV"
 
       # VTK.jl's docs do `using VTK`, which needs the compiled C++ wrapper.
       # ubuntu-latest ships g++; VTK itself comes from VTK_jll. The default
