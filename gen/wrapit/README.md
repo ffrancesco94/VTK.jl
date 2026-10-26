@@ -1,16 +1,21 @@
 # WrapIt driver — the binding generator
 
 Generates the `VTKGen` CxxWrap module from VTK 9.7 headers using
-[WrapIt](https://github.com/grasph/wrapit) (via `WrapIt_jll`), merged with a
-hand-written shim for accessors WrapIt cannot generate. **This is the
-generator behind the shipped `VTK.jl` module**: `gen/build_wrapper.jl` runs
-this driver and installs the merged library at
-`wrapper/build/libvtk_julia.so` (the default location `src/VTK.jl` loads).
-The legacy hand-written CMake wrapper (`gen/build_wrapper_cmake.jl`,
-`wrapper/`) remains as a fallback; CI exercises both (A/B via
-`ENV["VTKJL_LIB"]`). Full story:
+[WrapIt](https://github.com/grasph/wrapit) — **built from source, from
+[`ffrancesco94/wrapit`](https://github.com/ffrancesco94/wrapit)** (our fork
+with the macro-truncation fix, PR #1) — merged with a hand-written shim for
+everything a generator cannot infer. **This is the generator behind the
+shipped `VTK.jl` module**: `gen/build_wrapper.jl` runs this driver and
+installs the merged library at `wrapper/build/libvtk_julia.so` (the default
+location `src/VTK.jl` loads). The legacy hand-written CMake wrapper
+(`gen/build_wrapper_cmake.jl`, `wrapper/`) remains as a fallback; CI
+exercises both (A/B via `ENV["VTKJL_LIB"]`). Full story:
 [`docs/wrapit-spike.md`](../../docs/wrapit-spike.md); migration notes:
 [`MIGRATION_STATUS.md`](MIGRATION_STATUS.md).
+
+Requirements: git, CMake, a C++17 compiler, libclang dev headers + resource
+dir, and OpenSSL dev headers (Debian/Ubuntu:
+`sudo apt-get install g++ cmake git libclang-dev clang libssl-dev`).
 
 ## Usage
 
@@ -30,10 +35,12 @@ julia --project=gen/wrapit gen/wrapit/conformance.jl
 
 | file | role |
 |---|---|
-| `build.jl` | driver: renders `wrapit.toml` from the template (runtime artifact paths), runs the Bug-1 veto loop, audits shim clashes/types, post-processes (AOS re-base, smart-pointer strip, shim injection), compiles the single merged library |
+| `build.jl` | driver: renders `wrapit.toml` from the template (runtime artifact paths), builds wrapit from source (`wrapit_src.jl`), generates, audits shim clashes/types, post-processes (AOS re-base, smart-pointer strip, shim injection), compiles the single merged library |
+| `wrapit_src.jl` | clones and builds [`ffrancesco94/wrapit`](https://github.com/ffrancesco94/wrapit) (contains the Bug-1 fix) into `build/wrapit-build/wrapit`. Update with `VTKJL_WRAPIT_UPDATE=1`; override repo/ref with `VTKJL_WRAPIT_REPO`/`VTKJL_WRAPIT_REF` |
 | `wrapit.toml.template` | WrapIt config; `__VTK_INCLUDE__`/`__MPI_INCLUDE__`/`__VETO_LIST__` are substituted by `build.jl` |
-| `veto.txt` | converged veto list (WrapIt bug 1 workaround: macro-generated accessors). Grows automatically when `input` changes. The regex lines (`/std::basic_ostream.*/` etc.) are load-bearing — they veto ostream wrappers; do not remove |
-| `shim_vtkjl.{h,cpp}` | everything WrapIt can't emit, mechanically extracted from the retired hand wrapper: smart-pointer traits, ownership factories, error window, zero-copy workers, macro accessors, downcasts, `upcast_dataarray` |
+| `veto.txt` | small hand-maintained list: ostream wrappers (bug 4) and ownership-overridden getters. The ~200 macro-accessor vetoes and the veto loop are **gone** (Bug 1 fixed in our fork); clash vetoes are re-derived mechanically when needed |
+| `auto_shim.jl` | generates the mechanical shim (`build/cxx/shim_auto.cpp`) from the headers: owning `X_new` factories (from `static vtkX* New();`) and macro accessors. Only public members of non-template classes, whitelisted scalar types; dedups against hand shim and WrapIt's own output |
+| `shim_vtkjl.{h,cpp}` | the decisions a generator can't make: smart-pointer traits, ownership (`take_ref`), error window, zero-copy workers, **generic `SetInputData`/`GetOutput`/`Update` on `vtkAlgorithm`** (no per-filter plumbing), downcasts, `upcast_dataarray` |
 | `conformance.jl` | CI gate: unit-hex → temperature → clip (tetrahedron oracle) → write/read `.vtu`, through the merged library via `@wrapmodule` |
 | `build/` (gitignored) | generated C++/Julia code and the merged `libvtk_julia.so` |
 
@@ -41,8 +48,10 @@ julia --project=gen/wrapit gen/wrapit/conformance.jl
 
 Add the class's header to `input` in `wrapit.toml.template` **including any
 missing intermediate base-class headers** (a broken chain shows up as a
-Julia-side `MethodError` on inherited calls), then re-run `build.jl`. New
-macro-generated accessors are auto-vetoed; shim clashes are vetoed
-mechanically ("REGENERATE" message — run again). Re-provide any accessor you
-need in `shim_vtkjl.cpp` (WrapIt bugs are documented in
-`docs/wrapit-spike.md`).
+Julia-side `MethodError` on inherited calls), then re-run `build.jl`.
+Shim clashes are vetoed mechanically ("REGENERATE" message — run again).
+**Factories, macro accessors and `SetInputData`/`GetOutput` come for free**,
+so most new filters/readers/writers need no shim edits; only add ownership
+policy, downcasts or special conveniences to `shim_vtkjl.cpp` (WrapIt bugs
+are documented in `docs/wrapit-spike.md` and
+`docs/wrapit-upstream-bugs.md`).

@@ -32,11 +32,11 @@ function evaluates negative unless `insideout=true`.
 """
 function clip(grid, implicitfn; insideout = false)
     f = TableBasedClipDataSet_new()
-    SetInputData(_cp(vtkTableBasedClipDataSet, f), _cp(vtkDataSet, grid))
+    SetInputData(_cp(vtkAlgorithm, f), _cp(vtkDataObject, grid))
     SetClipFunction(_cp(vtkTableBasedClipDataSet, f), _cp(vtkImplicitFunction, implicitfn))
     SetInsideOut(_cp(vtkTableBasedClipDataSet, f), insideout)
     update!(f)
-    return GetOutput(_cp(vtkTableBasedClipDataSet, f))
+    return UnstructuredGrid(GetOutput(_cp(vtkAlgorithm, f)))
 end
 
 """
@@ -46,30 +46,30 @@ Cross-section of `grid` where the implicit function evaluates to zero.
 """
 function slice(grid, implicitfn)
     f = Cutter_new()
-    SetInputData(_cp(vtkCutter, f), _cp(vtkDataSet, grid))
+    SetInputData(_cp(vtkAlgorithm, f), _cp(vtkDataObject, grid))
     SetCutFunction(_cp(vtkCutter, f), _cp(vtkImplicitFunction, implicitfn))
     update!(f)
-    return GetOutput(_cp(vtkCutter, f))
+    return PolyData(GetOutput(_cp(vtkAlgorithm, f)))
 end
 
 """
-    cell_to_point(grid) -> vtkDataSet (downcast to access)
-    point_to_cell(grid) -> vtkDataSet
+    cell_to_point(grid) -> vtkDataObject (downcast to access)
+    point_to_cell(grid) -> vtkDataObject
 
 Interpolate cell data to points and vice versa.
 """
 function cell_to_point(grid)
     f = CellDataToPointData_new()
-    SetInputData(_cp(vtkCellDataToPointData, f), _cp(vtkDataSet, grid))
+    SetInputData(_cp(vtkAlgorithm, f), _cp(vtkDataObject, grid))
     update!(f)
-    return GetOutput(_cp(vtkCellDataToPointData, f))
+    return GetOutput(_cp(vtkAlgorithm, f))
 end
 
 function point_to_cell(grid)
     f = PointDataToCellData_new()
-    SetInputData(_cp(vtkPointDataToCellData, f), _cp(vtkDataSet, grid))
+    SetInputData(_cp(vtkAlgorithm, f), _cp(vtkDataObject, grid))
     update!(f)
-    return GetOutput(_cp(vtkPointDataToCellData, f))
+    return GetOutput(_cp(vtkAlgorithm, f))
 end
 
 """
@@ -80,13 +80,13 @@ select the point-data array by name (it is activated automatically).
 """
 function contour(grid, values; scalars = nothing)
     f = ContourFilter_new()
-    SetInputData(_cp(vtkContourFilter, f), _cp(vtkDataSet, grid))
+    SetInputData(_cp(vtkAlgorithm, f), _cp(vtkDataObject, grid))
     scalars === nothing || activate_point_data!(grid, scalars)
     for (i, v) in enumerate(values)
         SetContourValue(_cp(vtkContourFilter, f), i - 1, v)
     end
     update!(f)
-    return GetOutput(_cp(vtkContourFilter, f))
+    return PolyData(GetOutput(_cp(vtkAlgorithm, f)))
 end
 
 """
@@ -96,7 +96,7 @@ External surface of a dataset as polydata.
 """
 function extract_surface(grid)
     f = DataSetSurfaceFilter_new()
-    SetInputData(_cp(vtkDataSetSurfaceFilter, f), _cp(vtkDataSet, grid))
+    SetInputData(_cp(vtkAlgorithm, f), _cp(vtkDataObject, grid))
     update!(f)
-    return GetOutput(_cp(vtkDataSetSurfaceFilter, f))
+    return PolyData(GetOutput(_cp(vtkAlgorithm, f)))
 end

@@ -166,3 +166,88 @@ Single shared library `gen/wrapit/build/shipped/libvtk_julia.so`, one
 - WrapIt upstream bug reports (4 candidates, repros in `docs/wrapit-spike.md`).
 - Remaining roadmap items are unchanged (more I/O formats/filters, generic
   `downcast`, jll packaging — see `STATUS.md` §6).
+
+## Addendum 2026-10-26 (pm): shim automation + generic plumbing
+
+Two follow-up automation items landed, verified on both libraries:
+
+1. **Generic algorithm plumbing (item 3).** One `SetInputData` and one
+   `GetOutput` on `vtkAlgorithm` (via `SetInputDataObject(0, …)` /
+   `GetOutputDataObject(0)`) replaced 16 per-filter/reader/writer methods
+   in both shims. Outputs are owning `vtkDataObject` smart pointers and the
+   Julian layer downcasts (`UnstructuredGrid(...)`/`PolyData(...)`), so
+   `clip`/`slice`/`contour`/`read_vtu` return the same concrete types as
+   before. `cell_to_point`/`point_to_cell` now return `vtkDataObject`
+   (downcast at use site, as documented).
+2. **Auto-generated mechanical shim (item 2).** `auto_shim.jl` scans the
+   input headers for `static vtkX* New();` and the accessor macros
+   (`vtkSetMacro`/`vtkGetMacro`, string + file-path macros,
+   `vtkBooleanMacro`, `vtkSetVector{,3}Macro`, `vtkSetClampMacro`) and emits
+   `build/cxx/shim_auto.cpp` (**222 methods for 26 classes**, 22 more
+   skipped because WrapIt already generates them), registered
+   next to `register_shim_methods`. Only public members of non-template
+   classes; whitelisted scalar types. It dedups against the hand shim and
+   against WrapIt's own output (normalized-signature match), so no double
+   registrations; string getters intentionally win over generated
+   `const char*` versions via the clash audit. **Most new filters/readers/
+   writers now need no shim edits at all.**
+   Fixes this required: access-section tracking (protected macros),
+   `vtkTypeBool` normalization to `int32_t` in the clash audit (was
+   `int64_t`, which let a `SetCopyScalars` double registration through),
+   and `size_t` mapping.
+
+Validation: full suite **97/97** on the merged lib (91 original + 6
+auto-shim assertions) and 91/91 on the hand wrapper (auto-shim testset
+skips there); conformance PASSED. Suite includes `InsideOutOn/Off`,
+`GetInsideOut`, `GetUseValueAsOffset`, `GetFileName` and `PolyData_new`.
+
+Upstream: `docs/wrapit-upstream-bugs.md` now has issue-ready write-ups for
+the four WrapIt bugs. **Bug 1's fix is validated** (3-line null guard in
+`operator<<(CXString)`, patch `docs/patches/wrapit-bug1-null-cstring.patch`):
+with an empty veto list, the truncated 676-line `JlClasses.cxx` becomes a
+complete 12 578-line one with macro accessors generated. That makes the
+veto loop removable once the fix lands upstream.
+
+## Addendum 2026-10-26 (evening): wrapit fork + veto machinery removed
+
+**The driver now builds wrapit from source**
+([`ffrancesco94/wrapit`](https://github.com/ffrancesco94/wrapit)), our fork
+with the Bug-1 fix (PR #1, merged; feature branch
+`fix-null-cstring-truncation` preserved). `wrapit_src.jl` clones into
+`build/wrapit-src` and builds `build/wrapit-build/wrapit` on first use
+(update with `VTKJL_WRAPIT_UPDATE=1`; override repo/ref with
+`VTKJL_WRAPIT_REPO`/`VTKJL_WRAPIT_REF`). `WrapIt_jll` is no longer a
+dependency. New build requirements: git, CMake, libclang dev headers +
+resource dir, OpenSSL dev headers (CI and docs workflows install them via
+apt).
+
+**The Bug-1 veto loop and the ~200 macro-accessor vetoes are gone.**
+`veto.txt` is now a small hand-maintained list (ostream/bug-4 + the
+ownership-overridden getter regexes); clash vetoes are still re-derived
+mechanically by `veto_shim_clashes!()` (28 exact entries at this writing).
+Generation now emits **1675 methods** (was 1397 with the macro vetoes);
+auto-shim emits only **25 methods for 18 classes** (282 already generated
+by WrapIt, skipped) — its remaining unique value is owning factories,
+`std::string` getters, and gap-filling.
+
+**Normalization gotchas fixed along the way** (shared
+`norm_cpp_type`/`norm_shim_args` in `auto_shim.jl`):
+- WrapIt's veto-comment signatures carry **types only** (no parameter
+  names), shim lambdas always have names — name-stripping is now per-source
+  (`strip_names=true` only for shim lambdas). Previously `"unsigned int"`
+  was misparsed as type `"unsigned"` + name `"int"`, which let a
+  `SetMaxDiscreteValues` double registration through.
+- Integer types are canonicalized to fixed-width spellings (LP64):
+  `unsigned int`→`uint32_t`, `long unsigned int`→`uint64_t`, etc.
+- **`std::string` vs `const char*` is an ambiguity, not a registration
+  clash**: WrapIt maps `const char*` to Julia `String` too, so the
+  generated `HasArray(const char*)` and the shim's `HasArray(std::string)`
+  made every call ambiguous. The clash audit now also vetoes generated
+  `const char*` methods when a `std::string` version exists on the same
+  class+name+arity (normalized `char`→`int8_t`) **or on a related
+  base/derived class** (needed for `SetActiveScalars`: generated on
+  `vtkDataSetAttributes`, our `std::string` versions on
+  `vtkPointData`/`vtkCellData`).
+
+Verification: full suite **97/97** on the merged lib, 91/91 on the hand
+wrapper, conformance PASSED (see the latest run in the session log).

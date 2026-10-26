@@ -33,6 +33,11 @@ jobs:
         with:
           node-version: 22
 
+      # The WrapIt-driven generator builds wrapit from source and needs
+      # libclang + OpenSSL headers (cmake/git/g++ are preinstalled).
+      - name: Install libclang + OpenSSL headers (wrapit build)
+        run: sudo apt-get update && sudo apt-get install -y libclang-dev clang libssl-dev
+
       # VTK.jl's docs do `using VTK`, which needs the compiled C++ wrapper.
       # ubuntu-latest ships g++; VTK itself comes from VTK_jll. The default
       # build is the WrapIt-driven generator (gen/build_wrapper.jl).
