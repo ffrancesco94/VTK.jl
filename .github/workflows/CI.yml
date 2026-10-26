@@ -43,6 +43,7 @@ jobs:
       # (@wrapmodule dlopens the library at module definition time).
       - name: Build C++ wrapper (${{ matrix.wrapper }})
         run: |
+          julia --project=. -e 'using Pkg; Pkg.instantiate()'
           julia --project=gen/wrapit -e 'using Pkg; Pkg.instantiate()'
           if [ "${{ matrix.wrapper }}" = "generated" ]; then
             julia --project=. gen/build_wrapper.jl
