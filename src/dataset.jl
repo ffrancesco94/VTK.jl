@@ -7,7 +7,34 @@ PolyData(obj::CxxWrap.CxxWrapCore.SmartPointer) =
     downcast_polydata(_cp(vtkDataObject, obj))
 ImageData(obj::CxxWrap.CxxWrapCore.SmartPointer) =
     downcast_imagedata(_cp(vtkDataObject, obj))
+RectilinearGrid(obj::CxxWrap.CxxWrapCore.SmartPointer) =
+    downcast_rectilineargrid(_cp(vtkDataObject, obj))
+StructuredGrid(obj::CxxWrap.CxxWrapCore.SmartPointer) =
+    downcast_structuredgrid(_cp(vtkDataObject, obj))
 Points() = Points_new()
+
+# ---- generic name-based downcast ------------------------------------------
+# Maps VTK class names (from GetClassName) to the typed constructor. Adding
+# a new grid type = one registry entry + its downcast_foo shim binding.
+const DOWNCAST_REGISTRY = Dict{String, Function}(
+    "vtkUnstructuredGrid" => UnstructuredGrid,
+    "vtkPolyData" => PolyData,
+    "vtkImageData" => ImageData,
+    "vtkRectilinearGrid" => RectilinearGrid,
+    "vtkStructuredGrid" => StructuredGrid,
+)
+
+"""
+    downcast(obj) -> typed grid
+
+Recover the concrete grid type from a generic `vtkDataObject` (e.g. a
+reader/filter output), dispatching on the VTK dynamic class name.
+Throws a `KeyError` for unregistered classes.
+"""
+function downcast(obj::CxxWrap.CxxWrapCore.SmartPointer)
+    name = GetClassName(_cp(vtkObjectBase, obj))
+    return DOWNCAST_REGISTRY[name](obj)
+end
 
 const VTK_HEXAHEDRON = 12
 const VTK_TETRA = 10
@@ -97,6 +124,9 @@ activate_cell_data!(grid, name) =
 """
     read_vtu(path) -> vtkUnstructuredGrid
     read_vtp(path) -> vtkPolyData
+    read_vti(path) -> vtkImageData
+    read_vtr(path) -> vtkRectilinearGrid
+    read_vts(path) -> vtkStructuredGrid
 """
 function read_vtu(path)
     reader = XMLUnstructuredGridReader_new()
@@ -112,9 +142,33 @@ function read_vtp(path)
     return PolyData(GetOutput(_cp(vtkAlgorithm, reader)))
 end
 
+function read_vti(path)
+    reader = XMLImageDataReader_new()
+    SetFileName(_cp(vtkXMLImageDataReader, reader), String(path))
+    update!(reader)
+    return ImageData(GetOutput(_cp(vtkAlgorithm, reader)))
+end
+
+function read_vtr(path)
+    reader = XMLRectilinearGridReader_new()
+    SetFileName(_cp(vtkXMLRectilinearGridReader, reader), String(path))
+    update!(reader)
+    return RectilinearGrid(GetOutput(_cp(vtkAlgorithm, reader)))
+end
+
+function read_vts(path)
+    reader = XMLStructuredGridReader_new()
+    SetFileName(_cp(vtkXMLStructuredGridReader, reader), String(path))
+    update!(reader)
+    return StructuredGrid(GetOutput(_cp(vtkAlgorithm, reader)))
+end
+
 """
     write_vtu(grid, path)
     write_vtp(polydata, path)
+    write_vti(imagedata, path)
+    write_vtr(rectilineargrid, path)
+    write_vts(structuredgrid, path)
 """
 function write_vtu(grid, path; raw_appended = false)
     writer = XMLUnstructuredGridWriter_new()
@@ -137,5 +191,35 @@ function write_vtp(pd, path)
     SetFileName(_cp(vtkXMLPolyDataWriter, writer), String(path))
     err = Write(_cp(vtkXMLPolyDataWriter, writer))
     err == 1 || error("vtkXMLPolyDataWriter failed: $(vtk_last_error())")
+    return path
+end
+
+function write_vti(img, path)
+    writer = XMLImageDataWriter_new()
+    EnableCompression(_cp(vtkXMLImageDataWriter, writer))
+    SetInputData(_cp(vtkAlgorithm, writer), _cp(vtkDataObject, img))
+    SetFileName(_cp(vtkXMLImageDataWriter, writer), String(path))
+    err = Write(_cp(vtkXMLImageDataWriter, writer))
+    err == 1 || error("vtkXMLImageDataWriter failed: $(vtk_last_error())")
+    return path
+end
+
+function write_vtr(rg, path)
+    writer = XMLRectilinearGridWriter_new()
+    EnableCompression(_cp(vtkXMLRectilinearGridWriter, writer))
+    SetInputData(_cp(vtkAlgorithm, writer), _cp(vtkDataObject, rg))
+    SetFileName(_cp(vtkXMLRectilinearGridWriter, writer), String(path))
+    err = Write(_cp(vtkXMLRectilinearGridWriter, writer))
+    err == 1 || error("vtkXMLRectilinearGridWriter failed: $(vtk_last_error())")
+    return path
+end
+
+function write_vts(sg, path)
+    writer = XMLStructuredGridWriter_new()
+    EnableCompression(_cp(vtkXMLStructuredGridWriter, writer))
+    SetInputData(_cp(vtkAlgorithm, writer), _cp(vtkDataObject, sg))
+    SetFileName(_cp(vtkXMLStructuredGridWriter, writer), String(path))
+    err = Write(_cp(vtkXMLStructuredGridWriter, writer))
+    err == 1 || error("vtkXMLStructuredGridWriter failed: $(vtk_last_error())")
     return path
 end

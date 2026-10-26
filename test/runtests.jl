@@ -7,4 +7,5 @@ using Test
     include("cells.jl")
     include("filters.jl")
     include("oracle.jl")
+    include("io_structured.jl")
 end
