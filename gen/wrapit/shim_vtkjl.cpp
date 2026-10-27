@@ -519,6 +519,9 @@ void register_shim_methods(jlcxx::Module& mod)
   });
 
   // ---- downcasts (throws if the object has the wrong dynamic type) ----
+  // One generic binding per registered grid type; the Julia side builds its
+  // DOWNCAST_REGISTRY mechanically from `add_type<...>("vtkX")` in the
+  // generated JlClasses.cxx, so adding a grid type needs no new C++ here.
   mod.method("downcast_unstructuredgrid", [](vtkDataObject* o) {
     return take_ref(vtkUnstructuredGrid::SafeDownCast(o));
   });

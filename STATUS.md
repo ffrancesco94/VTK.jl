@@ -185,10 +185,12 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 5. **Data model**: unstructured grids fully constructible from Julia; other
    grid types readable but not constructible. Cell types are bare integers
    (`VTK_HEXAHEDRON = 12`).
-6. **Downcasts**: generic name-based `downcast(obj)` exists
-   (`DOWNCAST_REGISTRY` on `GetClassName`); per-type constructors
-   (`UnstructuredGrid(obj)` etc.) remain as thin wrappers. Unregistered
-   classes raise `KeyError`.
+6. **Downcasts**: generic name-based `downcast(obj)` dispatches through
+   `DOWNCAST_REGISTRY`, built automatically at module load from the types
+   the loaded library registers + their `downcast_foo` shim bindings — no
+   manual registry edit when adding a grid type (add the type + shim
+   binding, rebuild; only extend `DOWNCAST_SOURCES` for a genuinely new
+   kind of type). Unregistered classes raise `KeyError`.
 7. **Distribution**: wrapper builds locally via system CMake; no
    `VTK_julia_jll` BinaryBuilder recipe yet — every user needs a C++17
    toolchain.

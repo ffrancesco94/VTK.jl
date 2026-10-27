@@ -28,16 +28,33 @@ MultiBlockDataSet(obj::CxxWrap.CxxWrapCore.CxxPtr{<:vtkDataObject}) =
 Points() = Points_new()
 
 # ---- generic name-based downcast ------------------------------------------
-# Maps VTK class names (from GetClassName) to the typed constructor. Adding
-# a new grid type = one registry entry + its downcast_foo shim binding.
-const DOWNCAST_REGISTRY = Dict{String, Function}(
-    "vtkUnstructuredGrid" => UnstructuredGrid,
-    "vtkPolyData" => PolyData,
-    "vtkImageData" => ImageData,
-    "vtkRectilinearGrid" => RectilinearGrid,
-    "vtkStructuredGrid" => StructuredGrid,
-    "vtkMultiBlockDataSet" => MultiBlockDataSet,
-)
+# DOWNCAST_REGISTRY maps VTK class names (from GetClassName) to typed
+# constructors. It is built at module load (__init__) from (type, name,
+# downcast-fn) triples, keeping only entries whose type is registered by the
+# loaded library — so the hand-written fallback (fewer types) works, and
+# adding a grid type to the pipeline needs no edit here.
+const DOWNCAST_SOURCES = [
+    (:vtkUnstructuredGrid, "vtkUnstructuredGrid", :downcast_unstructuredgrid),
+    (:vtkPolyData, "vtkPolyData", :downcast_polydata),
+    (:vtkImageData, "vtkImageData", :downcast_imagedata),
+    (:vtkRectilinearGrid, "vtkRectilinearGrid", :downcast_rectilineargrid),
+    (:vtkStructuredGrid, "vtkStructuredGrid", :downcast_structuredgrid),
+    (:vtkMultiBlockDataSet, "vtkMultiBlockDataSet", :downcast_multiblock),
+]
+
+const DOWNCAST_REGISTRY = Dict{String, Function}()
+
+function _init_downcast_registry!()
+    for (Tname, name, fn) in DOWNCAST_SOURCES
+        isdefined(@__MODULE__, Tname) || continue   # type not in this library
+        isdefined(@__MODULE__, fn) || continue      # no downcast binding
+        DOWNCAST_REGISTRY[name] = obj ->
+            getfield(@__MODULE__, fn)(
+                obj isa CxxWrap.CxxWrapCore.SmartPointer ?
+                    _cp(vtkDataObject, obj) : obj)
+    end
+    return nothing
+end
 
 """
     downcast(obj) -> typed grid
