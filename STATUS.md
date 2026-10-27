@@ -78,10 +78,11 @@ hand-written equivalent lives in `wrapper/src/vtk_julia.cpp`):
   `vtkImageData` (types registered with true VTK inheritance; construction
   currently exposed for unstructured grids), field data (`vtkPointData`/
   `vtkCellData`) with `AddArray`/`GetArray`/`SetActiveScalars`.
-- I/O: `vtkXML{UnstructuredGrid,PolyData,ImageData,RectilinearGrid,StructuredGrid}{Reader,Writer}`
-  (`.vtu/.vtp/.vti/.vtr/.vts`); writers emit zlib-compressed appended data by
-  default, or raw appended data (`raw_appended=true`) which ReadVTK.jl can
-  parse.
+- I/O: `vtkXML{UnstructuredGrid,PolyData,ImageData,RectilinearGrid,StructuredGrid}-
+  {Reader,Writer}` (`.vtu/.vtp/.vti/.vtr/.vts`) plus `vtkXMLMultiBlockData-
+  {Reader,Writer}` (`.vtm` containers with `block`/`set_block!`/`nblocks`);
+  writers emit zlib-compressed appended data by default, or raw appended
+  data (`raw_appended=true`) which ReadVTK.jl can parse.
 - Filters: `vtkTableBasedClipDataSet`, `vtkCutter`, `vtkCellDataToPointData`,
   `vtkPointDataToCellData`, `vtkContourFilter`, `vtkDataSetSurfaceFilter`,
   plus `vtkPlane` implicit function.
@@ -236,7 +237,9 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
       names ↔ VTK ids, singletons per id)
 - [x] More readers/writers: `.vti/.vtr/.vts` XML (2026-10-26; `.vtu/.vtp`
       already existed) — mostly `wrapit.toml.template` + Julian plumbing
-- [ ] More readers/writers: legacy `.vtk`, multiblock `.vtm`
+- [x] Multiblock `.vtm` (2026-10-27): `read_vtm`/`write_vtm`/`block`/
+      `set_block!`/`nblocks`; WriteVTK.jl oracle both directions
+- [ ] More readers/writers: legacy `.vtk`
 - [ ] More filters: calculator, gradient, threshold, stream tracer (as CFD
       needs arise)
 - [x] Generic name-based `downcast` (2026-10-26)

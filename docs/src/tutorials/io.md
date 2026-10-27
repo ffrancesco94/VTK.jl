@@ -18,8 +18,9 @@ p = VTK.field_array(pd, "p")         # typed zero-copy view, or nothing
 ```
 
 `read_vtp` does the same for poly data; `read_vti`/`read_vtr`/`read_vts`
-read image, rectilinear, and curvilinear structured grids. Readers return
-owning smart pointers, so the grid stays alive as long as you hold it.
+read image, rectilinear, and curvilinear structured grids; `read_vtm`
+reads multiblock containers (see below). Readers return owning smart
+pointers, so the grid stays alive as long as you hold it.
 
 ## Writing VTK files
 
@@ -30,6 +31,7 @@ VTK.write_vtp(poly, "surf.vtp")
 VTK.write_vti(img, "img.vti")                     # structured formats
 VTK.write_vtr(rg, "rg.vtr")
 VTK.write_vts(sg, "sg.vts")
+VTK.write_vtm(mb, "case.vtm")                     # multiblock container
 ```
 
 The default mode writes zlib-compressed appended data — ideal for ParaView.
@@ -37,6 +39,29 @@ The `raw_appended` mode is byte-compatible with what
 [ReadVTK.jl](https://github.com/JuliaVTK/ReadVTK.jl) parses; the test suite
 cross-validates in both directions, so a file written by VTK.jl is verified
 by an independent pure-Julia reader (and vice versa).
+
+## Multiblock files (.vtm)
+
+A `.vtm` file groups several grids (mixed types) into one assembly; VTK
+writes the container plus one sidecar file per block:
+
+```julia
+mb = VTK.read_vtm("case.vtm")
+VTK.nblocks(mb)                  # number of blocks
+g1 = VTK.block(mb, 1)            # block 1, downcast to its concrete type
+VTK.npoints(g1)
+
+mb2 = VTK.MultiBlockDataSet(2)   # assemble: 2 empty slots
+VTK.set_block!(mb2, 1, grid)     # fill them (1-based)
+VTK.set_block!(mb2, 2, surface)
+VTK.write_vtm(mb2, "out.vtm")
+```
+
+Blocks are borrowed views owned by the multiblock dataset — keep `mb`
+alive while using them. Note that files written by other tools may nest
+blocks one level deeper than expected (e.g. WriteVTK puts each named group
+in its own sub-block); `nblocks`/`block` compose, so just descend until
+you reach a data grid.
 
 ## Interop with WriteVTK.jl
 

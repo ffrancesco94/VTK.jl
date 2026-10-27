@@ -64,6 +64,10 @@ input = [
   "vtkXMLRectilinearGridWriter.h",
   "vtkXMLStructuredGridReader.h",
   "vtkXMLStructuredGridWriter.h",
+  # multiblock XML I/O (composite container)
+  "vtkMultiBlockDataSet.h",
+  "vtkXMLMultiBlockDataReader.h",
+  "vtkXMLMultiBlockDataWriter.h",
 ]
 extra_headers = [
   "vtkInformation.h",
