@@ -3,14 +3,28 @@
 UnstructuredGrid() = UnstructuredGrid_new()
 UnstructuredGrid(obj::CxxWrap.CxxWrapCore.SmartPointer) =
     downcast_unstructuredgrid(_cp(vtkDataObject, obj))
+UnstructuredGrid(obj::CxxWrap.CxxWrapCore.CxxPtr{<:vtkDataObject}) =
+    downcast_unstructuredgrid(obj)
 PolyData(obj::CxxWrap.CxxWrapCore.SmartPointer) =
     downcast_polydata(_cp(vtkDataObject, obj))
+PolyData(obj::CxxWrap.CxxWrapCore.CxxPtr{<:vtkDataObject}) =
+    downcast_polydata(obj)
 ImageData(obj::CxxWrap.CxxWrapCore.SmartPointer) =
     downcast_imagedata(_cp(vtkDataObject, obj))
+ImageData(obj::CxxWrap.CxxWrapCore.CxxPtr{<:vtkDataObject}) =
+    downcast_imagedata(obj)
 RectilinearGrid(obj::CxxWrap.CxxWrapCore.SmartPointer) =
     downcast_rectilineargrid(_cp(vtkDataObject, obj))
+RectilinearGrid(obj::CxxWrap.CxxWrapCore.CxxPtr{<:vtkDataObject}) =
+    downcast_rectilineargrid(obj)
 StructuredGrid(obj::CxxWrap.CxxWrapCore.SmartPointer) =
     downcast_structuredgrid(_cp(vtkDataObject, obj))
+StructuredGrid(obj::CxxWrap.CxxWrapCore.CxxPtr{<:vtkDataObject}) =
+    downcast_structuredgrid(obj)
+MultiBlockDataSet(obj::CxxWrap.CxxWrapCore.SmartPointer) =
+    downcast_multiblock(_cp(vtkDataObject, obj))
+MultiBlockDataSet(obj::CxxWrap.CxxWrapCore.CxxPtr{<:vtkDataObject}) =
+    downcast_multiblock(obj)
 Points() = Points_new()
 
 # ---- generic name-based downcast ------------------------------------------
@@ -22,6 +36,7 @@ const DOWNCAST_REGISTRY = Dict{String, Function}(
     "vtkImageData" => ImageData,
     "vtkRectilinearGrid" => RectilinearGrid,
     "vtkStructuredGrid" => StructuredGrid,
+    "vtkMultiBlockDataSet" => MultiBlockDataSet,
 )
 
 """
@@ -33,6 +48,14 @@ Throws a `KeyError` for unregistered classes.
 """
 function downcast(obj::CxxWrap.CxxWrapCore.SmartPointer)
     name = GetClassName(_cp(vtkObjectBase, obj))
+    return DOWNCAST_REGISTRY[name](obj)
+end
+
+# Borrowed raw pointers (e.g. multiblock blocks) carry no smart-pointer
+# wrapper; the shim's GetClassName takes vtkObjectBase*, and CxxPtr up-casts
+# implicitly at the call boundary.
+function downcast(obj::CxxWrap.CxxWrapCore.CxxPtr{<:vtkDataObject})
+    name = GetClassName(obj)
     return DOWNCAST_REGISTRY[name](obj)
 end
 
@@ -222,4 +245,66 @@ function write_vts(sg, path)
     err = Write(_cp(vtkXMLStructuredGridWriter, writer))
     err == 1 || error("vtkXMLStructuredGridWriter failed: $(vtk_last_error())")
     return path
+end
+
+"""
+    read_vtm(path) -> vtkMultiBlockDataSet
+
+Read a multiblock XML file (`.vtm`, a container referencing `.vtu`/`.vtp`/
+… blocks). Access blocks with `nblocks`/`block(mb, i)`; each block is a
+borrowed view — keep the multiblock dataset alive while using them.
+"""
+function read_vtm(path)
+    reader = XMLMultiBlockDataReader_new()
+    SetFileName(_cp(vtkXMLMultiBlockDataReader, reader), String(path))
+    update!(reader)
+    return MultiBlockDataSet(GetOutput(_cp(vtkAlgorithm, reader)))
+end
+
+"""
+    write_vtm(mb, path)
+
+Write a multiblock dataset (`.vtm` + its block files).
+"""
+function write_vtm(mb, path)
+    writer = XMLMultiBlockDataWriter_new()
+    EnableCompression(_cp(vtkXMLMultiBlockDataWriter, writer))
+    SetInputData(_cp(vtkAlgorithm, writer), _cp(vtkDataObject, mb))
+    SetFileName(_cp(vtkXMLMultiBlockDataWriter, writer), String(path))
+    err = Write(_cp(vtkXMLMultiBlockDataWriter, writer))
+    err == 1 || error("vtkXMLMultiBlockDataWriter failed: $(vtk_last_error())")
+    return path
+end
+
+# ---- multiblock accessors ---------------------------------------------------
+
+nblocks(mb) = GetNumberOfBlocks(_cp(vtkMultiBlockDataSet, mb))
+
+"""
+    block(mb, i) -> vtkDataObject (typed via the downcast registry)
+
+Return block `i` (1-based) of a multiblock dataset, downcast to its
+concrete type. The block is a borrowed view owned by `mb`.
+"""
+function block(mb, i::Integer)
+    1 <= i <= nblocks(mb) || throw(BoundsError(mb, i))
+    obj = GetBlockByIndex(_cp(vtkMultiBlockDataSet, mb), i - 1)
+    return downcast(obj)
+end
+
+"""
+    set_block!(mb, i, grid)
+
+Set block `i` (1-based) of a multiblock dataset. The dataset references
+`grid`; keep it alive.
+"""
+function set_block!(mb, i::Integer, grid)
+    1 <= i || throw(BoundsError(mb, i))
+    SetBlockByIndex(_cp(vtkMultiBlockDataSet, mb), i - 1, _cp(vtkDataObject, grid))
+    return mb
+end
+
+MultiBlockDataSet(n::Integer) = let mb = MultiBlockDataSet_new()
+    SetNumberOfBlocks(_cp(vtkMultiBlockDataSet, mb), n)
+    mb
 end
