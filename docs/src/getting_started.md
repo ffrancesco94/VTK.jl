@@ -50,7 +50,8 @@ using VTK
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-The suite (91 tests) includes analytic oracles — e.g. clipping a unit hex
+The suite (131 tests on the merged library, 91 on the hand-written
+fallback) includes analytic oracles — e.g. clipping a unit hex
 against the plane x+y+z=1 yields exactly the tetrahedron — and
 cross-validation against the independent pure-Julia packages ReadVTK.jl and
 WriteVTK.jl.

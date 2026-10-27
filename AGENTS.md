@@ -53,6 +53,12 @@ workflow changes.
   `register_auto_shim_methods`).
 - **A/B discipline**: `isdefined(VTK, :InsideOutOn)` after `using VTK` is the
   fastest check of which variant is loaded.
+- **Downcast registry is automated**: `DOWNCAST_REGISTRY` (src/dataset.jl) is
+  built at module load from `DOWNCAST_SOURCES` triples, filtered by what the
+  loaded library actually registers. Adding a grid type = header in
+  wrapit.toml.template + `downcast_foo` shim binding + typed constructor —
+  no registry edit. Only extend `DOWNCAST_SOURCES` for a genuinely new kind
+  of type.
 - The wrapit generation was validated with clang 13 (jll) and clang 22
   (system); other libclang versions may behave differently.
 - Kaimon MCP Julia sessions are optional for this repo; plain
