@@ -4,8 +4,10 @@ Julia bindings for a CFD-oriented subset of [VTK](https://vtk.org) 9.7: data
 model, XML I/O, and manipulation filters (clip, slice, cell↔point data
 conversion, contour, surface extraction). No rendering, no MPI-aware API.
 
-Status: early development (phase 0/1). Built on `VTK_jll` (binaries) +
-`CxxWrap.jl` (bindings).
+Status: early development. Built on `VTK_jll` (binaries) + `CxxWrap.jl`
+(bindings). Default build is the WrapIt-generated + shim-merged library
+(`gen/build_wrapper.jl`); the legacy hand-written CMake wrapper is the
+fallback. CI tests both.
 
 ## Building
 
