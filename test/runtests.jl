@@ -8,4 +8,5 @@ using Test
     include("filters.jl")
     include("oracle.jl")
     include("io_structured.jl")
+    include("io_multiblock.jl")
 end
