@@ -129,8 +129,11 @@ Idioms you will reuse constantly:
   C++ method expects (`_cp` = CxxPtr of).
 - `update!(algo)` — calls `Update` and throws if VTK reported an error.
 - `UnstructuredGrid(GetOutput(...))` — downcast the generic output to the
-  concrete type (see `DOWNCAST_REGISTRY` in `src/dataset.jl`; add your type
-  there if it is new).
+  concrete type. The generic `downcast(obj)` dispatches on `GetClassName()`
+  through `DOWNCAST_REGISTRY`, which is built automatically at module load
+  from the registered types + their `downcast_foo` shim bindings — add your
+  type to `DOWNCAST_SOURCES` in `src/dataset.jl` only if it is a new kind of
+  grid (the existing entries cover all current ones).
 
 ## Step 5 — test
 

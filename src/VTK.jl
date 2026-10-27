@@ -28,6 +28,7 @@ const libvtk_julia = get(ENV, "VTKJL_LIB",
 function __init__()
     @initcxx
     install_error_window()
+    _init_downcast_registry!()
 end
 
 # Include order matters: dataarray.jl defines helpers used by the rest.
