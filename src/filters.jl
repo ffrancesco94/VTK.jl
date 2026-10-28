@@ -6,7 +6,7 @@
 Execute `algo` and throw if VTK reported any error/warning while doing so.
 """
 function update!(algo)
-    Update(_cp(vtkAlgorithm, algo))
+    Update(algo)
     msg = vtk_last_error()
     isempty(msg) || error(msg)
     return algo
@@ -19,8 +19,8 @@ Implicit plane through `origin` with `normal`.
 """
 function plane(origin, normal)
     p = Plane_new()
-    SetOrigin(_cp(vtkPlane, p), origin...)
-    SetNormal(_cp(vtkPlane, p), normal...)
+    SetOrigin(p, origin...)
+    SetNormal(p, normal...)
     return p
 end
 
@@ -32,11 +32,11 @@ function evaluates negative unless `insideout=true`.
 """
 function clip(grid, implicitfn; insideout = false)
     f = TableBasedClipDataSet_new()
-    SetInputData(_cp(vtkAlgorithm, f), _cp(vtkDataObject, grid))
-    SetClipFunction(_cp(vtkTableBasedClipDataSet, f), _cp(vtkImplicitFunction, implicitfn))
-    SetInsideOut(_cp(vtkTableBasedClipDataSet, f), insideout)
+    SetInputData(f, grid)
+    SetClipFunction(f, implicitfn)
+    SetInsideOut(f, insideout)
     update!(f)
-    return UnstructuredGrid(GetOutput(_cp(vtkAlgorithm, f)))
+    return UnstructuredGrid(GetOutput(f))
 end
 
 """
@@ -46,10 +46,10 @@ Cross-section of `grid` where the implicit function evaluates to zero.
 """
 function slice(grid, implicitfn)
     f = Cutter_new()
-    SetInputData(_cp(vtkAlgorithm, f), _cp(vtkDataObject, grid))
-    SetCutFunction(_cp(vtkCutter, f), _cp(vtkImplicitFunction, implicitfn))
+    SetInputData(f, grid)
+    SetCutFunction(f, implicitfn)
     update!(f)
-    return PolyData(GetOutput(_cp(vtkAlgorithm, f)))
+    return PolyData(GetOutput(f))
 end
 
 """
@@ -60,16 +60,16 @@ Interpolate cell data to points and vice versa.
 """
 function cell_to_point(grid)
     f = CellDataToPointData_new()
-    SetInputData(_cp(vtkAlgorithm, f), _cp(vtkDataObject, grid))
+    SetInputData(f, grid)
     update!(f)
-    return GetOutput(_cp(vtkAlgorithm, f))
+    return GetOutput(f)
 end
 
 function point_to_cell(grid)
     f = PointDataToCellData_new()
-    SetInputData(_cp(vtkAlgorithm, f), _cp(vtkDataObject, grid))
+    SetInputData(f, grid)
     update!(f)
-    return GetOutput(_cp(vtkAlgorithm, f))
+    return GetOutput(f)
 end
 
 """
@@ -80,13 +80,13 @@ select the point-data array by name (it is activated automatically).
 """
 function contour(grid, values; scalars = nothing)
     f = ContourFilter_new()
-    SetInputData(_cp(vtkAlgorithm, f), _cp(vtkDataObject, grid))
+    SetInputData(f, grid)
     scalars === nothing || activate_point_data!(grid, scalars)
     for (i, v) in enumerate(values)
-        SetContourValue(_cp(vtkContourFilter, f), i - 1, v)
+        SetContourValue(f, i - 1, v)
     end
     update!(f)
-    return PolyData(GetOutput(_cp(vtkAlgorithm, f)))
+    return PolyData(GetOutput(f))
 end
 
 """
@@ -96,7 +96,7 @@ External surface of a dataset as polydata.
 """
 function extract_surface(grid)
     f = DataSetSurfaceFilter_new()
-    SetInputData(_cp(vtkAlgorithm, f), _cp(vtkDataObject, grid))
+    SetInputData(f, grid)
     update!(f)
-    return PolyData(GetOutput(_cp(vtkAlgorithm, f)))
+    return PolyData(GetOutput(f))
 end

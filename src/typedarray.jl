@@ -57,17 +57,17 @@ _as_dataarray_sp(p::SP{vtkIntArray}) = _asdataarray_upcast(p)
 Julia storage type of a wrapped vtkDataArray (from its VTK type id).
 """
 function scalar_type(obj::CxxWrap.CxxWrapCore.SmartPointer{vtkDataArray})
-    id = GetDataType(_cp(vtkAbstractArray, obj))
+    id = GetDataType(obj)
     haskey(VTK_TO_JULIA_TYPE, id) ||
         throw(ArgumentError("unsupported VTK data type id $id"))
     return VTK_TO_JULIA_TYPE[id]
 end
 
 function _typed_view(::Type{T}, obj) where {T}
-    ncomp = GetNumberOfComponents(_cp(vtkDataArray, obj))
-    nt = GetNumberOfTuples(_cp(vtkDataArray, obj))
+    ncomp = GetNumberOfComponents(obj)
+    nt = GetNumberOfTuples(obj)
     nt == 0 && return Matrix{T}(undef, ncomp, 0)
-    return zero_copy_matrix(_cp(vtkDataArray, obj))
+    return zero_copy_matrix(obj)
 end
 
 """
@@ -119,7 +119,7 @@ Resize the array. The zero-copy view is refreshed afterwards; previously
 obtained views of the same array are invalidated.
 """
 function Base.resize!(a::VTKDataArray{T}, n::Integer) where {T}
-    SetNumberOfTuples(_cp(vtkDataArray, a.obj), n)
+    SetNumberOfTuples(a.obj, n)
     a.view = _typed_view(T, a.obj)
     return a
 end
