@@ -14,7 +14,7 @@ Type of the i-th cell (1-based) as a VTKBase `VTKCellType` (has `.vtk_id`
 and `VTKCellTypes.name`).
 """
 cell_type(grid, i::Integer) =
-    VTKCellTypes.VTKCellType(GetCellTypeId(_cp(vtkDataSet, grid), i - 1))
+    VTKCellTypes.VTKCellType(GetCellTypeId(grid, i - 1))
 
 """
     cell_connectivity(grid, i) -> Vector{Int}
@@ -23,7 +23,7 @@ cell_type(grid, i::Integer) =
 connectivity convention.
 """
 cell_connectivity(grid, i::Integer) =
-    Int.(GetCellPointIds(_cp(vtkDataSet, grid), i - 1)) .+ 1
+    Int.(GetCellPointIds(grid, i - 1)) .+ 1
 
 """
     cell(grid, i) -> MeshCell

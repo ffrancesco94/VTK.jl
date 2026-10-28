@@ -8,12 +8,14 @@
 #   2. build wrapit from source (wrapit_src.jl, our fork with the macro
 #      truncation fix) and run it on the input headers
 #   3. generate the mechanical shim from the headers (auto_shim.jl)
-#   4. post-process the generated C++ (AOS leaf-array fake superclasses,
+#   4. generate Julia smart-pointer forwarding overloads
+#   5. post-process the generated C++ (AOS leaf-array fake superclasses,
 #      WrapIt bug 2 workaround)
-#   5. compile the generated module + shims against VTK_jll
+#   6. compile the generated module + shims against VTK_jll
 #
-# Products land in gen/wrapit/build/{cxx,jl,shipped,wrapit-src,wrapit-build};
-# nothing outside gen/wrapit and the depot is touched.
+# C++/build products land in
+# gen/wrapit/build/{cxx,jl,shipped,wrapit-src,wrapit-build}; the tracked Julia
+# forwarding layer is regenerated at src/generated_methods.jl.
 using VTK_jll
 using CxxWrap
 
@@ -21,6 +23,7 @@ const DRIVER_DIR = @__DIR__
 const BUILD_DIR = joinpath(DRIVER_DIR, "build")
 
 include(joinpath(DRIVER_DIR, "auto_shim.jl"))
+include(joinpath(DRIVER_DIR, "smartptr_wrappers.jl"))
 include(joinpath(DRIVER_DIR, "wrapit_src.jl"))
 
 # ---- artifact paths --------------------------------------------------------
@@ -295,6 +298,9 @@ end
 generate!()
 generate_auto_shim!(DRIVER_DIR, BUILD_DIR, vtk_include_dir())
 veto_shim_clashes!()
+generate_smartptr_wrappers!(DRIVER_DIR, BUILD_DIR,
+                            joinpath(dirname(dirname(DRIVER_DIR)), "src",
+                                     "generated_methods.jl"))
 postprocess!()
 compile!()
 println("""

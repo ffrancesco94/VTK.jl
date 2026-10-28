@@ -22,8 +22,10 @@ julia --project=gen/wrapit gen/wrapit/conformance.jl  # analytic-oracle gate
 wrapit from source** (`wrapit_src.jl`, from
 [`ffrancesco94/wrapit`](https://github.com/ffrancesco94/wrapit) — our fork
 with the macro-truncation fix, PR #1), runs it, generates the mechanical
-shim (`auto_shim.jl`), post-processes the generated C++, and compiles **one
-merged library** (`gen/wrapit/build/shipped/libvtk_julia.so`, gitignored)
+shim (`auto_shim.jl`), generates smart-pointer forwarding overloads
+(`smartptr_wrappers.jl` → `src/generated_methods.jl`), post-processes the
+generated C++, and compiles **one merged library**
+(`gen/wrapit/build/shipped/libvtk_julia.so`, gitignored)
 from:
 
 1. the WrapIt-generated code (~60 classes, 1200+ methods, true VTK
@@ -65,6 +67,7 @@ returns raw pointers, which WrapIt maps to non-owning `CxxPtr`.
 | `veto_shim_clashes!()` / `check_shim_types_registered!()` in `build.jl` | mechanical audits, re-run on every build: generated methods colliding with the shim are vetoed (duplicate Julia methods are fatal at precompile), and every vtk type the shim references must be registered by the generated code |
 | `shim_vtkjl.{h,cpp}` | everything that needs a human decision: smart-pointer traits + `add_smart_pointer`, `take_ref`'d getters/outputs, the error window, zero-copy views, **generic `SetInputData`/`GetOutput`/`Update` on `vtkAlgorithm`** (no per-filter plumbing), downcasts, explicit AOS-leaf up-casts (`upcast_dataarray`) |
 | `auto_shim.jl` | generates the mechanical shim from the headers: `X_new` factories and macro accessors. Only public members, non-template classes, whitelisted scalar types; dedups against the hand shim and against WrapIt's own output |
+| `smartptr_wrappers.jl` | generates `src/generated_methods.jl` from actual raw-pointer registrations. These Julia overloads accept smart pointers and forward through `_cp`, eliminating explicit conversions at ordinary call sites while retaining the low-level raw-pointer API |
 | `conformance.jl` | CI gate: loads the merged library directly (`@wrapmodule`, no package needed) and replays the unit-hex → clip (tetrahedron oracle) → write/read `.vtu` pipeline |
 
 Ownership of factory/getter returns stays in the shim layer (`take_ref` +

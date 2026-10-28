@@ -169,12 +169,13 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
    test failures; clean with `--gcthreads=1`). Remaining caveats: after
    `resize!`, previously obtained views are invalidated by VTK
    reallocation; and the grown region is NOT zero-initialized.
-2. **Argument-passing pattern**: C++ methods take raw `T*` and the Julian
-   layer converts via `_cp(T, obj)` (`CxxPtr{T}(obj[])`). CxxWrap's by-value
-   smart-pointer argument path is unusable for custom smart pointers
-   (`Type{Dereferenced{T}}` dispatch is impossible — Julia's `Type` is
-   invariant). Any future generator must emit this pattern or register
-   `const T&` overloads.
+2. **Argument-passing pattern**: C++ methods take raw `T*`. The generated
+   Julian overloads in `src/generated_methods.jl` accept smart pointers and
+   forward via `_cp(T, obj)` (`CxxPtr{T}(obj[])`), so normal callers do not
+   write the conversion. CxxWrap's by-value smart-pointer argument path is
+   unusable for custom smart pointers (`Type{Dereferenced{T}}` dispatch is
+   impossible — Julia's `Type` is invariant). Raw-pointer overloads remain
+   available for low-level code.
 3. **Arrays**: no typed get/set accessors (all access goes through zero-copy
    views or the slow double-based virtual API); SOA/variant arrays
    unsupported for zero-copy (guarded, throws).

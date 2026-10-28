@@ -3,6 +3,7 @@ using Test
 
 @testset "VTK.jl" begin
     include("dataarray.jl")
+    include("smartptr.jl")
     include("typedarray.jl")
     include("cells.jl")
     include("filters.jl")
