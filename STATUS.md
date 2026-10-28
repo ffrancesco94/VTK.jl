@@ -83,6 +83,10 @@ hand-written equivalent lives in `wrapper/src/vtk_julia.cpp`):
   {Reader,Writer}` (`.vtm` containers with `block`/`set_block!`/`nblocks`);
   writers emit zlib-compressed appended data by default, or raw appended
   data (`raw_appended=true`) which ReadVTK.jl can parse.
+- CFD readers: `vtkEnSightGoldReader` (`.case` + geometry),
+  `vtkCGNSReader` (`.cgns`), and `vtkXMLPPolyDataReader` (`.pvtp`
+  parallel summaries); all produce `vtkMultiBlockDataSet` except
+  `vtkXMLPPolyDataReader` which yields `vtkPolyData`.
 - Filters: `vtkTableBasedClipDataSet`, `vtkCutter`, `vtkCellDataToPointData`,
   `vtkPointDataToCellData`, `vtkContourFilter`, `vtkDataSetSurfaceFilter`,
   plus `vtkPlane` implicit function.
@@ -111,6 +115,8 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 - `read_vtu`/`read_vtp`/`read_vti`/`read_vtr`/`read_vts`,
   `write_vtu`/`write_vtp`/`write_vti`/`write_vtr`/`write_vts`, `field_array`,
   `point_data`, `cell_data`, `activate_point_data!`.
+- CFD readers: `read_ensight` (EnSight Gold `.case`),
+  `read_cgns` (CGNS `.cgns`), `read_pvtp` (parallel PVTK `.pvtp`).
 - Generic name-based `downcast(obj)` dispatching on the VTK dynamic class
   name via `GetClassName` and a registry (`DOWNCAST_REGISTRY`); adding a
   grid type = one registry entry + its `downcast_foo` shim binding.
@@ -122,7 +128,7 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 - `plane`, `clip`, `slice`, `cell_to_point`, `point_to_cell`, `contour`,
   `extract_surface`, `update!`.
 
-## 3. Test suite (118 tests, all passing; 91 on the hand-written fallback)
+## 3. Test suite (158 tests, all passing; 96 on the hand-written fallback)
 
 - **Array core**: typed creation, zero-copy write-through both directions,
   multi-component reshape, names, Int32 element type, GC churn with
@@ -157,6 +163,10 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
   parse zlib-compressed appended data, so the write-side oracle is limited
   to geometry/header checks); generic `downcast` dispatch on reader outputs;
   skipped on the hand-written fallback.
+- **CFD readers** (generated library only): EnSight Gold `.case` with
+  analytic oracle (unit hex); CGNS smoke test (reader construction +
+  error on missing file); parallel `.pvtp` summary + piece files written
+  by WriteVTK, read back and verified; skipped on the hand-written fallback.
 
 ## 4. Known limitations / design debt
 
@@ -179,8 +189,8 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 3. **Arrays**: no typed get/set accessors (all access goes through zero-copy
    views or the slow double-based virtual API); SOA/variant arrays
    unsupported for zero-copy (guarded, throws).
-4. **I/O**: XML only, including structured grids and multiblock `.vtm`;
-   legacy `.vtk` and parallel readers are unwrapped. Writers only emit
+4. **I/O**: XML + CFD formats (EnSight Gold, CGNS, parallel `.pvtp`);
+   legacy `.vtk` and `.pvtu` are unwrapped. Writers only emit
    appended data (fine for CFD). ReadVTK.jl
    (the pure-Julia oracle) does not parse zlib-compressed appended blocks,
    so compressed output is verified by re-reading with VTK.jl itself.
@@ -243,6 +253,8 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
       already existed) — mostly `wrapit.toml.template` + Julian plumbing
 - [x] Multiblock `.vtm` (2026-10-27): `read_vtm`/`write_vtm`/`block`/
       `set_block!`/`nblocks`; WriteVTK.jl oracle both directions
+- [x] CFD readers (2026-10-28): EnSight Gold (`read_ensight`), CGNS
+      (`read_cgns`), parallel PVTK poly data (`read_pvtp`)
 - [ ] More readers/writers: legacy `.vtk`
 - [ ] More filters: calculator, gradient, threshold, stream tracer (as CFD
       needs arise)

@@ -275,6 +275,50 @@ function read_vtm(path)
     return MultiBlockDataSet(GetOutput(reader))
 end
 
+# ---- CFD readers: EnSight Gold + CGNS ----
+
+"""
+    read_ensight(path) -> vtkMultiBlockDataSet
+
+Read an EnSight Gold case file (`.case`). The output is a multiblock
+dataset with one block per part; variables are stored in field data.
+"""
+function read_ensight(path)
+    reader = EnSightGoldReader_new()
+    SetCaseFileName(reader, String(path))
+    update!(reader)
+    return MultiBlockDataSet(GetOutput(reader))
+end
+
+"""
+    read_cgns(path) -> vtkMultiBlockDataSet
+
+Read a CGNS (CFD General Notation System) file. The output is a multiblock
+dataset with one block per zone; data arrays may live at nodes, cells, or
+faces depending on the file.
+"""
+function read_cgns(path)
+    reader = CGNSReader_new()
+    SetFileName(reader, String(path))
+    update!(reader)
+    return MultiBlockDataSet(GetOutput(reader))
+end
+
+# ---- parallel XML readers ----
+
+"""
+    read_pvtp(path) -> vtkPolyData
+
+Read a parallel PVTK XML PolyData summary file (`.pvtp`), which references
+per-piece `.vtp` files. Returns the merged poly data.
+"""
+function read_pvtp(path)
+    reader = XMLPPolyDataReader_new()
+    SetFileName(reader, String(path))
+    update!(reader)
+    return PolyData(GetOutput(reader))
+end
+
 """
     write_vtm(mb, path)
 

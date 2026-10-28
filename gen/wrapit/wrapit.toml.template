@@ -68,6 +68,17 @@ input = [
   "vtkMultiBlockDataSet.h",
   "vtkXMLMultiBlockDataReader.h",
   "vtkXMLMultiBlockDataWriter.h",
+  # CFD readers: EnSight Gold + CGNS (multiblock output)
+  "vtkMultiBlockDataSetAlgorithm.h",
+  "vtkGenericEnSightReader.h",
+  "vtkEnSightReader.h",
+  "vtkEnSightGoldReader.h",
+  "vtkCGNSReader.h",
+  # parallel XML I/O (PVTK summary-file readers)
+  "vtkXMLPDataObjectReader.h",
+  "vtkXMLPDataReader.h",
+  "vtkXMLPUnstructuredDataReader.h",
+  "vtkXMLPPolyDataReader.h",
 ]
 extra_headers = [
   "vtkInformation.h",
