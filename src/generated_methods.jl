@@ -337,6 +337,36 @@ if isdefined(@__MODULE__, Symbol("BuildPointLocator")) && isdefined(@__MODULE__,
         BuildPointLocator(_cp(vtkPointSet, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("CacheConnectivityOff")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    CacheConnectivityOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        CacheConnectivityOff(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("CacheConnectivityOn")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    CacheConnectivityOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        CacheConnectivityOn(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("CacheMeshOff")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    CacheMeshOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        CacheMeshOff(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("CacheMeshOn")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    CacheMeshOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        CacheMeshOn(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("CanReadFile")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    CanReadFile(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        CanReadFile(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("CanReadFile")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    CanReadFile(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        CanReadFile(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("CanReadFile")) && isdefined(@__MODULE__, :vtkXMLReader)
     CanReadFile(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}, a2) =
         CanReadFile(_cp(vtkXMLReader, a1), a2)
@@ -732,6 +762,16 @@ if isdefined(@__MODULE__, Symbol("CopyOutputInformation")) && isdefined(@__MODUL
         CopyOutputInformation(_cp(vtkXMLImageDataReader, a1), _cp(vtkInformation, a2), a3)
 end
 
+if isdefined(@__MODULE__, Symbol("CopyOutputInformation")) && isdefined(@__MODULE__, :vtkXMLPDataReader) && isdefined(@__MODULE__, :vtkInformation)
+    CopyOutputInformation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLPDataReader}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3) =
+        CopyOutputInformation(_cp(vtkXMLPDataReader, a1), _cp(vtkInformation, a2), a3)
+end
+
+if isdefined(@__MODULE__, Symbol("CopyOutputInformation")) && isdefined(@__MODULE__, :vtkXMLPUnstructuredDataReader) && isdefined(@__MODULE__, :vtkInformation)
+    CopyOutputInformation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLPUnstructuredDataReader}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3) =
+        CopyOutputInformation(_cp(vtkXMLPUnstructuredDataReader, a1), _cp(vtkInformation, a2), a3)
+end
+
 if isdefined(@__MODULE__, Symbol("CopyOutputInformation")) && isdefined(@__MODULE__, :vtkXMLReader) && isdefined(@__MODULE__, :vtkInformation)
     CopyOutputInformation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3) =
         CopyOutputInformation(_cp(vtkXMLReader, a1), _cp(vtkInformation, a2), a3)
@@ -907,6 +947,16 @@ if isdefined(@__MODULE__, Symbol("CreateDefaultLookupTable")) && isdefined(@__MO
         CreateDefaultLookupTable(_cp(vtkDataArray, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("CreateEachSolutionAsBlockOff")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    CreateEachSolutionAsBlockOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        CreateEachSolutionAsBlockOff(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("CreateEachSolutionAsBlockOn")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    CreateEachSolutionAsBlockOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        CreateEachSolutionAsBlockOn(_cp(vtkCGNSReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("Crop")) && isdefined(@__MODULE__, :vtkDataObject)
     Crop(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}, a2) =
         Crop(_cp(vtkDataObject, a1), a2)
@@ -1077,9 +1127,64 @@ if isdefined(@__MODULE__, Symbol("DeletePoint")) && isdefined(@__MODULE__, :vtkP
         DeletePoint(_cp(vtkPolyData, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("DetermineEnSightVersion")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    DetermineEnSightVersion(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        DetermineEnSightVersion(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("DetermineEnSightVersion")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    DetermineEnSightVersion(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        DetermineEnSightVersion(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("DisableAllBases")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    DisableAllBases(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        DisableAllBases(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("DisableAllCellArrays")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    DisableAllCellArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        DisableAllCellArrays(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("DisableAllFaceArrays")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    DisableAllFaceArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        DisableAllFaceArrays(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("DisableAllFamilies")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    DisableAllFamilies(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        DisableAllFamilies(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("DisableAllPointArrays")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    DisableAllPointArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        DisableAllPointArrays(_cp(vtkCGNSReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("DistanceToPlane")) && isdefined(@__MODULE__, :vtkPlane)
     DistanceToPlane(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPlane}, a2) =
         DistanceToPlane(_cp(vtkPlane, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("DistributeBlocksOff")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    DistributeBlocksOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        DistributeBlocksOff(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("DistributeBlocksOn")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    DistributeBlocksOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        DistributeBlocksOn(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("DoublePrecisionMeshOff")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    DoublePrecisionMeshOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        DoublePrecisionMeshOff(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("DoublePrecisionMeshOn")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    DoublePrecisionMeshOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        DoublePrecisionMeshOn(_cp(vtkCGNSReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("EditableOff")) && isdefined(@__MODULE__, :vtkPointSet)
@@ -1090,6 +1195,31 @@ end
 if isdefined(@__MODULE__, Symbol("EditableOn")) && isdefined(@__MODULE__, :vtkPointSet)
     EditableOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPointSet}) =
         EditableOn(_cp(vtkPointSet, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("EnableAllBases")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    EnableAllBases(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        EnableAllBases(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("EnableAllCellArrays")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    EnableAllCellArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        EnableAllCellArrays(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("EnableAllFaceArrays")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    EnableAllFaceArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        EnableAllFaceArrays(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("EnableAllFamilies")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    EnableAllFamilies(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        EnableAllFamilies(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("EnableAllPointArrays")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    EnableAllPointArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        EnableAllPointArrays(_cp(vtkCGNSReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("EnableCompression")) && isdefined(@__MODULE__, :vtkXMLImageDataWriter)
@@ -1270,6 +1400,16 @@ end
 if isdefined(@__MODULE__, Symbol("FindPoint")) && isdefined(@__MODULE__, :vtkRectilinearGrid)
     FindPoint(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGrid}, a2) =
         FindPoint(_cp(vtkRectilinearGrid, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("FlipFaceNormalsOff")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    FlipFaceNormalsOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        FlipFaceNormalsOff(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("FlipFaceNormalsOn")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    FlipFaceNormalsOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        FlipFaceNormalsOn(_cp(vtkCGNSReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("FunctionGradient")) && isdefined(@__MODULE__, :vtkImplicitFunction)
@@ -1482,6 +1622,11 @@ if isdefined(@__MODULE__, Symbol("GetAllowInterpolation")) && isdefined(@__MODUL
         GetAllowInterpolation(_cp(vtkDataSetSurfaceFilter, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetApplyTetrahedralize")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetApplyTetrahedralize(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetApplyTetrahedralize(_cp(vtkGenericEnSightReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetArray")) && isdefined(@__MODULE__, :vtkFieldData)
     GetArray(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkFieldData}, a2) =
         GetArray(_cp(vtkFieldData, a1), a2)
@@ -1577,6 +1722,16 @@ if isdefined(@__MODULE__, Symbol("GetAxisUpdateExtent")) && isdefined(@__MODULE_
         GetAxisUpdateExtent(_cp(vtkImageData, a1), a2, a3, a4, a5)
 end
 
+if isdefined(@__MODULE__, Symbol("GetBaseArrayName")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetBaseArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        GetBaseArrayName(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetBaseArrayStatus")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetBaseArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        GetBaseArrayStatus(_cp(vtkCGNSReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetBatchSize")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
     GetBatchSize(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkTableBasedClipDataSet}) =
         GetBatchSize(_cp(vtkTableBasedClipDataSet, a1))
@@ -1627,9 +1782,34 @@ if isdefined(@__MODULE__, Symbol("GetBounds")) && isdefined(@__MODULE__, :vtkPoi
         GetBounds(_cp(vtkPoints, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetByteOrder")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetByteOrder(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetByteOrder(_cp(vtkGenericEnSightReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetByteOrder")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
     GetByteOrder(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLWriterBase}) =
         GetByteOrder(_cp(vtkXMLWriterBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetByteOrderAsString")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetByteOrderAsString(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetByteOrderAsString(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetCacheConnectivity")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetCacheConnectivity(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetCacheConnectivity(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetCacheMesh")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetCacheMesh(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetCacheMesh(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetCaseFileName")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetCaseFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetCaseFileName(_cp(vtkGenericEnSightReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetCategoricalData")) && isdefined(@__MODULE__, :vtkPointDataToCellData)
@@ -1712,9 +1892,29 @@ if isdefined(@__MODULE__, Symbol("GetCell")) && isdefined(@__MODULE__, :vtkUnstr
         GetCell(_cp(vtkUnstructuredGrid, a1), a2, _cp(vtkGenericCell, a3))
 end
 
+if isdefined(@__MODULE__, Symbol("GetCellArrayName")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetCellArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        GetCellArrayName(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetCellArrayName")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetCellArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        GetCellArrayName(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetCellArrayName")) && isdefined(@__MODULE__, :vtkXMLReader)
     GetCellArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}, a2) =
         GetCellArrayName(_cp(vtkXMLReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetCellArrayStatus")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetCellArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        GetCellArrayStatus(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetCellArrayStatus")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetCellArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        GetCellArrayStatus(_cp(vtkGenericEnSightReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetCellArrayStatus")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -2012,6 +2212,16 @@ if isdefined(@__MODULE__, Symbol("GetCommand")) && isdefined(@__MODULE__, :vtkOb
         GetCommand(_cp(vtkObject, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetComplexDescription")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetComplexDescription(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        GetComplexDescription(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetComplexVariableType")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetComplexVariableType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        GetComplexVariableType(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetComponent")) && isdefined(@__MODULE__, :vtkDataArray)
     GetComponent(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataArray}, a2, a3) =
         GetComponent(_cp(vtkDataArray, a1), a2, a3)
@@ -2187,6 +2397,11 @@ if isdefined(@__MODULE__, Symbol("GetCopyVectors")) && isdefined(@__MODULE__, :v
         GetCopyVectors(_cp(vtkDataSetAttributes, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetCreateEachSolutionAsBlock")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetCreateEachSolutionAsBlock(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetCreateEachSolutionAsBlock(_cp(vtkCGNSReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetCutFunction")) && isdefined(@__MODULE__, :vtkCutter)
     GetCutFunction(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCutter}) =
         GetCutFunction(_cp(vtkCutter, a1))
@@ -2210,6 +2425,21 @@ end
 if isdefined(@__MODULE__, Symbol("GetDataDimension")) && isdefined(@__MODULE__, :vtkStructuredGrid)
     GetDataDimension(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGrid}) =
         GetDataDimension(_cp(vtkStructuredGrid, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetDataLocation")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetDataLocation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetDataLocation(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetDataLocationMaxValue")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetDataLocationMaxValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetDataLocationMaxValue(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetDataLocationMinValue")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetDataLocationMinValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetDataLocationMinValue(_cp(vtkCGNSReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetDataMode")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
@@ -2337,6 +2567,16 @@ if isdefined(@__MODULE__, Symbol("GetDelegation")) && isdefined(@__MODULE__, :vt
         GetDelegation(_cp(vtkDataSetSurfaceFilter, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetDescription")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetDescription(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        GetDescription(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetDescription")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetDescription(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2, a3) =
+        GetDescription(_cp(vtkGenericEnSightReader, a1), a2, a3)
+end
+
 if isdefined(@__MODULE__, Symbol("GetDeviceVoidPointer")) && isdefined(@__MODULE__, :vtkDataArray)
     GetDeviceVoidPointer(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataArray}, a2) =
         GetDeviceVoidPointer(_cp(vtkDataArray, a1), a2)
@@ -2362,9 +2602,24 @@ if isdefined(@__MODULE__, Symbol("GetDistinctCellTypesArray")) && isdefined(@__M
         GetDistinctCellTypesArray(_cp(vtkUnstructuredGrid, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetDistributeBlocks")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetDistributeBlocks(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetDistributeBlocks(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetDoublePrecisionMesh")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetDoublePrecisionMesh(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetDoublePrecisionMesh(_cp(vtkCGNSReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetEditable")) && isdefined(@__MODULE__, :vtkPointSet)
     GetEditable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPointSet}) =
         GetEditable(_cp(vtkPointSet, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetEnSightVersion")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetEnSightVersion(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetEnSightVersion(_cp(vtkGenericEnSightReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetEncodeAppendedData")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
@@ -2407,9 +2662,29 @@ if isdefined(@__MODULE__, Symbol("GetExtentType")) && isdefined(@__MODULE__, :vt
         GetExtentType(_cp(vtkStructuredGrid, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetFaceArrayName")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetFaceArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        GetFaceArrayName(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetFaceArrayStatus")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetFaceArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        GetFaceArrayStatus(_cp(vtkCGNSReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetFaceStream")) && isdefined(@__MODULE__, :vtkUnstructuredGrid) && isdefined(@__MODULE__, :vtkIdList)
     GetFaceStream(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGrid}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkIdList}) =
         GetFaceStream(_cp(vtkUnstructuredGrid, a1), a2, _cp(vtkIdList, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFamilyArrayName")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetFamilyArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        GetFamilyArrayName(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetFamilyArrayStatus")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetFamilyArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        GetFamilyArrayStatus(_cp(vtkCGNSReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetFastMode")) && isdefined(@__MODULE__, :vtkContourFilter)
@@ -2432,6 +2707,11 @@ if isdefined(@__MODULE__, Symbol("GetFieldData")) && isdefined(@__MODULE__, :vtk
         GetFieldData(_cp(vtkDataObject, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetFileName")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetFileName(_cp(vtkCGNSReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetFileName")) && isdefined(@__MODULE__, :vtkXMLReader)
     GetFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}) =
         GetFileName(_cp(vtkXMLReader, a1))
@@ -2440,6 +2720,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetFileName")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
     GetFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLWriterBase}) =
         GetFileName(_cp(vtkXMLWriterBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFilePath")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetFilePath(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetFilePath(_cp(vtkGenericEnSightReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetFiniteRange")) && isdefined(@__MODULE__, :vtkDataArray)
@@ -2472,6 +2757,11 @@ if isdefined(@__MODULE__, Symbol("GetFiniteRange")) && isdefined(@__MODULE__, :v
         GetFiniteRange(_cp(vtkFieldData, a1), a2, a3, a4)
 end
 
+if isdefined(@__MODULE__, Symbol("GetFlipFaceNormals")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetFlipFaceNormals(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetFlipFaceNormals(_cp(vtkCGNSReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetGenerateClipPointTypes")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
     GetGenerateClipPointTypes(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkTableBasedClipDataSet}) =
         GetGenerateClipPointTypes(_cp(vtkTableBasedClipDataSet, a1))
@@ -2500,6 +2790,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetGenerateTriangles")) && isdefined(@__MODULE__, :vtkCutter)
     GetGenerateTriangles(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCutter}) =
         GetGenerateTriangles(_cp(vtkCutter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetGeometryFileName")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetGeometryFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetGeometryFileName(_cp(vtkGenericEnSightReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetGhostArray")) && isdefined(@__MODULE__, :vtkDataObject)
@@ -2585,6 +2880,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetIdsOfCellsOfType")) && isdefined(@__MODULE__, :vtkUnstructuredGridBase) && isdefined(@__MODULE__, :vtkIdTypeArray)
     GetIdsOfCellsOfType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridBase}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkIdTypeArray}) =
         GetIdsOfCellsOfType(_cp(vtkUnstructuredGridBase, a1), a2, _cp(vtkIdTypeArray, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("GetIgnoreFlowSolutionPointers")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetIgnoreFlowSolutionPointers(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetIgnoreFlowSolutionPointers(_cp(vtkCGNSReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetImageDataOutput")) && isdefined(@__MODULE__, :vtkDataSetAlgorithm)
@@ -2792,6 +3092,21 @@ if isdefined(@__MODULE__, Symbol("GetLinks")) && isdefined(@__MODULE__, :vtkUnst
         GetLinks(_cp(vtkUnstructuredGrid, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetLoadBndPatch")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetLoadBndPatch(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetLoadBndPatch(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetLoadMesh")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetLoadMesh(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetLoadMesh(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetLoadSurfacePatch")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetLoadSurfacePatch(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetLoadSurfacePatch(_cp(vtkCGNSReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetLocator")) && isdefined(@__MODULE__, :vtkContourFilter)
     GetLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkContourFilter}) =
         GetLocator(_cp(vtkContourFilter, a1))
@@ -2872,6 +3187,11 @@ if isdefined(@__MODULE__, Symbol("GetMatchBoundariesIgnoringCellOrder")) && isde
         GetMatchBoundariesIgnoringCellOrder(_cp(vtkDataSetSurfaceFilter, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetMatchFileName")) && isdefined(@__MODULE__, :vtkEnSightReader)
+    GetMatchFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkEnSightReader}) =
+        GetMatchFileName(_cp(vtkEnSightReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetMaxCellSize")) && isdefined(@__MODULE__, :vtkDataSet)
     GetMaxCellSize(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSet}) =
         GetMaxCellSize(_cp(vtkDataSet, a1))
@@ -2925,6 +3245,16 @@ end
 if isdefined(@__MODULE__, Symbol("GetMaxSpatialDimension")) && isdefined(@__MODULE__, :vtkUnstructuredGrid)
     GetMaxSpatialDimension(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGrid}) =
         GetMaxSpatialDimension(_cp(vtkUnstructuredGrid, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetMaximumTimeValue")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetMaximumTimeValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetMaximumTimeValue(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetMeasuredFileName")) && isdefined(@__MODULE__, :vtkEnSightReader)
+    GetMeasuredFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkEnSightReader}) =
+        GetMeasuredFileName(_cp(vtkEnSightReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetMemorySpace")) && isdefined(@__MODULE__, :vtkDataArray)
@@ -2992,6 +3322,11 @@ if isdefined(@__MODULE__, Symbol("GetMinSpatialDimension")) && isdefined(@__MODU
         GetMinSpatialDimension(_cp(vtkUnstructuredGrid, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetMinimumTimeValue")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetMinimumTimeValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetMinimumTimeValue(_cp(vtkGenericEnSightReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetName")) && isdefined(@__MODULE__, :vtkAbstractArray)
     GetName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractArray}) =
         GetName(_cp(vtkAbstractArray, a1))
@@ -3027,9 +3362,24 @@ if isdefined(@__MODULE__, Symbol("GetNumberOfArrays")) && isdefined(@__MODULE__,
         GetNumberOfArrays(_cp(vtkFieldData, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfBaseArrays")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetNumberOfBaseArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetNumberOfBaseArrays(_cp(vtkCGNSReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfBlocks")) && isdefined(@__MODULE__, :vtkMultiBlockDataSet)
     GetNumberOfBlocks(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMultiBlockDataSet}) =
         GetNumberOfBlocks(_cp(vtkMultiBlockDataSet, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfCellArrays")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetNumberOfCellArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetNumberOfCellArrays(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfCellArrays")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfCellArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfCellArrays(_cp(vtkGenericEnSightReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfCellArrays")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -3060,6 +3410,31 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfColumnArrays")) && isdefined(@__MODULE__, :vtkXMLReader)
     GetNumberOfColumnArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}) =
         GetNumberOfColumnArrays(_cp(vtkXMLReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfComplexScalarsPerElement")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfComplexScalarsPerElement(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfComplexScalarsPerElement(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfComplexScalarsPerNode")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfComplexScalarsPerNode(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfComplexScalarsPerNode(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfComplexVariables")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfComplexVariables(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfComplexVariables(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfComplexVectorsPerElement")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfComplexVectorsPerElement(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfComplexVectorsPerElement(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfComplexVectorsPerNode")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfComplexVectorsPerNode(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfComplexVectorsPerNode(_cp(vtkGenericEnSightReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfComponents")) && isdefined(@__MODULE__, :vtkDataArray)
@@ -3102,6 +3477,16 @@ if isdefined(@__MODULE__, Symbol("GetNumberOfElements")) && isdefined(@__MODULE_
         GetNumberOfElements(_cp(vtkDataSet, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfFaceArrays")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetNumberOfFaceArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetNumberOfFaceArrays(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfFamilyArrays")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetNumberOfFamilyArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetNumberOfFamilyArrays(_cp(vtkCGNSReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkAbstractArray)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractArray}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkAbstractArray, a1), a2)
@@ -3110,6 +3495,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkAlgorithm)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkAlgorithm, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkCGNSReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkCellData)
@@ -3172,6 +3562,16 @@ if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined
         GetNumberOfGenerationsFromBase(_cp(vtkDoubleArray, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkEnSightGoldReader)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkEnSightGoldReader}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkEnSightGoldReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkEnSightReader)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkEnSightReader}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkEnSightReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkFieldData)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkFieldData}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkFieldData, a1), a2)
@@ -3180,6 +3580,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkFloatArray)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkFloatArray}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkFloatArray, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkGenericEnSightReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkIdList)
@@ -3205,6 +3610,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkMultiBlockDataSet)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMultiBlockDataSet}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkMultiBlockDataSet, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkMultiBlockDataSetAlgorithm)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMultiBlockDataSetAlgorithm}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkMultiBlockDataSetAlgorithm, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkObject)
@@ -3305,6 +3715,26 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkXMLMultiBlockDataWriter)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLMultiBlockDataWriter}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkXMLMultiBlockDataWriter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkXMLPDataObjectReader)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLPDataObjectReader}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkXMLPDataObjectReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkXMLPDataReader)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLPDataReader}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkXMLPDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkXMLPPolyDataReader)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLPPolyDataReader}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkXMLPPolyDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkXMLPUnstructuredDataReader)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLPUnstructuredDataReader}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkXMLPUnstructuredDataReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkXMLPolyDataReader)
@@ -3422,6 +3852,11 @@ if isdefined(@__MODULE__, Symbol("GetNumberOfPieces")) && isdefined(@__MODULE__,
         GetNumberOfPieces(_cp(vtkUnstructuredGrid, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfPieces")) && isdefined(@__MODULE__, :vtkXMLPDataObjectReader)
+    GetNumberOfPieces(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLPDataObjectReader}) =
+        GetNumberOfPieces(_cp(vtkXMLPDataObjectReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfPieces")) && isdefined(@__MODULE__, :vtkXMLStructuredDataWriter)
     GetNumberOfPieces(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLStructuredDataWriter}) =
         GetNumberOfPieces(_cp(vtkXMLStructuredDataWriter, a1))
@@ -3435,6 +3870,16 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfPieces")) && isdefined(@__MODULE__, :vtkXMLUnstructuredDataWriter)
     GetNumberOfPieces(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLUnstructuredDataWriter}) =
         GetNumberOfPieces(_cp(vtkXMLUnstructuredDataWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfPointArrays")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetNumberOfPointArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetNumberOfPointArrays(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfPointArrays")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfPointArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfPointArrays(_cp(vtkGenericEnSightReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfPointArrays")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -3472,6 +3917,21 @@ if isdefined(@__MODULE__, Symbol("GetNumberOfPolys")) && isdefined(@__MODULE__, 
         GetNumberOfPolys(_cp(vtkXMLPolyDataReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfScalarsPerElement")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfScalarsPerElement(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfScalarsPerElement(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfScalarsPerMeasuredNode")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfScalarsPerMeasuredNode(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfScalarsPerMeasuredNode(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfScalarsPerNode")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfScalarsPerNode(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfScalarsPerNode(_cp(vtkGenericEnSightReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfStrips")) && isdefined(@__MODULE__, :vtkPolyData)
     GetNumberOfStrips(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyData}) =
         GetNumberOfStrips(_cp(vtkPolyData, a1))
@@ -3480,6 +3940,26 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfStrips")) && isdefined(@__MODULE__, :vtkXMLPolyDataReader)
     GetNumberOfStrips(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLPolyDataReader}) =
         GetNumberOfStrips(_cp(vtkXMLPolyDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfTensorsAsymPerElement")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfTensorsAsymPerElement(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfTensorsAsymPerElement(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfTensorsAsymPerNode")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfTensorsAsymPerNode(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfTensorsAsymPerNode(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfTensorsSymmPerElement")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfTensorsSymmPerElement(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfTensorsSymmPerElement(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfTensorsSymmPerNode")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfTensorsSymmPerNode(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfTensorsSymmPerNode(_cp(vtkGenericEnSightReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfTimeSteps")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -3500,6 +3980,31 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfTuples")) && isdefined(@__MODULE__, :vtkFieldData)
     GetNumberOfTuples(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkFieldData}) =
         GetNumberOfTuples(_cp(vtkFieldData, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfVariables")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfVariables(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfVariables(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfVariables")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfVariables(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        GetNumberOfVariables(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfVectorsPerElement")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfVectorsPerElement(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfVectorsPerElement(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfVectorsPerMeasuredNode")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfVectorsPerMeasuredNode(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfVectorsPerMeasuredNode(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfVectorsPerNode")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetNumberOfVectorsPerNode(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetNumberOfVectorsPerNode(_cp(vtkGenericEnSightReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfVerts")) && isdefined(@__MODULE__, :vtkPolyData)
@@ -3637,6 +4142,11 @@ if isdefined(@__MODULE__, Symbol("GetParserErrorObserver")) && isdefined(@__MODU
         GetParserErrorObserver(_cp(vtkXMLReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetParticleCoordinatesByIndex")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetParticleCoordinatesByIndex(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetParticleCoordinatesByIndex(_cp(vtkGenericEnSightReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetPassCellData")) && isdefined(@__MODULE__, :vtkCellDataToPointData)
     GetPassCellData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCellDataToPointData}) =
         GetPassCellData(_cp(vtkCellDataToPointData, a1))
@@ -3737,9 +4247,29 @@ if isdefined(@__MODULE__, Symbol("GetPoint")) && isdefined(@__MODULE__, :vtkStru
         GetPoint(_cp(vtkStructuredGrid, a1), a2, a3)
 end
 
+if isdefined(@__MODULE__, Symbol("GetPointArrayName")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetPointArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        GetPointArrayName(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetPointArrayName")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetPointArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        GetPointArrayName(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetPointArrayName")) && isdefined(@__MODULE__, :vtkXMLReader)
     GetPointArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}, a2) =
         GetPointArrayName(_cp(vtkXMLReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetPointArrayStatus")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetPointArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        GetPointArrayStatus(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetPointArrayStatus")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetPointArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        GetPointArrayStatus(_cp(vtkGenericEnSightReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetPointArrayStatus")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -3957,6 +4487,11 @@ if isdefined(@__MODULE__, Symbol("GetRationalWeights")) && isdefined(@__MODULE__
         GetRationalWeights(_cp(vtkDataSetAttributes, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetReadAllVariables")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetReadAllVariables(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetReadAllVariables(_cp(vtkGenericEnSightReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetReadFromInputStream")) && isdefined(@__MODULE__, :vtkXMLReader)
     GetReadFromInputStream(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}) =
         GetReadFromInputStream(_cp(vtkXMLReader, a1))
@@ -3965,6 +4500,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetReadFromInputString")) && isdefined(@__MODULE__, :vtkXMLReader)
     GetReadFromInputString(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}) =
         GetReadFromInputString(_cp(vtkXMLReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetReader")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetReader(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetReader(_cp(vtkGenericEnSightReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetReaderErrorObserver")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -3985,6 +4525,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetReleaseDataFlag")) && isdefined(@__MODULE__, :vtkAlgorithm)
     GetReleaseDataFlag(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}) =
         GetReleaseDataFlag(_cp(vtkAlgorithm, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetRigidBodyFileName")) && isdefined(@__MODULE__, :vtkEnSightReader)
+    GetRigidBodyFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkEnSightReader}) =
+        GetRigidBodyFileName(_cp(vtkEnSightReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetSampledMaxCellLength2")) && isdefined(@__MODULE__, :vtkDataSet)
@@ -4202,6 +4747,11 @@ if isdefined(@__MODULE__, Symbol("GetTimeStepRange")) && isdefined(@__MODULE__, 
         GetTimeStepRange(_cp(vtkXMLReader, a1), a2, a3)
 end
 
+if isdefined(@__MODULE__, Symbol("GetTimeValue")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetTimeValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        GetTimeValue(_cp(vtkGenericEnSightReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetTotalNumberOfInputConnections")) && isdefined(@__MODULE__, :vtkAlgorithm)
     GetTotalNumberOfInputConnections(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}) =
         GetTotalNumberOfInputConnections(_cp(vtkAlgorithm, a1))
@@ -4270,6 +4820,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetTuples")) && isdefined(@__MODULE__, :vtkDataArray) && isdefined(@__MODULE__, :vtkAbstractArray)
     GetTuples(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataArray}, a2, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractArray}) =
         GetTuples(_cp(vtkDataArray, a1), a2, a3, _cp(vtkAbstractArray, a4))
+end
+
+if isdefined(@__MODULE__, Symbol("GetUnsteadySolutionStartTimestep")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetUnsteadySolutionStartTimestep(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetUnsteadySolutionStartTimestep(_cp(vtkCGNSReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetUnstructuredGridInput")) && isdefined(@__MODULE__, :vtkUnstructuredGridAlgorithm)
@@ -4342,9 +4897,19 @@ if isdefined(@__MODULE__, Symbol("GetUpdateTime")) && isdefined(@__MODULE__, :vt
         GetUpdateTime(_cp(vtkDataObject, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetUse3DVector")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetUse3DVector(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetUse3DVector(_cp(vtkCGNSReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetUseScalarTree")) && isdefined(@__MODULE__, :vtkContourFilter)
     GetUseScalarTree(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkContourFilter}) =
         GetUseScalarTree(_cp(vtkContourFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetUseUnsteadyPattern")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    GetUseUnsteadyPattern(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        GetUseUnsteadyPattern(_cp(vtkCGNSReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetUseValueAsOffset")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
@@ -4385,6 +4950,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetValues")) && isdefined(@__MODULE__, :vtkCutter)
     GetValues(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCutter}, a2) =
         GetValues(_cp(vtkCutter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetVariableType")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    GetVariableType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        GetVariableType(_cp(vtkGenericEnSightReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetVariantValue")) && isdefined(@__MODULE__, :vtkAbstractArray)
@@ -4550,6 +5120,16 @@ end
 if isdefined(@__MODULE__, Symbol("HasObserver")) && isdefined(@__MODULE__, :vtkObject) && isdefined(@__MODULE__, :vtkCommand)
     HasObserver(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObject}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCommand}) =
         HasObserver(_cp(vtkObject, a1), a2, _cp(vtkCommand, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("IgnoreFlowSolutionPointersOff")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    IgnoreFlowSolutionPointersOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        IgnoreFlowSolutionPointersOff(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("IgnoreFlowSolutionPointersOn")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    IgnoreFlowSolutionPointersOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        IgnoreFlowSolutionPointersOn(_cp(vtkCGNSReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("Initialize")) && isdefined(@__MODULE__, :vtkAbstractArray)
@@ -4982,6 +5562,11 @@ if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkAlgorithm
         IsA(_cp(vtkAlgorithm, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        IsA(_cp(vtkCGNSReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkCellData)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCellData}, a2) =
         IsA(_cp(vtkCellData, a1), a2)
@@ -5042,6 +5627,16 @@ if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkDoubleArr
         IsA(_cp(vtkDoubleArray, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkEnSightGoldReader)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkEnSightGoldReader}, a2) =
+        IsA(_cp(vtkEnSightGoldReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkEnSightReader)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkEnSightReader}, a2) =
+        IsA(_cp(vtkEnSightReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkFieldData)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkFieldData}, a2) =
         IsA(_cp(vtkFieldData, a1), a2)
@@ -5050,6 +5645,11 @@ end
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkFloatArray)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkFloatArray}, a2) =
         IsA(_cp(vtkFloatArray, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        IsA(_cp(vtkGenericEnSightReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkIdList)
@@ -5075,6 +5675,11 @@ end
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkMultiBlockDataSet)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMultiBlockDataSet}, a2) =
         IsA(_cp(vtkMultiBlockDataSet, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkMultiBlockDataSetAlgorithm)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMultiBlockDataSetAlgorithm}, a2) =
+        IsA(_cp(vtkMultiBlockDataSetAlgorithm, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkObject)
@@ -5175,6 +5780,26 @@ end
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkXMLMultiBlockDataWriter)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLMultiBlockDataWriter}, a2) =
         IsA(_cp(vtkXMLMultiBlockDataWriter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkXMLPDataObjectReader)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLPDataObjectReader}, a2) =
+        IsA(_cp(vtkXMLPDataObjectReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkXMLPDataReader)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLPDataReader}, a2) =
+        IsA(_cp(vtkXMLPDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkXMLPPolyDataReader)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLPPolyDataReader}, a2) =
+        IsA(_cp(vtkXMLPPolyDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkXMLPUnstructuredDataReader)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLPUnstructuredDataReader}, a2) =
+        IsA(_cp(vtkXMLPUnstructuredDataReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkXMLPolyDataReader)
@@ -5297,6 +5922,36 @@ if isdefined(@__MODULE__, Symbol("IsTriangle")) && isdefined(@__MODULE__, :vtkPo
         IsTriangle(_cp(vtkPolyData, a1), a2, a3, a4)
 end
 
+if isdefined(@__MODULE__, Symbol("LoadBndPatchOff")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    LoadBndPatchOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        LoadBndPatchOff(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("LoadBndPatchOn")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    LoadBndPatchOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        LoadBndPatchOn(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("LoadMeshOff")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    LoadMeshOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        LoadMeshOff(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("LoadMeshOn")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    LoadMeshOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        LoadMeshOn(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("LoadSurfacePatchOff")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    LoadSurfacePatchOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        LoadSurfacePatchOff(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("LoadSurfacePatchOn")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    LoadSurfacePatchOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        LoadSurfacePatchOn(_cp(vtkCGNSReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("LookupValue")) && isdefined(@__MODULE__, :vtkAbstractArray)
     LookupValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractArray}, a2) =
         LookupValue(_cp(vtkAbstractArray, a1), a2)
@@ -5355,6 +6010,16 @@ end
 if isdefined(@__MODULE__, Symbol("NullData")) && isdefined(@__MODULE__, :vtkFieldData)
     NullData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkFieldData}, a2) =
         NullData(_cp(vtkFieldData, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("ParticleCoordinatesByIndexOff")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    ParticleCoordinatesByIndexOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        ParticleCoordinatesByIndexOff(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ParticleCoordinatesByIndexOn")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    ParticleCoordinatesByIndexOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        ParticleCoordinatesByIndexOn(_cp(vtkGenericEnSightReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("PassCellDataOff")) && isdefined(@__MODULE__, :vtkCellDataToPointData)
@@ -5467,6 +6132,11 @@ if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :v
         ProcessRequest(_cp(vtkDataSetAlgorithm, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
 end
 
+if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkMultiBlockDataSetAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector)
+    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMultiBlockDataSetAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
+        ProcessRequest(_cp(vtkMultiBlockDataSetAlgorithm, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
+end
+
 if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkPolyDataAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector)
     ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
         ProcessRequest(_cp(vtkPolyDataAlgorithm, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
@@ -5510,6 +6180,16 @@ end
 if isdefined(@__MODULE__, Symbol("Push")) && isdefined(@__MODULE__, :vtkPlane)
     Push(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPlane}, a2) =
         Push(_cp(vtkPlane, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("ReadAllVariablesOff")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    ReadAllVariablesOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        ReadAllVariablesOff(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadAllVariablesOn")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    ReadAllVariablesOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        ReadAllVariablesOn(_cp(vtkGenericEnSightReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("ReadFromInputStreamOff")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -5882,6 +6562,11 @@ if isdefined(@__MODULE__, Symbol("SetAllowInterpolation")) && isdefined(@__MODUL
         SetAllowInterpolation(_cp(vtkDataSetSurfaceFilter, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetApplyTetrahedralize")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    SetApplyTetrahedralize(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        SetApplyTetrahedralize(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetArrayComponent")) && isdefined(@__MODULE__, :vtkContourFilter)
     SetArrayComponent(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkContourFilter}, a2) =
         SetArrayComponent(_cp(vtkContourFilter, a1), a2)
@@ -5912,6 +6597,11 @@ if isdefined(@__MODULE__, Symbol("SetAxisUpdateExtent")) && isdefined(@__MODULE_
         SetAxisUpdateExtent(_cp(vtkImageData, a1), a2, a3, a4, a5, a6)
 end
 
+if isdefined(@__MODULE__, Symbol("SetBaseArrayStatus")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetBaseArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2, a3) =
+        SetBaseArrayStatus(_cp(vtkCGNSReader, a1), a2, a3)
+end
+
 if isdefined(@__MODULE__, Symbol("SetBatchSize")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
     SetBatchSize(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkTableBasedClipDataSet}, a2) =
         SetBatchSize(_cp(vtkTableBasedClipDataSet, a1), a2)
@@ -5937,9 +6627,19 @@ if isdefined(@__MODULE__, Symbol("SetBlockSize")) && isdefined(@__MODULE__, :vtk
         SetBlockSize(_cp(vtkXMLWriterBase, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetByteOrder")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    SetByteOrder(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        SetByteOrder(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetByteOrder")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
     SetByteOrder(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLWriterBase}, a2) =
         SetByteOrder(_cp(vtkXMLWriterBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetByteOrderToBigEndian")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    SetByteOrderToBigEndian(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        SetByteOrderToBigEndian(_cp(vtkGenericEnSightReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("SetByteOrderToBigEndian")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
@@ -5947,14 +6647,44 @@ if isdefined(@__MODULE__, Symbol("SetByteOrderToBigEndian")) && isdefined(@__MOD
         SetByteOrderToBigEndian(_cp(vtkXMLWriterBase, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("SetByteOrderToLittleEndian")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    SetByteOrderToLittleEndian(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
+        SetByteOrderToLittleEndian(_cp(vtkGenericEnSightReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("SetByteOrderToLittleEndian")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
     SetByteOrderToLittleEndian(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLWriterBase}) =
         SetByteOrderToLittleEndian(_cp(vtkXMLWriterBase, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("SetCacheConnectivity")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetCacheConnectivity(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        SetCacheConnectivity(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetCacheMesh")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetCacheMesh(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        SetCacheMesh(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetCaseFileName")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    SetCaseFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        SetCaseFileName(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetCategoricalData")) && isdefined(@__MODULE__, :vtkPointDataToCellData)
     SetCategoricalData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPointDataToCellData}, a2) =
         SetCategoricalData(_cp(vtkPointDataToCellData, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetCellArrayStatus")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetCellArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2, a3) =
+        SetCellArrayStatus(_cp(vtkCGNSReader, a1), a2, a3)
+end
+
+if isdefined(@__MODULE__, Symbol("SetCellArrayStatus")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    SetCellArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2, a3) =
+        SetCellArrayStatus(_cp(vtkGenericEnSightReader, a1), a2, a3)
 end
 
 if isdefined(@__MODULE__, Symbol("SetCellArrayStatus")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -6202,6 +6932,11 @@ if isdefined(@__MODULE__, Symbol("SetCopyVectors")) && isdefined(@__MODULE__, :v
         SetCopyVectors(_cp(vtkDataSetAttributes, a1), a2, a3)
 end
 
+if isdefined(@__MODULE__, Symbol("SetCreateEachSolutionAsBlock")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetCreateEachSolutionAsBlock(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        SetCreateEachSolutionAsBlock(_cp(vtkCGNSReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetCutFunction")) && isdefined(@__MODULE__, :vtkCutter) && isdefined(@__MODULE__, :vtkImplicitFunction)
     SetCutFunction(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCutter}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkImplicitFunction}) =
         SetCutFunction(_cp(vtkCutter, a1), _cp(vtkImplicitFunction, a2))
@@ -6210,6 +6945,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetData")) && isdefined(@__MODULE__, :vtkPoints) && isdefined(@__MODULE__, :vtkDataArray)
     SetData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPoints}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataArray}) =
         SetData(_cp(vtkPoints, a1), _cp(vtkDataArray, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetDataLocation")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetDataLocation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        SetDataLocation(_cp(vtkCGNSReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetDataMode")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
@@ -6322,6 +7062,16 @@ if isdefined(@__MODULE__, Symbol("SetDirectionMatrix")) && isdefined(@__MODULE__
         SetDirectionMatrix(_cp(vtkImageData, a1), a2, a3, a4, a5, a6, a7, a8, a9, a10)
 end
 
+if isdefined(@__MODULE__, Symbol("SetDistributeBlocks")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetDistributeBlocks(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        SetDistributeBlocks(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetDoublePrecisionMesh")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetDoublePrecisionMesh(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        SetDoublePrecisionMesh(_cp(vtkCGNSReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetEditable")) && isdefined(@__MODULE__, :vtkPointSet)
     SetEditable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPointSet}, a2) =
         SetEditable(_cp(vtkPointSet, a1), a2)
@@ -6347,6 +7097,16 @@ if isdefined(@__MODULE__, Symbol("SetExtent")) && isdefined(@__MODULE__, :vtkStr
         SetExtent(_cp(vtkStructuredGrid, a1), a2, a3, a4, a5, a6, a7)
 end
 
+if isdefined(@__MODULE__, Symbol("SetFaceArrayStatus")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetFaceArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2, a3) =
+        SetFaceArrayStatus(_cp(vtkCGNSReader, a1), a2, a3)
+end
+
+if isdefined(@__MODULE__, Symbol("SetFamilyArrayStatus")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetFamilyArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2, a3) =
+        SetFamilyArrayStatus(_cp(vtkCGNSReader, a1), a2, a3)
+end
+
 if isdefined(@__MODULE__, Symbol("SetFastMode")) && isdefined(@__MODULE__, :vtkContourFilter)
     SetFastMode(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkContourFilter}, a2) =
         SetFastMode(_cp(vtkContourFilter, a1), a2)
@@ -6360,6 +7120,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetFieldData")) && isdefined(@__MODULE__, :vtkDataObject) && isdefined(@__MODULE__, :vtkFieldData)
     SetFieldData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkFieldData}) =
         SetFieldData(_cp(vtkDataObject, a1), _cp(vtkFieldData, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetFileName")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        SetFileName(_cp(vtkCGNSReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetFileName")) && isdefined(@__MODULE__, :vtkXMLImageDataWriter)
@@ -6415,6 +7180,16 @@ end
 if isdefined(@__MODULE__, Symbol("SetFileName")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
     SetFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLWriterBase}, a2) =
         SetFileName(_cp(vtkXMLWriterBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetFilePath")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    SetFilePath(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        SetFilePath(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetFlipFaceNormals")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetFlipFaceNormals(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        SetFlipFaceNormals(_cp(vtkCGNSReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetGenerateClipPointTypes")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
@@ -6507,6 +7282,11 @@ if isdefined(@__MODULE__, Symbol("SetIdTypeToInt64")) && isdefined(@__MODULE__, 
         SetIdTypeToInt64(_cp(vtkXMLWriterBase, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("SetIgnoreFlowSolutionPointers")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetIgnoreFlowSolutionPointers(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        SetIgnoreFlowSolutionPointers(_cp(vtkCGNSReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetInformation")) && isdefined(@__MODULE__, :vtkAlgorithm) && isdefined(@__MODULE__, :vtkInformation)
     SetInformation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}) =
         SetInformation(_cp(vtkAlgorithm, a1), _cp(vtkInformation, a2))
@@ -6582,6 +7362,11 @@ if isdefined(@__MODULE__, Symbol("SetInputData")) && isdefined(@__MODULE__, :vtk
         SetInputData(_cp(vtkDataSetAlgorithm, a1), _cp(vtkDataSet, a2))
 end
 
+if isdefined(@__MODULE__, Symbol("SetInputData")) && isdefined(@__MODULE__, :vtkMultiBlockDataSetAlgorithm) && isdefined(@__MODULE__, :vtkDataObject)
+    SetInputData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMultiBlockDataSetAlgorithm}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
+        SetInputData(_cp(vtkMultiBlockDataSetAlgorithm, a1), a2, _cp(vtkDataObject, a3))
+end
+
 if isdefined(@__MODULE__, Symbol("SetInputData")) && isdefined(@__MODULE__, :vtkPolyDataAlgorithm) && isdefined(@__MODULE__, :vtkDataObject)
     SetInputData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataAlgorithm}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
         SetInputData(_cp(vtkPolyDataAlgorithm, a1), a2, _cp(vtkDataObject, a3))
@@ -6635,6 +7420,21 @@ end
 if isdefined(@__MODULE__, Symbol("SetLinks")) && isdefined(@__MODULE__, :vtkUnstructuredGrid) && isdefined(@__MODULE__, :vtkAbstractCellLinks)
     SetLinks(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGrid}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractCellLinks}) =
         SetLinks(_cp(vtkUnstructuredGrid, a1), _cp(vtkAbstractCellLinks, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetLoadBndPatch")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetLoadBndPatch(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        SetLoadBndPatch(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetLoadMesh")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetLoadMesh(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        SetLoadMesh(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetLoadSurfacePatch")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetLoadSurfacePatch(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        SetLoadSurfacePatch(_cp(vtkCGNSReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetLocator")) && isdefined(@__MODULE__, :vtkContourFilter) && isdefined(@__MODULE__, :vtkIncrementalPointLocator)
@@ -6837,6 +7637,11 @@ if isdefined(@__MODULE__, Symbol("SetParserErrorObserver")) && isdefined(@__MODU
         SetParserErrorObserver(_cp(vtkXMLReader, a1), _cp(vtkCommand, a2))
 end
 
+if isdefined(@__MODULE__, Symbol("SetParticleCoordinatesByIndex")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    SetParticleCoordinatesByIndex(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        SetParticleCoordinatesByIndex(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetPassCellData")) && isdefined(@__MODULE__, :vtkCellDataToPointData)
     SetPassCellData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCellDataToPointData}, a2) =
         SetPassCellData(_cp(vtkCellDataToPointData, a1), a2)
@@ -6880,6 +7685,16 @@ end
 if isdefined(@__MODULE__, Symbol("SetPoint")) && isdefined(@__MODULE__, :vtkPoints)
     SetPoint(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPoints}, a2, a3) =
         SetPoint(_cp(vtkPoints, a1), a2, a3)
+end
+
+if isdefined(@__MODULE__, Symbol("SetPointArrayStatus")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetPointArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2, a3) =
+        SetPointArrayStatus(_cp(vtkCGNSReader, a1), a2, a3)
+end
+
+if isdefined(@__MODULE__, Symbol("SetPointArrayStatus")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    SetPointArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2, a3) =
+        SetPointArrayStatus(_cp(vtkGenericEnSightReader, a1), a2, a3)
 end
 
 if isdefined(@__MODULE__, Symbol("SetPointArrayStatus")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -6950,6 +7765,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetRawAppendedData")) && isdefined(@__MODULE__, :vtkXMLUnstructuredGridWriter)
     SetRawAppendedData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLUnstructuredGridWriter}) =
         SetRawAppendedData(_cp(vtkXMLUnstructuredGridWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetReadAllVariables")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    SetReadAllVariables(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        SetReadAllVariables(_cp(vtkGenericEnSightReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetReadFromInputStream")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -7062,6 +7882,11 @@ if isdefined(@__MODULE__, Symbol("SetTimeStepRange")) && isdefined(@__MODULE__, 
         SetTimeStepRange(_cp(vtkXMLReader, a1), a2, a3)
 end
 
+if isdefined(@__MODULE__, Symbol("SetTimeValue")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
+    SetTimeValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
+        SetTimeValue(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetTransform")) && isdefined(@__MODULE__, :vtkImplicitFunction)
     SetTransform(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkImplicitFunction}, a2) =
         SetTransform(_cp(vtkImplicitFunction, a1), a2)
@@ -7122,9 +7947,24 @@ if isdefined(@__MODULE__, Symbol("SetTuple9")) && isdefined(@__MODULE__, :vtkDat
         SetTuple9(_cp(vtkDataArray, a1), a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
 end
 
+if isdefined(@__MODULE__, Symbol("SetUnsteadySolutionStartTimestep")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetUnsteadySolutionStartTimestep(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        SetUnsteadySolutionStartTimestep(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetUse3DVector")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetUse3DVector(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        SetUse3DVector(_cp(vtkCGNSReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetUseScalarTree")) && isdefined(@__MODULE__, :vtkContourFilter)
     SetUseScalarTree(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkContourFilter}, a2) =
         SetUseScalarTree(_cp(vtkContourFilter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetUseUnsteadyPattern")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    SetUseUnsteadyPattern(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
+        SetUseUnsteadyPattern(_cp(vtkCGNSReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetUseValueAsOffset")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
@@ -7532,6 +8372,16 @@ if isdefined(@__MODULE__, Symbol("UpdateWholeExtent")) && isdefined(@__MODULE__,
         UpdateWholeExtent(_cp(vtkAlgorithm, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("Use3DVectorOff")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    Use3DVectorOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        Use3DVectorOff(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("Use3DVectorOn")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    Use3DVectorOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        Use3DVectorOn(_cp(vtkCGNSReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("UseScalarTreeOff")) && isdefined(@__MODULE__, :vtkContourFilter)
     UseScalarTreeOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkContourFilter}) =
         UseScalarTreeOff(_cp(vtkContourFilter, a1))
@@ -7540,6 +8390,16 @@ end
 if isdefined(@__MODULE__, Symbol("UseScalarTreeOn")) && isdefined(@__MODULE__, :vtkContourFilter)
     UseScalarTreeOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkContourFilter}) =
         UseScalarTreeOn(_cp(vtkContourFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("UseUnsteadyPatternOff")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    UseUnsteadyPatternOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        UseUnsteadyPatternOff(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("UseUnsteadyPatternOn")) && isdefined(@__MODULE__, :vtkCGNSReader)
+    UseUnsteadyPatternOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
+        UseUnsteadyPatternOn(_cp(vtkCGNSReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("UseValueAsOffsetOff")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
@@ -7682,6 +8542,11 @@ if isdefined(@__MODULE__, Symbol("vtkAlgorithm!SetDefaultExecutivePrototype")) &
         vtkAlgorithm!SetDefaultExecutivePrototype(_cp(vtkExecutive, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("vtkCGNSReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkCGNSReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkCGNSReader!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("vtkCellData!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkCellData!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkCellData!SafeDownCast(_cp(vtkObjectBase, a1))
@@ -7812,6 +8677,16 @@ if isdefined(@__MODULE__, Symbol("vtkDoubleArray!SafeDownCast")) && isdefined(@_
         vtkDoubleArray!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("vtkEnSightGoldReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkEnSightGoldReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkEnSightGoldReader!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkEnSightReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkEnSightReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkEnSightReader!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("vtkFieldData!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkFieldData!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkFieldData!SafeDownCast(_cp(vtkObjectBase, a1))
@@ -7825,6 +8700,11 @@ end
 if isdefined(@__MODULE__, Symbol("vtkFloatArray!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkFloatArray!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkFloatArray!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkGenericEnSightReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkGenericEnSightReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkGenericEnSightReader!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("vtkIdList!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
@@ -7885,6 +8765,11 @@ end
 if isdefined(@__MODULE__, Symbol("vtkMultiBlockDataSet!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkMultiBlockDataSet!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkMultiBlockDataSet!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkMultiBlockDataSetAlgorithm!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkMultiBlockDataSetAlgorithm!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkMultiBlockDataSetAlgorithm!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("vtkObject!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
@@ -8080,6 +8965,26 @@ end
 if isdefined(@__MODULE__, Symbol("vtkXMLMultiBlockDataWriter!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkXMLMultiBlockDataWriter!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkXMLMultiBlockDataWriter!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkXMLPDataObjectReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkXMLPDataObjectReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkXMLPDataObjectReader!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkXMLPDataReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkXMLPDataReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkXMLPDataReader!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkXMLPPolyDataReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkXMLPPolyDataReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkXMLPPolyDataReader!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkXMLPUnstructuredDataReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkXMLPUnstructuredDataReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkXMLPUnstructuredDataReader!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("vtkXMLPolyDataReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)

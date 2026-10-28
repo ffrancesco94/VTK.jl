@@ -19,8 +19,12 @@ p = VTK.field_array(pd, "p")         # typed zero-copy view, or nothing
 
 `read_vtp` does the same for poly data; `read_vti`/`read_vtr`/`read_vts`
 read image, rectilinear, and curvilinear structured grids; `read_vtm`
-reads multiblock containers (see below). Readers return owning smart
-pointers, so the grid stays alive as long as you hold it.
+reads multiblock containers (see below).  For CFD workflows,
+`read_ensight` reads EnSight Gold case files, `read_cgns` reads CGNS
+files, and `read_pvtp` reads parallel PVTK poly-data summaries — all
+returning `vtkMultiBlockDataSet` (or `vtkPolyData` for `read_pvtp`).
+Readers return owning smart pointers, so the grid stays alive as long as
+you hold it.
 
 ## Writing VTK files
 
@@ -109,9 +113,9 @@ VTK.insert_cell!(grid, VTK.VTKCellTypes.VTK_TETRA, [0, 1, 2, 3])
 
 ## What is *not* covered (yet)
 
-Legacy `.vtk`, structured formats (`.vti/.vtr/.vts`), multiblock `.vtm`,
-and parallel readers are unwrapped — see the roadmap in `STATUS.md`.
-For structured data, the pragmatic path today is going through
-WriteVTK/ReadVTK and converting via the constructors above.
+Legacy `.vtk` and parallel unstructured-grid readers (`.pvtu`) are
+unwrapped — see the roadmap in `STATUS.md`.  For structured data, the
+pragmatic path today is going through WriteVTK/ReadVTK and converting
+via the constructors above.
 
 Next: [filter pipelines](filters.md).

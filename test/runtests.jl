@@ -10,4 +10,5 @@ using Test
     include("oracle.jl")
     include("io_structured.jl")
     include("io_multiblock.jl")
+    include("io_cfd.jl")
 end
