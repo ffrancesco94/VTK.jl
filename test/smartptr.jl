@@ -26,3 +26,14 @@
         @test VTK.GetInsideOut(clip) == 1
     end
 end
+
+@testset "public VTK parent chains" begin
+    @test VTK.vtkImageData <: VTK.vtkDataSet
+    if isdefined(VTK, :vtkRectilinearGrid)
+        @test VTK.vtkRectilinearGrid <: VTK.vtkDataSet
+        @test VTK.vtkMultiBlockDataSet <: VTK.vtkDataObject
+        @test VTK.vtkIdTypeArray <: VTK.vtkDataArray
+        @test VTK.vtkXMLMultiBlockDataReader <: VTK.vtkXMLReader
+        @test VTK.vtkXMLMultiBlockDataWriter <: VTK.vtkXMLWriter
+    end
+end
