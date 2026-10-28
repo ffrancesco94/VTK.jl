@@ -179,8 +179,9 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 3. **Arrays**: no typed get/set accessors (all access goes through zero-copy
    views or the slow double-based virtual API); SOA/variant arrays
    unsupported for zero-copy (guarded, throws).
-4. **I/O**: XML only; legacy `.vtk`, multiblock `.vtm`, parallel readers are
-   unwrapped. Writer only emits appended data (fine for CFD). ReadVTK.jl
+4. **I/O**: XML only, including structured grids and multiblock `.vtm`;
+   legacy `.vtk` and parallel readers are unwrapped. Writers only emit
+   appended data (fine for CFD). ReadVTK.jl
    (the pure-Julia oracle) does not parse zlib-compressed appended blocks,
    so compressed output is verified by re-reading with VTK.jl itself.
 5. **Data model**: unstructured grids fully constructible from Julia; other
@@ -246,6 +247,10 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 - [ ] More filters: calculator, gradient, threshold, stream tracer (as CFD
       needs arise)
 - [x] Generic name-based `downcast` (2026-10-26)
+- [x] Generated smart-pointer forwarding overloads and repaired public VTK
+      parent chains (2026-10-28): ordinary wrapped calls no longer need
+      explicit `_cp`; structured XML and multiblock types dispatch through
+      their proper dataset/algorithm base classes
 
 ### Phase 3 — Julian layer
 
@@ -272,9 +277,9 @@ The generator migration is done and CI-green, so the next sprint is about
 **breadth** (more VTK surface through the now-working pipeline) and
 **upstream** (reducing our fork delta). Roughly in priority order:
 
-1. **More I/O** (Phase 2): `.vti/.vtr/.vts` readers/writers, legacy `.vtk`,
-   multiblock `.vtm`. With the generator in place this is mostly
-   `wrapit.toml.template` + Julian plumbing (`read_vti`/`write_vti`, …).
+1. **More I/O** (Phase 2): legacy `.vtk` readers/writers. Structured XML
+   (`.vti/.vtr/.vts`) and multiblock `.vtm` are complete. With the generator
+   in place, legacy support is mostly `wrapit.toml.template` + Julian plumbing.
 2. **Upstream WrapIt Bug 1** (Phase 2/4 hygiene): submit
    `docs/patches/wrapit-bug1-null-cstring.patch` to `grasph/wrapit` per the
    how-to in `docs/wrapit-upstream-bugs.md`; unblocks dropping the fork.
@@ -282,9 +287,7 @@ The generator migration is done and CI-green, so the next sprint is about
 3. **More filters** (Phase 2): calculator, gradient, threshold, stream
    tracer — as CFD needs arise; each is config + a thin `src/filters.jl`
    wrapper.
-4. **Generic name-based `downcast`** (Phase 2): replace the hand-written
-   per-type downcasts with a registry-driven `downcast(obj, "vtkPolyData")`.
-5. **Meshes.jl/GeometryBasics bridges** (Phase 3): needs a target-representation
+4. **Meshes.jl/GeometryBasics bridges** (Phase 3): needs a target-representation
    decision for mixed-cell grids.
-6. **`VTK_julia_jll` BinaryBuilder recipe** (Phase 4): removes the local
+5. **`VTK_julia_jll` BinaryBuilder recipe** (Phase 4): removes the local
    C++17 toolchain requirement for end users.

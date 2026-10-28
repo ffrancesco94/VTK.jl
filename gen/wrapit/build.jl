@@ -175,10 +175,19 @@ end
 const AOS_LEAF_ARRAYS =
     ["vtkDoubleArray", "vtkFloatArray", "vtkIntArray", "vtkUnsignedCharArray"]
 
-# Structured-grid data model: WrapIt drops the vtkStructuredData base (pure
-# template mixin, bug 2 same family); re-point vtkStructuredGrid at
-# vtkPointSet, exactly like the AOS leaf arrays.
-const STRUCTURED_GRID_PARENT = "vtkPointSet"
+# Other public classes whose direct VTK parent is not mapped by WrapIt.
+# Re-point them at the nearest registered public ancestor. This preserves the
+# C++ is-a relationship for CxxPtr/SmartPointer dispatch without wrapping every
+# intermediate implementation class.
+const PARENT_FIXES = [
+    "vtkStructuredGrid" => "vtkPointSet",       # vtkStructuredData mixin
+    "vtkImageData" => "vtkDataSet",             # vtkCartesianGrid
+    "vtkRectilinearGrid" => "vtkDataSet",       # vtkStructuredData mixin
+    "vtkMultiBlockDataSet" => "vtkDataObject",  # vtkDataObjectTree
+    "vtkIdTypeArray" => "vtkDataArray",         # vtkAOSDataArrayTemplate
+    "vtkXMLMultiBlockDataReader" => "vtkXMLReader",
+    "vtkXMLMultiBlockDataWriter" => "vtkXMLWriter",
+]
 
 function postprocess!()
     classes = joinpath(BUILD_DIR, "cxx", "JlClasses.cxx")
@@ -194,17 +203,30 @@ function postprocess!()
     shim = "\nnamespace jlcxx {\n" * join(
         "  template<> struct SuperType<$c> { typedef vtkDataArray type; };\n"
         for c in AOS_LEAF_ARRAYS) * "}\n"
+    # (2) repair the remaining dropped public parent chains (bug 2 family).
+    parent_shims = Pair{String,String}[]
+    for (child, parent) in PARENT_FIXES
+        bare = "add_type<$child>(\"$child\")"
+        fixed = "add_type<$child>(\"$child\", jlcxx::julia_base_type<$parent>())"
+        if occursin(bare, s)
+            s = replace(s, bare => fixed)
+            push!(parent_shims, child => parent)
+        else
+            # Newer libclang versions may recover some of these parents
+            # themselves; accept that case, but never hide an unexpected one.
+            occursin(Regex("add_type<$child>\\(\"$child\",\\s*" *
+                            "jlcxx::julia_base_type<$parent>\\(\\)\\)"), s) ||
+                error("parent-fix target not found: $child")
+        end
+    end
+    shim = "\nnamespace jlcxx {\n" * join(
+        "  template<> struct SuperType<$child> { typedef $parent type; };\n"
+        for (child, parent) in parent_shims) * "}\n" * shim
     # The smart-pointer traits must be visible in EVERY TU that boxes
     # vtkSmartPointer returns (factory selection is per translation unit);
     # ToAOSDataArray in this file returns vtkSmartPointer<vtkDataArray>.
     s = replace(s, "#include \"jlVTKGen.h\"" =>
         "#include \"jlVTKGen.h\"\n#include \"shim_vtkjl.h\"\n" * shim; count = 1)
-    # (2) structured grid: WrapIt drops the vtkStructuredData template base;
-    # re-point at vtkPointSet (fake-superclass trick, same as (1)).
-    s = replace(s,
-        "add_type<vtkStructuredGrid>(\"vtkStructuredGrid\")" =>
-        "add_type<vtkStructuredGrid>(\"vtkStructuredGrid\", jlcxx::julia_base_type<vtkPointSet>())")
-    shim = "\nnamespace jlcxx {\n  template<> struct SuperType<vtkStructuredGrid> { typedef vtkPointSet type; };\n}\n" * shim
     # (3) strip WrapIt's parametric vtkSmartPointer wrapper (the merged
     # module registers REAL smart-pointer support instead).
     s = strip_vtksmartpointer(s)
