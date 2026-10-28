@@ -272,6 +272,29 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 - [x] Memory-management hardening, "wrapper-owns-everything" design:
       `data`/`raw_data` return views derived from an owning `VTKDataArray`
       (structural lifetime, no view finalizers; §4.1/§5)
+- [x] Pass-through filters return downcast types (2026-10-28): `clip`,
+      `cell_to_point`, `point_to_cell` now use `downcast(GetOutput(f))`
+      instead of hard-coding `UnstructuredGrid`, so poly/structured/image
+      inputs produce correctly typed outputs
+- [ ] **`@vtk_filter` macro overhaul**: replace the repetitive
+      factory → configure → update! → downcast boilerplate in `src/filters.jl`
+      with a declarative macro. Each filter becomes a one-liner plus its
+      filter-specific configuration block:
+
+      ```julia
+      @vtk_filter clip(TableBasedClipDataSet → pass_through;
+                      insideout=false) begin
+          SetClipFunction(f, implicitfn)
+          insideout && SetInsideOut(f, true)
+      end
+      ```
+
+      The macro generates the standard wrapper: `Factory_new()`,
+      `SetInputData`, the config block (with access to `f` and all kwargs),
+      `update!`, and the appropriate output downcast. Output type
+      annotations: `pass_through` (matches input), `vtkPolyData` etc.
+      (fixed output), or `auto` (generic `downcast`). Eliminates ~5 lines
+      of boilerplate per filter and enforces consistent error handling.
 - [ ] Meshes.jl/GeometryBasics bridges — deferred (mixed-cell grids vs
       homogeneous-typed Julia meshes need a target-representation decision);
       plain `(points, cells)` data already feeds both manually

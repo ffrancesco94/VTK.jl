@@ -25,10 +25,11 @@ function plane(origin, normal)
 end
 
 """
-    clip(grid, implicitfn; insideout=false) -> vtkUnstructuredGrid
+    clip(grid, implicitfn; insideout=false) -> vtkDataObject (downcast to access)
 
 Clip `grid` by an implicit function (see `plane`). Keeps the region where the
-function evaluates negative unless `insideout=true`.
+function evaluates negative unless `insideout=true`. The output type matches
+the input grid type (unstructured, poly, image, structured).
 """
 function clip(grid, implicitfn; insideout = false)
     f = TableBasedClipDataSet_new()
@@ -36,7 +37,7 @@ function clip(grid, implicitfn; insideout = false)
     SetClipFunction(f, implicitfn)
     SetInsideOut(f, insideout)
     update!(f)
-    return UnstructuredGrid(GetOutput(f))
+    return downcast(GetOutput(f))
 end
 
 """
@@ -56,20 +57,21 @@ end
     cell_to_point(grid) -> vtkDataObject (downcast to access)
     point_to_cell(grid) -> vtkDataObject
 
-Interpolate cell data to points and vice versa.
+Interpolate cell data to points and vice versa. The output type matches the
+input grid type.
 """
 function cell_to_point(grid)
     f = CellDataToPointData_new()
     SetInputData(f, grid)
     update!(f)
-    return GetOutput(f)
+    return downcast(GetOutput(f))
 end
 
 function point_to_cell(grid)
     f = PointDataToCellData_new()
     SetInputData(f, grid)
     update!(f)
-    return GetOutput(f)
+    return downcast(GetOutput(f))
 end
 
 """
