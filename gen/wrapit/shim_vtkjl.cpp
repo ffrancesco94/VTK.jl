@@ -57,6 +57,15 @@
 #include <vtkPointDataToCellData.h>
 #include <vtkContourFilter.h>
 #include <vtkDataSetSurfaceFilter.h>
+#include <vtkMultiBlockDataSetAlgorithm.h>
+#include <vtkGenericEnSightReader.h>
+#include <vtkEnSightReader.h>
+#include <vtkEnSightGoldReader.h>
+#include <vtkCGNSReader.h>
+#include <vtkXMLPDataObjectReader.h>
+#include <vtkXMLPDataReader.h>
+#include <vtkXMLPUnstructuredDataReader.h>
+#include <vtkXMLPPolyDataReader.h>
 #include <vtkArrayDispatch.h>
 #include <array>
 #include <cstdint>
@@ -421,6 +430,27 @@ void register_shim_methods(jlcxx::Module& mod)
     [](vtkXMLStructuredGridWriter* w, const std::string& name) {
       w->SetFileName(name.c_str());
     });
+
+  // ---- CFD readers: EnSight Gold + CGNS ----
+  mod.method("EnSightGoldReader_new", []() {
+    return vtkSmartPointer<vtkEnSightGoldReader>::New();
+  });
+  mod.method("SetCaseFileName",
+    [](vtkGenericEnSightReader* r, const std::string& name) {
+      r->SetCaseFileName(name.c_str());
+    });
+  mod.method("CGNSReader_new", []() {
+    return vtkSmartPointer<vtkCGNSReader>::New();
+  });
+  mod.method("SetFileName",
+    [](vtkCGNSReader* r, const std::string& name) {
+      r->SetFileName(name.c_str());
+    });
+
+  // ---- parallel XML readers ----
+  mod.method("XMLPPolyDataReader_new", []() {
+    return vtkSmartPointer<vtkXMLPPolyDataReader>::New();
+  });
 
   // ---- XML writers ----
   mod.method("XMLUnstructuredGridWriter_new", []() {
