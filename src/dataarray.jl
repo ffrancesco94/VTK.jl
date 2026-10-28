@@ -18,8 +18,8 @@
 # requested static type, for calling low-level methods that take T*.
 _cp(::Type{T}, x) where {T} = CxxPtr{T}(x[])
 
-ntuples(da) = GetNumberOfTuples(_cp(vtkDataArray, da))
-ncomponents(da) = GetNumberOfComponents(_cp(vtkDataArray, da))
+ntuples(da) = GetNumberOfTuples(da)
+ncomponents(da) = GetNumberOfComponents(da)
 
 Base.size(da) = (ncomponents(da), ntuples(da))
 Base.length(da) = ncomponents(da) * ntuples(da)
@@ -43,8 +43,8 @@ Holds the underlying smart pointer, so it (and views derived from it, e.g.
 """
 data(da::CxxWrap.CxxWrapCore.SmartPointer) = VTKDataArray(da)
 
-name(da) = GetArrayName(_cp(vtkDataArray, da))
-name!(da, s) = SetArrayName(_cp(vtkDataArray, da), String(s))
+name(da) = GetArrayName(da)
+name!(da, s) = SetArrayName(da, String(s))
 
 """
     resize!(da, ntuples)
@@ -52,6 +52,6 @@ name!(da, s) = SetArrayName(_cp(vtkDataArray, da), String(s))
 Set the number of tuples. Call before writing through a `data`/`raw_data` view.
 """
 function Base.resize!(da::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataArray}, n::Integer)
-    SetNumberOfTuples(_cp(vtkDataArray, da), n)
+    SetNumberOfTuples(da, n)
     return da
 end

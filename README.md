@@ -25,7 +25,8 @@ This drives the WrapIt-based generator ([`gen/wrapit`](gen/wrapit)): it
 builds **wrapit from source** ([`ffrancesco94/wrapit`](https://github.com/ffrancesco94/wrapit),
 which contains the macro-truncation fix), generates CxxWrap bindings from
 the VTK headers plus a header-derived mechanical shim, merges the hand
-shim, compiles, and installs the result at `wrapper/build/libvtk_julia.so`,
+shim, generates Julia smart-pointer forwarding overloads, compiles, and
+installs the result at `wrapper/build/libvtk_julia.so`,
 the default location loaded by the package.
 
 - Fallback: the legacy hand-written CMake wrapper is still available via

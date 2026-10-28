@@ -15,10 +15,13 @@ workflow changes.
     `vtkAlgorithm`) via the hand shim (`shim_vtkjl.cpp`) plus a generated
     auto-shim (`build/cxx/shim_auto.cpp`, produced by `gen/wrapit/auto_shim.jl`
     from VTK headers, factories + macro accessors like `InsideOutOn`).
+    `gen/wrapit/smartptr_wrappers.jl` also generates
+    `src/generated_methods.jl`, smart-pointer overloads that forward to the
+    raw-pointer bindings through `_cp`; regenerate it after binding changes.
   - **Fallback**: legacy hand-written CMake wrapper,
     `julia --project=. gen/build_wrapper_cmake.jl`. Lacks the auto-shim.
-- Test counts: **97/97 on the merged lib** (6 extra auto-shim tests),
-  **91/91 on the hand-written fallback** (auto-shim testset self-skips via
+- Test counts: **137/137 on the merged lib** (6 extra auto-shim tests),
+  **95/95 on the hand-written fallback** (auto-shim testset self-skips via
   `isdefined(VTK, :InsideOutOn)`).
 - WrapIt is built **from source** from the fork `ffrancesco94/wrapit` (main),
   not from WrapIt_jll; see `gen/wrapit/wrapit_src.jl`. The upstream bugs we

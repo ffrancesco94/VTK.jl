@@ -115,18 +115,18 @@ Add the friendly function to `src/filters.jl` (or `dataset.jl` for I/O):
 """
 function gradient(grid; scalars = nothing)
     f = GradientFilter_new()
-    SetInputData(_cp(vtkAlgorithm, f), _cp(vtkDataObject, grid))
-    scalars === nothing || SetInputScalars(
-        _cp(vtkGradientFilter, f), 0, String(scalars))  # check the generated name
+    SetInputData(f, grid)
+    scalars === nothing || SetInputScalars(f, 0, String(scalars))  # check the generated name
     update!(f)
-    return UnstructuredGrid(GetOutput(_cp(vtkAlgorithm, f)))
+    return UnstructuredGrid(GetOutput(f))
 end
 ```
 
 Idioms you will reuse constantly:
 
-- `_cp(vtkBaseClass, obj)` — up-cast a smart pointer to the base class the
-  C++ method expects (`_cp` = CxxPtr of).
+- Call wrapped methods directly with smart pointers. The generated overloads
+  in `src/generated_methods.jl` insert the required `_cp(vtkBaseClass, obj)`
+  conversion automatically; raw-pointer calls with explicit `_cp` remain valid.
 - `update!(algo)` — calls `Update` and throws if VTK reported an error.
 - `UnstructuredGrid(GetOutput(...))` — downcast the generic output to the
   concrete type. The generic `downcast(obj)` dispatches on `GetClassName()`
@@ -173,7 +173,7 @@ end
 | `shim references types the generated module does not register: vtkX` | Add `vtkX.h` to the `input` list (reader/writer headers alone do not register their data types). |
 | C++ compile error: `no member named ...` in generated code | A method's parameter type was not registered; add that class's header, or veto the method. |
 | `added N shim-clash vetoes; REGENERATE` | Normal: the driver found methods both it and the shim emit; it reruns itself. Only investigate if it does not converge. |
-| Julia `MethodError` for a wrapped method | The generated overload was vetoed, or the argument needs an up-cast (`_cp`). Grep `JlClasses.cxx` for the exact signature. |
+| Julia `MethodError` for a wrapped method | The generated overload was vetoed, the smart-pointer forwarding file is stale, or an argument has the wrong type. Rebuild and grep `JlClasses.cxx` for the exact signature. |
 | Tests pass locally but CI fails | CI builds wrapit from source with a different libclang; check the CLANG_PREFIX notes in `AGENTS.md`. |
 | Wrong library loaded after switching | `rm -rf ~/.julia/compiled/v1.12/VTK` — the precompile cache does not track which `.so` was used. |
 

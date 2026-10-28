@@ -2,27 +2,27 @@
 
 UnstructuredGrid() = UnstructuredGrid_new()
 UnstructuredGrid(obj::CxxWrap.CxxWrapCore.SmartPointer) =
-    downcast_unstructuredgrid(_cp(vtkDataObject, obj))
+    downcast_unstructuredgrid(obj)
 UnstructuredGrid(obj::CxxWrap.CxxWrapCore.CxxPtr{<:vtkDataObject}) =
     downcast_unstructuredgrid(obj)
 PolyData(obj::CxxWrap.CxxWrapCore.SmartPointer) =
-    downcast_polydata(_cp(vtkDataObject, obj))
+    downcast_polydata(obj)
 PolyData(obj::CxxWrap.CxxWrapCore.CxxPtr{<:vtkDataObject}) =
     downcast_polydata(obj)
 ImageData(obj::CxxWrap.CxxWrapCore.SmartPointer) =
-    downcast_imagedata(_cp(vtkDataObject, obj))
+    downcast_imagedata(obj)
 ImageData(obj::CxxWrap.CxxWrapCore.CxxPtr{<:vtkDataObject}) =
     downcast_imagedata(obj)
 RectilinearGrid(obj::CxxWrap.CxxWrapCore.SmartPointer) =
-    downcast_rectilineargrid(_cp(vtkDataObject, obj))
+    downcast_rectilineargrid(obj)
 RectilinearGrid(obj::CxxWrap.CxxWrapCore.CxxPtr{<:vtkDataObject}) =
     downcast_rectilineargrid(obj)
 StructuredGrid(obj::CxxWrap.CxxWrapCore.SmartPointer) =
-    downcast_structuredgrid(_cp(vtkDataObject, obj))
+    downcast_structuredgrid(obj)
 StructuredGrid(obj::CxxWrap.CxxWrapCore.CxxPtr{<:vtkDataObject}) =
     downcast_structuredgrid(obj)
 MultiBlockDataSet(obj::CxxWrap.CxxWrapCore.SmartPointer) =
-    downcast_multiblock(_cp(vtkDataObject, obj))
+    downcast_multiblock(obj)
 MultiBlockDataSet(obj::CxxWrap.CxxWrapCore.CxxPtr{<:vtkDataObject}) =
     downcast_multiblock(obj)
 Points() = Points_new()
@@ -48,10 +48,7 @@ function _init_downcast_registry!()
     for (Tname, name, fn) in DOWNCAST_SOURCES
         isdefined(@__MODULE__, Tname) || continue   # type not in this library
         isdefined(@__MODULE__, fn) || continue      # no downcast binding
-        DOWNCAST_REGISTRY[name] = obj ->
-            getfield(@__MODULE__, fn)(
-                obj isa CxxWrap.CxxWrapCore.SmartPointer ?
-                    _cp(vtkDataObject, obj) : obj)
+        DOWNCAST_REGISTRY[name] = obj -> getfield(@__MODULE__, fn)(obj)
     end
     return nothing
 end
@@ -64,7 +61,7 @@ reader/filter output), dispatching on the VTK dynamic class name.
 Throws a `KeyError` for unregistered classes.
 """
 function downcast(obj::CxxWrap.CxxWrapCore.SmartPointer)
-    name = GetClassName(_cp(vtkObjectBase, obj))
+    name = GetClassName(obj)
     return DOWNCAST_REGISTRY[name](obj)
 end
 
@@ -87,41 +84,41 @@ Insert a cell of `celltype` (e.g. `VTK_HEXAHEDRON`) referencing 0-based
 """
 function insert_cell!(grid, celltype, point_ids)
     ids = CxxWrap.StdLib.StdVector(Int64.(collect(point_ids)))
-    InsertNextCell(_cp(vtkUnstructuredGrid, grid), celltype, ids)
+    InsertNextCell(grid, celltype, ids)
     return grid
 end
 
-Base.setindex!(pts, coord, i) = SetPoint(_cp(vtkPoints, pts), i - 1, coord...)
+Base.setindex!(pts, coord, i) = SetPoint(pts, i - 1, coord...)
 
-npoints!(pts, n) = SetNumberOfPoints(_cp(vtkPoints, pts), n)
+npoints!(pts, n) = SetNumberOfPoints(pts, n)
 
-set_points!(grid, pts) = SetPoints(_cp(vtkPointSet, grid), _cp(vtkPoints, pts))
+set_points!(grid, pts) = SetPoints(grid, pts)
 
-allocate!(grid, n) = Allocate(_cp(vtkUnstructuredGrid, grid), n)
+allocate!(grid, n) = Allocate(grid, n)
 
-point_coordinates(grid, i) = GetPointCoordinates(_cp(vtkPointSet, grid), i - 1)
+point_coordinates(grid, i) = GetPointCoordinates(grid, i - 1)
 
-ncells(grid) = GetNumberOfCells(_cp(vtkDataSet, grid))
-npoints(grid) = GetNumberOfPoints(_cp(vtkPointSet, grid))
+ncells(grid) = GetNumberOfCells(grid)
+npoints(grid) = GetNumberOfPoints(grid)
 
 """
     points(grid) -> vtkPoints (owning reference)
 
 The points object of a point set.
 """
-points(grid) = GetPoints(_cp(vtkPointSet, grid))
+points(grid) = GetPoints(grid)
 
 """
     points_array(pts) -> VTKDataArray{T}
 
 The coordinate array of a vtkPoints object (3 components).
 """
-points_array(pts) = VTKDataArray(GetPointData(_cp(vtkPoints, pts)))
-point_data(grid) = GetPointData(_cp(vtkDataSet, grid))
-cell_data(grid) = GetCellData(_cp(vtkDataSet, grid))
+points_array(pts) = VTKDataArray(GetPointData(pts))
+point_data(grid) = GetPointData(grid)
+cell_data(grid) = GetCellData(grid)
 
 field_array_names(fd) =
-    [GetArrayNameOf(_cp(vtkFieldData, fd), i) for i in 0:GetNumberOfArrays(_cp(vtkFieldData, fd))-1]
+    [GetArrayNameOf(fd, i) for i in 0:GetNumberOfArrays(fd)-1]
 
 """
     field_array(fd, name) -> VTKDataArray{T} or nothing
@@ -129,8 +126,8 @@ field_array_names(fd) =
 Typed zero-copy view of the named array in field data `fd`.
 """
 function field_array(fd, name)
-    HasArray(_cp(vtkFieldData, fd), String(name)) || return nothing
-    return VTKDataArray(GetArray(_cp(vtkFieldData, fd), String(name)))
+    HasArray(fd, String(name)) || return nothing
+    return VTKDataArray(GetArray(fd, String(name)))
 end
 
 """
@@ -139,12 +136,12 @@ end
 Untyped variant of `field_array`.
 """
 function field_array_raw(fd, name)
-    HasArray(_cp(vtkFieldData, fd), String(name)) || return nothing
-    return GetArray(_cp(vtkFieldData, fd), String(name))
+    HasArray(fd, String(name)) || return nothing
+    return GetArray(fd, String(name))
 end
 
 function add_array!(fd, da)
-    AddArray(_cp(vtkFieldData, fd), _cp(vtkDataArray, da))
+    AddArray(fd, da)
     return da
 end
 
@@ -155,9 +152,9 @@ end
 Mark a field-data array as the active scalar for filters like `contour`.
 """
 activate_point_data!(grid, name) =
-    SetActiveScalars(_cp(vtkPointData, point_data(grid)), String(name))
+    SetActiveScalars(point_data(grid), String(name))
 activate_cell_data!(grid, name) =
-    SetActiveScalars(_cp(vtkCellData, cell_data(grid)), String(name))
+    SetActiveScalars(cell_data(grid), String(name))
 
 # ---- XML I/O ----
 
@@ -170,37 +167,37 @@ activate_cell_data!(grid, name) =
 """
 function read_vtu(path)
     reader = XMLUnstructuredGridReader_new()
-    SetFileName(_cp(vtkXMLUnstructuredGridReader, reader), String(path))
+    SetFileName(reader, String(path))
     update!(reader)
-    return UnstructuredGrid(GetOutput(_cp(vtkAlgorithm, reader)))
+    return UnstructuredGrid(GetOutput(reader))
 end
 
 function read_vtp(path)
     reader = XMLPolyDataReader_new()
-    SetFileName(_cp(vtkXMLPolyDataReader, reader), String(path))
+    SetFileName(reader, String(path))
     update!(reader)
-    return PolyData(GetOutput(_cp(vtkAlgorithm, reader)))
+    return PolyData(GetOutput(reader))
 end
 
 function read_vti(path)
     reader = XMLImageDataReader_new()
-    SetFileName(_cp(vtkXMLImageDataReader, reader), String(path))
+    SetFileName(reader, String(path))
     update!(reader)
-    return ImageData(GetOutput(_cp(vtkAlgorithm, reader)))
+    return ImageData(GetOutput(reader))
 end
 
 function read_vtr(path)
     reader = XMLRectilinearGridReader_new()
-    SetFileName(_cp(vtkXMLRectilinearGridReader, reader), String(path))
+    SetFileName(reader, String(path))
     update!(reader)
-    return RectilinearGrid(GetOutput(_cp(vtkAlgorithm, reader)))
+    return RectilinearGrid(GetOutput(reader))
 end
 
 function read_vts(path)
     reader = XMLStructuredGridReader_new()
-    SetFileName(_cp(vtkXMLStructuredGridReader, reader), String(path))
+    SetFileName(reader, String(path))
     update!(reader)
-    return StructuredGrid(GetOutput(_cp(vtkAlgorithm, reader)))
+    return StructuredGrid(GetOutput(reader))
 end
 
 """
@@ -213,53 +210,53 @@ end
 function write_vtu(grid, path; raw_appended = false)
     writer = XMLUnstructuredGridWriter_new()
     if raw_appended
-        SetRawAppendedData(_cp(vtkXMLUnstructuredGridWriter, writer))
+        SetRawAppendedData(writer)
     else
-        EnableCompression(_cp(vtkXMLUnstructuredGridWriter, writer))
+        EnableCompression(writer)
     end
-    SetInputData(_cp(vtkAlgorithm, writer), _cp(vtkDataObject, grid))
-    SetFileName(_cp(vtkXMLUnstructuredGridWriter, writer), String(path))
-    err = Write(_cp(vtkXMLUnstructuredGridWriter, writer))
+    SetInputData(writer, grid)
+    SetFileName(writer, String(path))
+    err = Write(writer)
     err == 1 || error("vtkXMLUnstructuredGridWriter failed: $(vtk_last_error())")
     return path
 end
 
 function write_vtp(pd, path)
     writer = XMLPolyDataWriter_new()
-    EnableCompression(_cp(vtkXMLPolyDataWriter, writer))
-    SetInputData(_cp(vtkAlgorithm, writer), _cp(vtkDataObject, pd))
-    SetFileName(_cp(vtkXMLPolyDataWriter, writer), String(path))
-    err = Write(_cp(vtkXMLPolyDataWriter, writer))
+    EnableCompression(writer)
+    SetInputData(writer, pd)
+    SetFileName(writer, String(path))
+    err = Write(writer)
     err == 1 || error("vtkXMLPolyDataWriter failed: $(vtk_last_error())")
     return path
 end
 
 function write_vti(img, path)
     writer = XMLImageDataWriter_new()
-    EnableCompression(_cp(vtkXMLImageDataWriter, writer))
-    SetInputData(_cp(vtkAlgorithm, writer), _cp(vtkDataObject, img))
-    SetFileName(_cp(vtkXMLImageDataWriter, writer), String(path))
-    err = Write(_cp(vtkXMLImageDataWriter, writer))
+    EnableCompression(writer)
+    SetInputData(writer, img)
+    SetFileName(writer, String(path))
+    err = Write(writer)
     err == 1 || error("vtkXMLImageDataWriter failed: $(vtk_last_error())")
     return path
 end
 
 function write_vtr(rg, path)
     writer = XMLRectilinearGridWriter_new()
-    EnableCompression(_cp(vtkXMLRectilinearGridWriter, writer))
-    SetInputData(_cp(vtkAlgorithm, writer), _cp(vtkDataObject, rg))
-    SetFileName(_cp(vtkXMLRectilinearGridWriter, writer), String(path))
-    err = Write(_cp(vtkXMLRectilinearGridWriter, writer))
+    EnableCompression(writer)
+    SetInputData(writer, rg)
+    SetFileName(writer, String(path))
+    err = Write(writer)
     err == 1 || error("vtkXMLRectilinearGridWriter failed: $(vtk_last_error())")
     return path
 end
 
 function write_vts(sg, path)
     writer = XMLStructuredGridWriter_new()
-    EnableCompression(_cp(vtkXMLStructuredGridWriter, writer))
-    SetInputData(_cp(vtkAlgorithm, writer), _cp(vtkDataObject, sg))
-    SetFileName(_cp(vtkXMLStructuredGridWriter, writer), String(path))
-    err = Write(_cp(vtkXMLStructuredGridWriter, writer))
+    EnableCompression(writer)
+    SetInputData(writer, sg)
+    SetFileName(writer, String(path))
+    err = Write(writer)
     err == 1 || error("vtkXMLStructuredGridWriter failed: $(vtk_last_error())")
     return path
 end
@@ -273,9 +270,9 @@ borrowed view — keep the multiblock dataset alive while using them.
 """
 function read_vtm(path)
     reader = XMLMultiBlockDataReader_new()
-    SetFileName(_cp(vtkXMLMultiBlockDataReader, reader), String(path))
+    SetFileName(reader, String(path))
     update!(reader)
-    return MultiBlockDataSet(GetOutput(_cp(vtkAlgorithm, reader)))
+    return MultiBlockDataSet(GetOutput(reader))
 end
 
 """
@@ -285,17 +282,17 @@ Write a multiblock dataset (`.vtm` + its block files).
 """
 function write_vtm(mb, path)
     writer = XMLMultiBlockDataWriter_new()
-    EnableCompression(_cp(vtkXMLMultiBlockDataWriter, writer))
-    SetInputData(_cp(vtkAlgorithm, writer), _cp(vtkDataObject, mb))
-    SetFileName(_cp(vtkXMLMultiBlockDataWriter, writer), String(path))
-    err = Write(_cp(vtkXMLMultiBlockDataWriter, writer))
+    EnableCompression(writer)
+    SetInputData(writer, mb)
+    SetFileName(writer, String(path))
+    err = Write(writer)
     err == 1 || error("vtkXMLMultiBlockDataWriter failed: $(vtk_last_error())")
     return path
 end
 
 # ---- multiblock accessors ---------------------------------------------------
 
-nblocks(mb) = GetNumberOfBlocks(_cp(vtkMultiBlockDataSet, mb))
+nblocks(mb) = GetNumberOfBlocks(mb)
 
 """
     block(mb, i) -> vtkDataObject (typed via the downcast registry)
@@ -305,7 +302,7 @@ concrete type. The block is a borrowed view owned by `mb`.
 """
 function block(mb, i::Integer)
     1 <= i <= nblocks(mb) || throw(BoundsError(mb, i))
-    obj = GetBlockByIndex(_cp(vtkMultiBlockDataSet, mb), i - 1)
+    obj = GetBlockByIndex(mb, i - 1)
     return downcast(obj)
 end
 
@@ -317,11 +314,11 @@ Set block `i` (1-based) of a multiblock dataset. The dataset references
 """
 function set_block!(mb, i::Integer, grid)
     1 <= i || throw(BoundsError(mb, i))
-    SetBlockByIndex(_cp(vtkMultiBlockDataSet, mb), i - 1, _cp(vtkDataObject, grid))
+    SetBlockByIndex(mb, i - 1, grid)
     return mb
 end
 
 MultiBlockDataSet(n::Integer) = let mb = MultiBlockDataSet_new()
-    SetNumberOfBlocks(_cp(vtkMultiBlockDataSet, mb), n)
+    SetNumberOfBlocks(mb, n)
     mb
 end

@@ -51,21 +51,28 @@ The package exports **nothing** on purpose: all names are used qualified
 (`VTK.read_vtu`), which avoids collisions with VTKBase/WriteVTK/ReadVTK in
 the same session.
 
-## The `_cp` pattern
+## Generated smart-pointer overloads
 
-C++ methods are registered with raw-pointer arguments, and the Julian layer
-converts handles via:
+C++ methods are registered with raw-pointer arguments. The build reads those
+registrations and generates `src/generated_methods.jl`, which adds Julia
+overloads accepting CxxWrap smart pointers. Each overload converts its VTK
+arguments via:
 
 ```julia
 _cp(::Type{T}, x) where {T} = CxxPtr{T}(x[])   # CxxPtr of static type T
 ```
 
+and calls the original raw-pointer method. Generic base-class shim APIs also
+get hierarchy-independent fallbacks for classes whose Julia parent chain is
+incomplete. Thus ordinary code is simply `SetInputData(filter, grid)` or
+`Update(reader)`, with no hand-written cast. The original methods remain
+available as `Update(_cp(vtkAlgorithm, reader))` for low-level use.
+
 Why not register by-value smart-pointer arguments? CxxWrap's by-value
 smart-pointer path dispatches on `Type{Dereferenced{T}}`, and Julia's
 `Type` is *invariant* — the dispatch is impossible to hit for custom smart
-pointers. Raw pointers + `_cp` sidestep this entirely, and a future binding
-generator must emit the same pattern (or `const T&` overloads). This is
-recorded as design debt §4.2 in `STATUS.md`.
+pointers. Raw pointers plus generated forwarding overloads sidestep this.
+This is recorded as design debt §4.2 in `STATUS.md`.
 
 ## Errors
 
