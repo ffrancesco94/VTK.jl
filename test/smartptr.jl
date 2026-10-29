@@ -19,21 +19,17 @@
     VTK.Update(clip)
     @test VTK.GetOutput(clip) isa VTK.CxxWrap.CxxWrapCore.SmartPointer
 
-    if isdefined(VTK, :InsideOutOn)
-        VTK.InsideOutOff(clip)
-        @test VTK.GetInsideOut(clip) == 0
-        VTK.InsideOutOn(clip)
-        @test VTK.GetInsideOut(clip) == 1
-    end
+    VTK.InsideOutOff(clip)
+    @test VTK.GetInsideOut(clip) == 0
+    VTK.InsideOutOn(clip)
+    @test VTK.GetInsideOut(clip) == 1
 end
 
 @testset "public VTK parent chains" begin
     @test VTK.vtkImageData <: VTK.vtkDataSet
-    if isdefined(VTK, :vtkRectilinearGrid)
-        @test VTK.vtkRectilinearGrid <: VTK.vtkDataSet
-        @test VTK.vtkMultiBlockDataSet <: VTK.vtkDataObject
-        @test VTK.vtkIdTypeArray <: VTK.vtkDataArray
-        @test VTK.vtkXMLMultiBlockDataReader <: VTK.vtkXMLReader
-        @test VTK.vtkXMLMultiBlockDataWriter <: VTK.vtkXMLWriter
-    end
+    @test VTK.vtkRectilinearGrid <: VTK.vtkDataSet
+    @test VTK.vtkMultiBlockDataSet <: VTK.vtkDataObject
+    @test VTK.vtkIdTypeArray <: VTK.vtkDataArray
+    @test VTK.vtkXMLMultiBlockDataReader <: VTK.vtkXMLReader
+    @test VTK.vtkXMLMultiBlockDataWriter <: VTK.vtkXMLWriter
 end

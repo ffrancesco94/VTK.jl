@@ -58,11 +58,6 @@ function write_ensight_case(dir)
 end
 
 @testset "CFD readers (EnSight Gold / CGNS / PVT)" begin
-    if !isdefined(VTK, :EnSightGoldReader_new)
-        @info "CFD readers not present (hand-written wrapper) — skipping"
-        return
-    end
-
     mktempdir() do dir
         # ---- EnSight Gold: analytic oracle (unit hex) ----
         case_path = write_ensight_case(dir)

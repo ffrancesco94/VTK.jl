@@ -21,7 +21,7 @@ end
 
 # Location of the compiled C++ binding module. Override with ENV["VTKJL_LIB"].
 const libvtk_julia = get(ENV, "VTKJL_LIB",
-    joinpath(dirname(@__DIR__), "wrapper", "build", "libvtk_julia.so"))
+    joinpath(dirname(@__DIR__), "gen", "wrapit", "build", "shipped", "libvtk_julia.so"))
 
 @wrapmodule(() -> libvtk_julia)
 
