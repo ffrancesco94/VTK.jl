@@ -44,6 +44,8 @@ input = [
   "vtkCellDataToPointData.h",
   "vtkPointDataToCellData.h",
   "vtkDataSetSurfaceFilter.h",
+  "vtkPassInputTypeAlgorithm.h",
+  "vtkArrayCalculator.h",
   # XML I/O (full reader/writer chains)
   "vtkXMLWriterBase.h",
   "vtkXMLWriter.h",

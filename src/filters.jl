@@ -215,3 +215,24 @@ External surface of a dataset as polydata.
 @vtk_filter extract_surface(grid, DataSetSurfaceFilter → vtkPolyData) begin
     # no extra configuration
 end
+
+"""
+    calculator(grid; scalars, expression, result="result") -> vtkDataObject
+
+Evaluate a mathematical expression on field data arrays. Variables are
+referenced by name; use `scalars` to select the input array (default: active
+scalars). The result is stored as a new point-data array named `result`.
+
+# Example
+
+```julia
+grid = calculator(grid; scalars="temperature", expression="temperature * 2", result="T2")
+```
+"""
+@vtk_filter calculator(grid, ArrayCalculator → pass_through;
+                      scalars=nothing, expression="", result="result") begin
+    SetAttributeType(f, 0)  # POINT data
+    scalars === nothing || AddScalarVariable(f, String(scalars), String(scalars))
+    SetFunction(f, String(expression))
+    SetResultArrayName(f, String(result))
+end
