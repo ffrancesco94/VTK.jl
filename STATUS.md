@@ -87,6 +87,11 @@ hand-written equivalent lives in `wrapper/src/vtk_julia.cpp`):
   `vtkCGNSReader` (`.cgns`), and `vtkXMLPPolyDataReader` (`.pvtp`
   parallel summaries); all produce `vtkMultiBlockDataSet` except
   `vtkXMLPPolyDataReader` which yields `vtkPolyData`.
+- Legacy I/O: `vtkGenericDataObjectReader`/`vtkGenericDataObjectWriter`
+  (`.vtk` format, any dataset type), plus specific
+  `vtkDataSetReader`/`Writer`, `vtkUnstructuredGridReader`/`Writer`,
+  `vtkPolyDataReader`/`Writer`, `vtkStructuredGridReader`/`Writer`,
+  `vtkRectilinearGridReader`/`Writer` for type-specific access.
 - Filters: `vtkTableBasedClipDataSet`, `vtkCutter`, `vtkCellDataToPointData`,
   `vtkPointDataToCellData`, `vtkContourFilter`, `vtkDataSetSurfaceFilter`,
   plus `vtkPlane` implicit function.
@@ -117,6 +122,8 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
   `point_data`, `cell_data`, `activate_point_data!`.
 - CFD readers: `read_ensight` (EnSight Gold `.case`),
   `read_cgns` (CGNS `.cgns`), `read_pvtp` (parallel PVTK `.pvtp`).
+- Legacy I/O: `read_legacy_vtk` (any `.vtk` dataset type, returns downcast),
+  `write_legacy_vtk` (any dataset, format chosen automatically).
 - Generic name-based `downcast(obj)` dispatching on the VTK dynamic class
   name via `GetClassName` and a registry (`DOWNCAST_REGISTRY`); adding a
   grid type = one registry entry + its `downcast_foo` shim binding.
@@ -128,7 +135,7 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 - `plane`, `clip`, `slice`, `cell_to_point`, `point_to_cell`, `contour`,
   `extract_surface`, `update!`.
 
-## 3. Test suite (158 tests, all passing; 96 on the hand-written fallback)
+## 3. Test suite (168 tests, all passing; 96 on the hand-written fallback)
 
 - **Array core**: typed creation, zero-copy write-through both directions,
   multi-component reshape, names, Int32 element type, GC churn with
@@ -167,6 +174,9 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
   analytic oracle (unit hex); CGNS smoke test (reader construction +
   error on missing file); parallel `.pvtp` summary + piece files written
   by WriteVTK, read back and verified; skipped on the hand-written fallback.
+- **Legacy VTK I/O** (generated library only): unstructured grid
+  round-trip with field data (unit hex + temperature); missing-file error;
+  skipped on the hand-written fallback.
 
 ## 4. Known limitations / design debt
 
@@ -189,11 +199,12 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 3. **Arrays**: no typed get/set accessors (all access goes through zero-copy
    views or the slow double-based virtual API); SOA/variant arrays
    unsupported for zero-copy (guarded, throws).
-4. **I/O**: XML + CFD formats (EnSight Gold, CGNS, parallel `.pvtp`);
-   legacy `.vtk` and `.pvtu` are unwrapped. Writers only emit
-   appended data (fine for CFD). ReadVTK.jl
-   (the pure-Julia oracle) does not parse zlib-compressed appended blocks,
-   so compressed output is verified by re-reading with VTK.jl itself.
+4. **I/O**: XML + CFD formats (EnSight Gold, CGNS, parallel `.pvtp`) +
+   legacy `.vtk`; `.pvtu` is unwrapped. Writers only emit
+   appended data for XML (fine for CFD); legacy writer emits ASCII.
+   ReadVTK.jl (the pure-Julia oracle) does not parse zlib-compressed
+   appended blocks, so compressed output is verified by re-reading with
+   VTK.jl itself.
 5. **Data model**: unstructured grids fully constructible from Julia; other
    grid types readable but not constructible. Cell types are bare integers
    (`VTK_HEXAHEDRON = 12`).
@@ -255,7 +266,9 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
       `set_block!`/`nblocks`; WriteVTK.jl oracle both directions
 - [x] CFD readers (2026-10-28): EnSight Gold (`read_ensight`), CGNS
       (`read_cgns`), parallel PVTK poly data (`read_pvtp`)
-- [ ] More readers/writers: legacy `.vtk`
+- [x] Legacy `.vtk` I/O (2026-10-29): `read_legacy_vtk`/`write_legacy_vtk`
+      via `vtkGenericDataObjectReader`/`Writer`; specific reader/writer
+      types registered for type hierarchy
 - [ ] More filters: calculator, gradient, threshold, stream tracer (as CFD
       needs arise)
 - [x] Generic name-based `downcast` (2026-10-26)

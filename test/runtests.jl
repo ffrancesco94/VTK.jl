@@ -11,4 +11,5 @@ using Test
     include("io_structured.jl")
     include("io_multiblock.jl")
     include("io_cfd.jl")
+    include("io_legacy.jl")
 end

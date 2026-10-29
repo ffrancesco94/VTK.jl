@@ -279,7 +279,7 @@ function vtk_libs()
     libdir = joinpath(VTK_jll.artifact_dir, "lib")
     names = ["vtkCommonCore", "vtkCommonDataModel", "vtkCommonExecutionModel",
              "vtkFiltersCore", "vtkFiltersGeneral", "vtkIOXML",
-             "vtkIOEnSight", "vtkIOCGNSReader"]
+             "vtkIOEnSight", "vtkIOCGNSReader", "vtkIOLegacy"]
     [joinpath(libdir, only(filter(n -> startswith(n, "lib$m-") &&
                                       endswith(n, ".so"), readdir(libdir))))
      for m in names]

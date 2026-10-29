@@ -319,6 +319,38 @@ function read_pvtp(path)
     return PolyData(GetOutput(reader))
 end
 
+# ---- legacy VTK I/O (.vtk format) ----
+
+"""
+    read_legacy_vtk(path) -> vtkDataObject (downcast to access)
+
+Read a legacy VTK file (`.vtk`). The output type depends on the dataset
+type stored in the file (unstructured grid, poly data, structured grid,
+rectilinear grid, or image data). Use `downcast` on the result or access
+it through the generic `vtkDataObject` API.
+"""
+function read_legacy_vtk(path)
+    reader = GenericDataObjectReader_new()
+    SetFileName(reader, String(path))
+    update!(reader)
+    return downcast(GetOutput(reader))
+end
+
+"""
+    write_legacy_vtk(grid, path)
+
+Write any dataset to a legacy VTK file (`.vtk`). The format is chosen
+automatically based on the concrete type of `grid`.
+"""
+function write_legacy_vtk(grid, path)
+    writer = GenericDataObjectWriter_new()
+    SetInputData(writer, grid)
+    SetFileName(writer, String(path))
+    err = Write(writer)
+    err == 1 || error("vtkGenericDataObjectWriter failed: $(vtk_last_error())")
+    return path
+end
+
 """
     write_vtm(mb, path)
 
