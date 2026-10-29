@@ -105,6 +105,36 @@ end
     @test arr !== nothing
     @test vec(VTK.data(arr)) ≈ 2 .* [0, 1, 2, 1, 1, 2, 3, 2]
 
+    # gradient of linear field T = x+y+z is constant (1,1,1)
+    grad = VTK.gradient(ug; scalars = "temperature", result = "grad_T")
+    garr = VTK.field_array(VTK.point_data(grad), "grad_T")
+    @test garr !== nothing
+    gdata = VTK.data(garr)
+    @test size(gdata) == (3, 8)
+    @test all(isapprox.(gdata[1, :], 1.0; atol = 1e-6))
+    @test all(isapprox.(gdata[2, :], 1.0; atol = 1e-6))
+    @test all(isapprox.(gdata[3, :], 1.0; atol = 1e-6))
+
+    # threshold: keep cells where all points have T in [1.5, 3.0]
+    # The hex has points with T < 1.5, so this should be empty
+    thresh = VTK.threshold(ug; scalars = "temperature", lower = 1.5, upper = 3.0)
+    @test VTK.ncells(thresh) == 0
+
+    # threshold with wider range should keep the hex
+    thresh2 = VTK.threshold(ug; scalars = "temperature", lower = 0.0, upper = 3.0)
+    @test VTK.ncells(thresh2) == 1
+
+    # line_source: resolution=N gives N+1 points (N segments)
+    line = VTK.line_source((0.0, 0.0, 0.0), (1.0, 1.0, 1.0); resolution = 5)
+    @test VTK.npoints(line) == 6
+
+    # sample_over_line: sample temperature along a line
+    profile = VTK.sample_over_line(ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0); resolution = 5)
+    @test VTK.npoints(profile) == 6
+    # sampled values should be close to x+y+z along the diagonal
+    parr = VTK.field_array(VTK.point_data(profile), "temperature")
+    @test parr !== nothing
+
     # GC stress across the full pipeline
     for _ in 1:50
         g = hex_mesh_with_temperature()
