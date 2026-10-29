@@ -46,6 +46,13 @@ input = [
   "vtkDataSetSurfaceFilter.h",
   "vtkPassInputTypeAlgorithm.h",
   "vtkArrayCalculator.h",
+  "vtkGradientFilter.h",
+  "vtkThreshold.h",
+  "vtkStreamTracer.h",
+  "vtkParticleTracer.h",
+  "vtkParticleTracerBase.h",
+  "vtkLineSource.h",
+  "vtkProbeFilter.h",
   # XML I/O (full reader/writer chains)
   "vtkXMLWriterBase.h",
   "vtkXMLWriter.h",

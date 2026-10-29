@@ -110,6 +110,64 @@ Variables are referenced by name in the expression. Use `scalars` to select
 the input array (default: active scalars). The result is stored as a new
 point-data array named `result`.
 
+## Gradient
+
+Compute the gradient of a scalar field:
+
+```julia
+grid2 = VTK.gradient(grid; scalars = "temperature", result = "grad_T")
+g = VTK.field_array(VTK.point_data(grid2), "grad_T")
+g[1, :], g[2, :], g[3, :]   # ∂T/∂x, ∂T/∂y, ∂T/∂z (all 1.0 for T=x+y+z)
+```
+
+## Threshold
+
+Extract cells where the scalar is within a range:
+
+```julia
+hot = VTK.threshold(grid; scalars = "temperature", lower = 1.5, upper = 3.0)
+VTK.ncells(hot)   # 0 — no cell has all points in [1.5, 3]
+
+all_cells = VTK.threshold(grid; scalars = "temperature", lower = 0.0, upper = 3.0)
+VTK.ncells(all_cells)   # 1 — the whole hex
+```
+
+Set `invert=true` to extract cells *outside* the range.
+
+## Stream tracer
+
+Trace streamlines through a vector field:
+
+```julia
+seeds = VTK.line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution = 10)
+lines = VTK.stream_tracer(grid, seeds; vectors = "velocity")
+```
+
+## Particle tracer
+
+Trace particles through a vector field (advection):
+
+```julia
+seeds = VTK.line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution = 10)
+particles = VTK.particle_tracer(grid, seeds; vectors = "velocity")
+```
+
+## Line source & sampling
+
+Generate points along a line, or sample a dataset along a line
+(ParaView's "Plot Over Line"):
+
+```julia
+# Generate points along a line
+line = VTK.line_source((0.0, 0.0, 0.0), (1.0, 1.0, 1.0); resolution = 50)
+VTK.npoints(line)   # 51 (resolution + 1)
+
+# Sample temperature along the line
+profile = VTK.sample_over_line(grid, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0); resolution = 50)
+VTK.npoints(profile)   # 51
+VTK.field_array(VTK.point_data(profile), "temperature")   # sampled values
+```
+
 ## Adding new filters
 
 The `@vtk_filter` macro generates filter wrappers declaratively:
