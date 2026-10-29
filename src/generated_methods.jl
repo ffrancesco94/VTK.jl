@@ -72,6 +72,11 @@ if isdefined(@__MODULE__, Symbol("AddCoordinateVectorVariable")) && isdefined(@_
         AddCoordinateVectorVariable(_cp(vtkArrayCalculator, a1), a2, a3, a4, a5)
 end
 
+if isdefined(@__MODULE__, Symbol("AddCustomTerminationCallback")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    AddCustomTerminationCallback(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2, a3, a4) =
+        AddCustomTerminationCallback(_cp(vtkStreamTracer, a1), a2, a3, a4)
+end
+
 if isdefined(@__MODULE__, Symbol("AddInputConnection")) && isdefined(@__MODULE__, :vtkAlgorithm) && isdefined(@__MODULE__, :vtkAlgorithmOutput)
     AddInputConnection(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithmOutput}) =
         AddInputConnection(_cp(vtkAlgorithm, a1), a2, _cp(vtkAlgorithmOutput, a3))
@@ -202,6 +207,11 @@ if isdefined(@__MODULE__, Symbol("AddSelector")) && isdefined(@__MODULE__, :vtkX
         AddSelector(_cp(vtkXMLMultiBlockDataReader, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("AddSourceConnection")) && isdefined(@__MODULE__, :vtkParticleTracerBase) && isdefined(@__MODULE__, :vtkAlgorithmOutput)
+    AddSourceConnection(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithmOutput}) =
+        AddSourceConnection(_cp(vtkParticleTracerBase, a1), _cp(vtkAlgorithmOutput, a2))
+end
+
 if isdefined(@__MODULE__, Symbol("AddVectorArrayName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
     AddVectorArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
         AddVectorArrayName(_cp(vtkArrayCalculator, a1), a2)
@@ -240,6 +250,16 @@ end
 if isdefined(@__MODULE__, Symbol("AddVectorVariable")) && isdefined(@__MODULE__, :vtkArrayCalculator)
     AddVectorVariable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2, a3, a4, a5, a6) =
         AddVectorVariable(_cp(vtkArrayCalculator, a1), a2, a3, a4, a5, a6)
+end
+
+if isdefined(@__MODULE__, Symbol("AllScalarsOff")) && isdefined(@__MODULE__, :vtkThreshold)
+    AllScalarsOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        AllScalarsOff(_cp(vtkThreshold, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("AllScalarsOn")) && isdefined(@__MODULE__, :vtkThreshold)
+    AllScalarsOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        AllScalarsOn(_cp(vtkThreshold, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("Allocate")) && isdefined(@__MODULE__, :vtkAbstractArray)
@@ -457,6 +477,11 @@ if isdefined(@__MODULE__, Symbol("CacheMeshOn")) && isdefined(@__MODULE__, :vtkC
         CacheMeshOn(_cp(vtkCGNSReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("CalculateVorticity")) && isdefined(@__MODULE__, :vtkStreamTracer) && isdefined(@__MODULE__, :vtkGenericCell) && isdefined(@__MODULE__, :vtkDoubleArray)
+    CalculateVorticity(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericCell}, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDoubleArray}, a5) =
+        CalculateVorticity(_cp(vtkStreamTracer, a1), _cp(vtkGenericCell, a2), a3, _cp(vtkDoubleArray, a4), a5)
+end
+
 if isdefined(@__MODULE__, Symbol("CanReadFile")) && isdefined(@__MODULE__, :vtkCGNSReader)
     CanReadFile(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
         CanReadFile(_cp(vtkCGNSReader, a1), a2)
@@ -477,9 +502,19 @@ if isdefined(@__MODULE__, Symbol("CategoricalDataOff")) && isdefined(@__MODULE__
         CategoricalDataOff(_cp(vtkPointDataToCellData, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("CategoricalDataOff")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    CategoricalDataOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        CategoricalDataOff(_cp(vtkProbeFilter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("CategoricalDataOn")) && isdefined(@__MODULE__, :vtkPointDataToCellData)
     CategoricalDataOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPointDataToCellData}) =
         CategoricalDataOn(_cp(vtkPointDataToCellData, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("CategoricalDataOn")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    CategoricalDataOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        CategoricalDataOn(_cp(vtkProbeFilter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("CheckAbort")) && isdefined(@__MODULE__, :vtkAlgorithm)
@@ -557,6 +592,26 @@ if isdefined(@__MODULE__, Symbol("ComputeCellsBounds")) && isdefined(@__MODULE__
         ComputeCellsBounds(_cp(vtkPolyData, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("ComputeDivergenceOff")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    ComputeDivergenceOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        ComputeDivergenceOff(_cp(vtkGradientFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ComputeDivergenceOn")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    ComputeDivergenceOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        ComputeDivergenceOn(_cp(vtkGradientFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ComputeGradientOff")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    ComputeGradientOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        ComputeGradientOff(_cp(vtkGradientFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ComputeGradientOn")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    ComputeGradientOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        ComputeGradientOn(_cp(vtkGradientFilter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("ComputeGradientsOff")) && isdefined(@__MODULE__, :vtkContourFilter)
     ComputeGradientsOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkContourFilter}) =
         ComputeGradientsOff(_cp(vtkContourFilter, a1))
@@ -592,6 +647,16 @@ if isdefined(@__MODULE__, Symbol("ComputePointId")) && isdefined(@__MODULE__, :v
         ComputePointId(_cp(vtkRectilinearGrid, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("ComputeQCriterionOff")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    ComputeQCriterionOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        ComputeQCriterionOff(_cp(vtkGradientFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ComputeQCriterionOn")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    ComputeQCriterionOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        ComputeQCriterionOn(_cp(vtkGradientFilter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("ComputeScalarsOff")) && isdefined(@__MODULE__, :vtkContourFilter)
     ComputeScalarsOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkContourFilter}) =
         ComputeScalarsOff(_cp(vtkContourFilter, a1))
@@ -615,6 +680,31 @@ end
 if isdefined(@__MODULE__, Symbol("ComputeStructuredCoordinates")) && isdefined(@__MODULE__, :vtkRectilinearGrid)
     ComputeStructuredCoordinates(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGrid}, a2, a3, a4) =
         ComputeStructuredCoordinates(_cp(vtkRectilinearGrid, a1), a2, a3, a4)
+end
+
+if isdefined(@__MODULE__, Symbol("ComputeToleranceOff")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    ComputeToleranceOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        ComputeToleranceOff(_cp(vtkProbeFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ComputeToleranceOn")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    ComputeToleranceOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        ComputeToleranceOn(_cp(vtkProbeFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ComputeVorticityOff")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    ComputeVorticityOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        ComputeVorticityOff(_cp(vtkGradientFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ComputeVorticityOn")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    ComputeVorticityOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        ComputeVorticityOn(_cp(vtkGradientFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ConvertIntervals")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    ConvertIntervals(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2, a3, a4, a5, a6) =
+        ConvertIntervals(_cp(vtkStreamTracer, a1), a2, a3, a4, a5, a6)
 end
 
 if isdefined(@__MODULE__, Symbol("ConvertTotalInputToPortConnection")) && isdefined(@__MODULE__, :vtkAlgorithm)
@@ -1367,6 +1457,16 @@ if isdefined(@__MODULE__, Symbol("EnableCompression")) && isdefined(@__MODULE__,
         EnableCompression(_cp(vtkXMLUnstructuredGridWriter, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("EnableParticleWritingOff")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    EnableParticleWritingOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        EnableParticleWritingOff(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("EnableParticleWritingOn")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    EnableParticleWritingOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        EnableParticleWritingOn(_cp(vtkParticleTracerBase, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("EncodeAppendedDataOff")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
     EncodeAppendedDataOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLWriterBase}) =
         EncodeAppendedDataOff(_cp(vtkXMLWriterBase, a1))
@@ -1440,6 +1540,16 @@ end
 if isdefined(@__MODULE__, Symbol("FastModeOn")) && isdefined(@__MODULE__, :vtkDataSetSurfaceFilter)
     FastModeOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetSurfaceFilter}) =
         FastModeOn(_cp(vtkDataSetSurfaceFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("FasterApproximationOff")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    FasterApproximationOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        FasterApproximationOff(_cp(vtkGradientFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("FasterApproximationOn")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    FasterApproximationOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        FasterApproximationOn(_cp(vtkGradientFilter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("Fill")) && isdefined(@__MODULE__, :vtkDataArray)
@@ -1527,6 +1637,26 @@ if isdefined(@__MODULE__, Symbol("FlipFaceNormalsOn")) && isdefined(@__MODULE__,
         FlipFaceNormalsOn(_cp(vtkCGNSReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("ForceSerialExecutionOff")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    ForceSerialExecutionOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        ForceSerialExecutionOff(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ForceSerialExecutionOff")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    ForceSerialExecutionOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        ForceSerialExecutionOff(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ForceSerialExecutionOn")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    ForceSerialExecutionOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        ForceSerialExecutionOn(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ForceSerialExecutionOn")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    ForceSerialExecutionOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        ForceSerialExecutionOn(_cp(vtkStreamTracer, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("FunctionGradient")) && isdefined(@__MODULE__, :vtkImplicitFunction)
     FunctionGradient(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkImplicitFunction}, a2) =
         FunctionGradient(_cp(vtkImplicitFunction, a1), a2)
@@ -1610,6 +1740,11 @@ end
 if isdefined(@__MODULE__, Symbol("GenerateGhostArray")) && isdefined(@__MODULE__, :vtkDataSet)
     GenerateGhostArray(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSet}, a2, a3) =
         GenerateGhostArray(_cp(vtkDataSet, a1), a2, a3)
+end
+
+if isdefined(@__MODULE__, Symbol("GenerateNormals")) && isdefined(@__MODULE__, :vtkStreamTracer) && isdefined(@__MODULE__, :vtkPolyData)
+    GenerateNormals(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyData}, a3, a4) =
+        GenerateNormals(_cp(vtkStreamTracer, a1), _cp(vtkPolyData, a2), a3, a4)
 end
 
 if isdefined(@__MODULE__, Symbol("GenerateTrianglesOff")) && isdefined(@__MODULE__, :vtkContourFilter)
@@ -1730,6 +1865,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetActualMemorySize")) && isdefined(@__MODULE__, :vtkUnstructuredGrid)
     GetActualMemorySize(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGrid}) =
         GetActualMemorySize(_cp(vtkUnstructuredGrid, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetAllScalars")) && isdefined(@__MODULE__, :vtkThreshold)
+    GetAllScalars(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        GetAllScalars(_cp(vtkThreshold, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetAllowInterpolation")) && isdefined(@__MODULE__, :vtkDataSetSurfaceFilter)
@@ -1942,6 +2082,11 @@ if isdefined(@__MODULE__, Symbol("GetCategoricalData")) && isdefined(@__MODULE__
         GetCategoricalData(_cp(vtkPointDataToCellData, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetCategoricalData")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    GetCategoricalData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        GetCategoricalData(_cp(vtkProbeFilter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetCell")) && isdefined(@__MODULE__, :vtkDataSet)
     GetCell(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSet}, a2, a3, a4) =
         GetCell(_cp(vtkDataSet, a1), a2, a3, a4)
@@ -2110,6 +2255,21 @@ end
 if isdefined(@__MODULE__, Symbol("GetCellLocator")) && isdefined(@__MODULE__, :vtkPointSet)
     GetCellLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPointSet}) =
         GetCellLocator(_cp(vtkPointSet, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetCellLocator")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    GetCellLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        GetCellLocator(_cp(vtkProbeFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetCellLocator")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetCellLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetCellLocator(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetCellLocatorPrototype")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    GetCellLocatorPrototype(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        GetCellLocatorPrototype(_cp(vtkProbeFilter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetCellNeighbors")) && isdefined(@__MODULE__, :vtkDataSet) && isdefined(@__MODULE__, :vtkIdList) && isdefined(@__MODULE__, :vtkIdList)
@@ -2352,9 +2512,39 @@ if isdefined(@__MODULE__, Symbol("GetComponent")) && isdefined(@__MODULE__, :vtk
         GetComponent(_cp(vtkDataArray, a1), a2, a3)
 end
 
+if isdefined(@__MODULE__, Symbol("GetComponentMode")) && isdefined(@__MODULE__, :vtkThreshold)
+    GetComponentMode(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        GetComponentMode(_cp(vtkThreshold, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetComponentModeAsString")) && isdefined(@__MODULE__, :vtkThreshold)
+    GetComponentModeAsString(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        GetComponentModeAsString(_cp(vtkThreshold, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetComponentModeMaxValue")) && isdefined(@__MODULE__, :vtkThreshold)
+    GetComponentModeMaxValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        GetComponentModeMaxValue(_cp(vtkThreshold, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetComponentModeMinValue")) && isdefined(@__MODULE__, :vtkThreshold)
+    GetComponentModeMinValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        GetComponentModeMinValue(_cp(vtkThreshold, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetCompressionLevel")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
     GetCompressionLevel(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLWriterBase}) =
         GetCompressionLevel(_cp(vtkXMLWriterBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetComputeDivergence")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetComputeDivergence(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        GetComputeDivergence(_cp(vtkGradientFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetComputeGradient")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetComputeGradient(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        GetComputeGradient(_cp(vtkGradientFilter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetComputeGradients")) && isdefined(@__MODULE__, :vtkContourFilter)
@@ -2367,9 +2557,34 @@ if isdefined(@__MODULE__, Symbol("GetComputeNormals")) && isdefined(@__MODULE__,
         GetComputeNormals(_cp(vtkContourFilter, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetComputeQCriterion")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetComputeQCriterion(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        GetComputeQCriterion(_cp(vtkGradientFilter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetComputeScalars")) && isdefined(@__MODULE__, :vtkContourFilter)
     GetComputeScalars(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkContourFilter}) =
         GetComputeScalars(_cp(vtkContourFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetComputeTolerance")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    GetComputeTolerance(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        GetComputeTolerance(_cp(vtkProbeFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetComputeVorticity")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetComputeVorticity(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        GetComputeVorticity(_cp(vtkGradientFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetComputeVorticity")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    GetComputeVorticity(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        GetComputeVorticity(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetComputeVorticity")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetComputeVorticity(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetComputeVorticity(_cp(vtkStreamTracer, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetContainerAlgorithm")) && isdefined(@__MODULE__, :vtkAlgorithm)
@@ -2397,14 +2612,29 @@ if isdefined(@__MODULE__, Symbol("GetContributingCellOption")) && isdefined(@__M
         GetContributingCellOption(_cp(vtkCellDataToPointData, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetContributingCellOption")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetContributingCellOption(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        GetContributingCellOption(_cp(vtkGradientFilter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetContributingCellOptionMaxValue")) && isdefined(@__MODULE__, :vtkCellDataToPointData)
     GetContributingCellOptionMaxValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCellDataToPointData}) =
         GetContributingCellOptionMaxValue(_cp(vtkCellDataToPointData, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetContributingCellOptionMaxValue")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetContributingCellOptionMaxValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        GetContributingCellOptionMaxValue(_cp(vtkGradientFilter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetContributingCellOptionMinValue")) && isdefined(@__MODULE__, :vtkCellDataToPointData)
     GetContributingCellOptionMinValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCellDataToPointData}) =
         GetContributingCellOptionMinValue(_cp(vtkCellDataToPointData, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetContributingCellOptionMinValue")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetContributingCellOptionMinValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        GetContributingCellOptionMinValue(_cp(vtkGradientFilter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetCoordinateResults")) && isdefined(@__MODULE__, :vtkArrayCalculator)
@@ -2762,6 +2992,11 @@ if isdefined(@__MODULE__, Symbol("GetDistributeBlocks")) && isdefined(@__MODULE_
         GetDistributeBlocks(_cp(vtkCGNSReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetDivergenceArrayName")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetDivergenceArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        GetDivergenceArrayName(_cp(vtkGradientFilter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetDoublePrecisionMesh")) && isdefined(@__MODULE__, :vtkCGNSReader)
     GetDoublePrecisionMesh(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
         GetDoublePrecisionMesh(_cp(vtkCGNSReader, a1))
@@ -2780,6 +3015,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetEnSightVersion")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
     GetEnSightVersion(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
         GetEnSightVersion(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetEnableParticleWriting")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    GetEnableParticleWriting(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        GetEnableParticleWriting(_cp(vtkParticleTracerBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetEncodeAppendedData")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
@@ -2855,6 +3095,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetFastMode")) && isdefined(@__MODULE__, :vtkDataSetSurfaceFilter)
     GetFastMode(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetSurfaceFilter}) =
         GetFastMode(_cp(vtkDataSetSurfaceFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFasterApproximation")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetFasterApproximation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        GetFasterApproximation(_cp(vtkGradientFilter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetField")) && isdefined(@__MODULE__, :vtkFieldData) && isdefined(@__MODULE__, :vtkIdList) && isdefined(@__MODULE__, :vtkFieldData)
@@ -2985,6 +3230,21 @@ end
 if isdefined(@__MODULE__, Symbol("GetFlipFaceNormals")) && isdefined(@__MODULE__, :vtkCGNSReader)
     GetFlipFaceNormals(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
         GetFlipFaceNormals(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetForceReinjectionEveryNSteps")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    GetForceReinjectionEveryNSteps(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        GetForceReinjectionEveryNSteps(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetForceSerialExecution")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    GetForceSerialExecution(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        GetForceSerialExecution(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetForceSerialExecution")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetForceSerialExecution(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetForceSerialExecution(_cp(vtkStreamTracer, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetFunction")) && isdefined(@__MODULE__, :vtkArrayCalculator)
@@ -3137,6 +3397,11 @@ if isdefined(@__MODULE__, Symbol("GetIgnoreMissingArrays")) && isdefined(@__MODU
         GetIgnoreMissingArrays(_cp(vtkArrayCalculator, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetIgnorePipelineTime")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    GetIgnorePipelineTime(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        GetIgnorePipelineTime(_cp(vtkParticleTracerBase, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetImageDataOutput")) && isdefined(@__MODULE__, :vtkDataSetAlgorithm)
     GetImageDataOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAlgorithm}) =
         GetImageDataOutput(_cp(vtkDataSetAlgorithm, a1))
@@ -3190,6 +3455,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetInformation")) && isdefined(@__MODULE__, :vtkDataObject)
     GetInformation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
         GetInformation(_cp(vtkDataObject, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetInitialIntegrationStep")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetInitialIntegrationStep(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetInitialIntegrationStep(_cp(vtkStreamTracer, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkDataObjectAlgorithm)
@@ -3387,6 +3657,51 @@ if isdefined(@__MODULE__, Symbol("GetInsideOut")) && isdefined(@__MODULE__, :vtk
         GetInsideOut(_cp(vtkTableBasedClipDataSet, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetIntegrationDirection")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetIntegrationDirection(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetIntegrationDirection(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetIntegrationDirectionMaxValue")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetIntegrationDirectionMaxValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetIntegrationDirectionMaxValue(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetIntegrationDirectionMinValue")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetIntegrationDirectionMinValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetIntegrationDirectionMinValue(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetIntegrationStepUnit")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetIntegrationStepUnit(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetIntegrationStepUnit(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetIntegrator")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    GetIntegrator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        GetIntegrator(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetIntegrator")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetIntegrator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetIntegrator(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetIntegratorType")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    GetIntegratorType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        GetIntegratorType(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetIntegratorType")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetIntegratorType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetIntegratorType(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetInvert")) && isdefined(@__MODULE__, :vtkThreshold)
+    GetInvert(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        GetInvert(_cp(vtkThreshold, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetLength")) && isdefined(@__MODULE__, :vtkDataSet)
     GetLength(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSet}) =
         GetLength(_cp(vtkDataSet, a1))
@@ -3450,6 +3765,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetLookupTableName")) && isdefined(@__MODULE__, :vtkDataWriter)
     GetLookupTableName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
         GetLookupTableName(_cp(vtkDataWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetLowerThreshold")) && isdefined(@__MODULE__, :vtkThreshold)
+    GetLowerThreshold(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        GetLowerThreshold(_cp(vtkThreshold, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetMTime")) && isdefined(@__MODULE__, :vtkContourFilter)
@@ -3582,6 +3902,26 @@ if isdefined(@__MODULE__, Symbol("GetMaxSpatialDimension")) && isdefined(@__MODU
         GetMaxSpatialDimension(_cp(vtkUnstructuredGrid, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetMaximumError")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetMaximumError(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetMaximumError(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetMaximumIntegrationStep")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetMaximumIntegrationStep(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetMaximumIntegrationStep(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetMaximumNumberOfSteps")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetMaximumNumberOfSteps(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetMaximumNumberOfSteps(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetMaximumPropagation")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetMaximumPropagation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetMaximumPropagation(_cp(vtkStreamTracer, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetMaximumTimeValue")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
     GetMaximumTimeValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
         GetMaximumTimeValue(_cp(vtkGenericEnSightReader, a1))
@@ -3627,6 +3967,21 @@ if isdefined(@__MODULE__, Symbol("GetMeshMTime")) && isdefined(@__MODULE__, :vtk
         GetMeshMTime(_cp(vtkUnstructuredGrid, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetMeshOverTime")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    GetMeshOverTime(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        GetMeshOverTime(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetMeshOverTimeMaxValue")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    GetMeshOverTimeMaxValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        GetMeshOverTimeMaxValue(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetMeshOverTimeMinValue")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    GetMeshOverTimeMinValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        GetMeshOverTimeMinValue(_cp(vtkParticleTracerBase, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetMetaData")) && isdefined(@__MODULE__, :vtkMultiBlockDataSet)
     GetMetaData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMultiBlockDataSet}, a2) =
         GetMetaData(_cp(vtkMultiBlockDataSet, a1), a2)
@@ -3655,6 +4010,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetMinSpatialDimension")) && isdefined(@__MODULE__, :vtkUnstructuredGrid)
     GetMinSpatialDimension(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGrid}) =
         GetMinSpatialDimension(_cp(vtkUnstructuredGrid, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetMinimumIntegrationStep")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetMinimumIntegrationStep(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetMinimumIntegrationStep(_cp(vtkStreamTracer, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetMinimumTimeValue")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
@@ -3977,6 +4337,11 @@ if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined
         GetNumberOfGenerationsFromBase(_cp(vtkGenericEnSightReader, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkGradientFilter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkIdList)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkIdList}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkIdList, a1), a2)
@@ -3997,6 +4362,11 @@ if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined
         GetNumberOfGenerationsFromBase(_cp(vtkIntArray, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkLineSource)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkLineSource, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkMultiBlockDataSet)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMultiBlockDataSet}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkMultiBlockDataSet, a1), a2)
@@ -4015,6 +4385,16 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkObjectBase)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkObjectBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkParticleTracer)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracer}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkParticleTracer, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkParticleTracerBase, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm)
@@ -4067,6 +4447,11 @@ if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined
         GetNumberOfGenerationsFromBase(_cp(vtkPolyDataWriter, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkProbeFilter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkRectilinearGrid)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGrid}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkRectilinearGrid, a1), a2)
@@ -4080,6 +4465,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkRectilinearGridWriter)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridWriter}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkRectilinearGridWriter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkStreamTracer, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkStructuredGrid)
@@ -4100,6 +4490,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkTableBasedClipDataSet}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkTableBasedClipDataSet, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkThreshold)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkThreshold, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkUnstructuredGrid)
@@ -4352,6 +4747,11 @@ if isdefined(@__MODULE__, Symbol("GetNumberOfPolys")) && isdefined(@__MODULE__, 
         GetNumberOfPolys(_cp(vtkXMLPolyDataReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfRefinementRatios")) && isdefined(@__MODULE__, :vtkLineSource)
+    GetNumberOfRefinementRatios(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}) =
+        GetNumberOfRefinementRatios(_cp(vtkLineSource, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfScalarArrays")) && isdefined(@__MODULE__, :vtkArrayCalculator)
     GetNumberOfScalarArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
         GetNumberOfScalarArrays(_cp(vtkArrayCalculator, a1))
@@ -4597,9 +4997,19 @@ if isdefined(@__MODULE__, Symbol("GetOutputPointsPrecision")) && isdefined(@__MO
         GetOutputPointsPrecision(_cp(vtkCutter, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetOutputPointsPrecision")) && isdefined(@__MODULE__, :vtkLineSource)
+    GetOutputPointsPrecision(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}) =
+        GetOutputPointsPrecision(_cp(vtkLineSource, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetOutputPointsPrecision")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
     GetOutputPointsPrecision(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkTableBasedClipDataSet}) =
         GetOutputPointsPrecision(_cp(vtkTableBasedClipDataSet, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetOutputPointsPrecision")) && isdefined(@__MODULE__, :vtkThreshold)
+    GetOutputPointsPrecision(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        GetOutputPointsPrecision(_cp(vtkThreshold, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetOutputPointsPrecisionMaxValue")) && isdefined(@__MODULE__, :vtkCutter)
@@ -4662,9 +5072,29 @@ if isdefined(@__MODULE__, Symbol("GetParticleCoordinatesByIndex")) && isdefined(
         GetParticleCoordinatesByIndex(_cp(vtkGenericEnSightReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetParticleFileName")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    GetParticleFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        GetParticleFileName(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetPassCellArrays")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    GetPassCellArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        GetPassCellArrays(_cp(vtkProbeFilter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetPassCellData")) && isdefined(@__MODULE__, :vtkCellDataToPointData)
     GetPassCellData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCellDataToPointData}) =
         GetPassCellData(_cp(vtkCellDataToPointData, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetPassFieldArrays")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    GetPassFieldArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        GetPassFieldArrays(_cp(vtkProbeFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetPassPointArrays")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    GetPassPointArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        GetPassPointArrays(_cp(vtkProbeFilter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetPassPointData")) && isdefined(@__MODULE__, :vtkPointDataToCellData)
@@ -4767,6 +5197,26 @@ if isdefined(@__MODULE__, Symbol("GetPoint")) && isdefined(@__MODULE__, :vtkStru
         GetPoint(_cp(vtkStructuredGrid, a1), a2, a3)
 end
 
+if isdefined(@__MODULE__, Symbol("GetPoint1")) && isdefined(@__MODULE__, :vtkLineSource)
+    GetPoint1(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}) =
+        GetPoint1(_cp(vtkLineSource, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetPoint1")) && isdefined(@__MODULE__, :vtkLineSource)
+    GetPoint1(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2) =
+        GetPoint1(_cp(vtkLineSource, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetPoint2")) && isdefined(@__MODULE__, :vtkLineSource)
+    GetPoint2(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}) =
+        GetPoint2(_cp(vtkLineSource, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetPoint2")) && isdefined(@__MODULE__, :vtkLineSource)
+    GetPoint2(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2) =
+        GetPoint2(_cp(vtkLineSource, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetPointArrayName")) && isdefined(@__MODULE__, :vtkCGNSReader)
     GetPointArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
         GetPointArrayName(_cp(vtkCGNSReader, a1), a2)
@@ -4865,6 +5315,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetPointer")) && isdefined(@__MODULE__, :vtkIdList)
     GetPointer(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkIdList}, a2) =
         GetPointer(_cp(vtkIdList, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetPoints")) && isdefined(@__MODULE__, :vtkLineSource)
+    GetPoints(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}) =
+        GetPoints(_cp(vtkLineSource, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetPoints")) && isdefined(@__MODULE__, :vtkPointSet)
@@ -4985,6 +5440,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetProgressText")) && isdefined(@__MODULE__, :vtkAlgorithm)
     GetProgressText(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}) =
         GetProgressText(_cp(vtkAlgorithm, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetQCriterionArrayName")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetQCriterionArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        GetQCriterionArrayName(_cp(vtkGradientFilter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetRange")) && isdefined(@__MODULE__, :vtkDataArray)
@@ -5122,6 +5582,11 @@ if isdefined(@__MODULE__, Symbol("GetReferenceCount")) && isdefined(@__MODULE__,
         GetReferenceCount(_cp(vtkObjectBase, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetRefinementRatio")) && isdefined(@__MODULE__, :vtkLineSource)
+    GetRefinementRatio(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2) =
+        GetRefinementRatio(_cp(vtkLineSource, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetReleaseDataFlag")) && isdefined(@__MODULE__, :vtkAlgorithm)
     GetReleaseDataFlag(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}) =
         GetReleaseDataFlag(_cp(vtkAlgorithm, a1))
@@ -5137,9 +5602,44 @@ if isdefined(@__MODULE__, Symbol("GetReplacementValue")) && isdefined(@__MODULE_
         GetReplacementValue(_cp(vtkArrayCalculator, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetReplacementValueOption")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetReplacementValueOption(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        GetReplacementValueOption(_cp(vtkGradientFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetReplacementValueOptionMaxValue")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetReplacementValueOptionMaxValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        GetReplacementValueOptionMaxValue(_cp(vtkGradientFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetReplacementValueOptionMinValue")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetReplacementValueOptionMinValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        GetReplacementValueOptionMinValue(_cp(vtkGradientFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetResolution")) && isdefined(@__MODULE__, :vtkLineSource)
+    GetResolution(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}) =
+        GetResolution(_cp(vtkLineSource, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetResolutionMaxValue")) && isdefined(@__MODULE__, :vtkLineSource)
+    GetResolutionMaxValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}) =
+        GetResolutionMaxValue(_cp(vtkLineSource, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetResolutionMinValue")) && isdefined(@__MODULE__, :vtkLineSource)
+    GetResolutionMinValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}) =
+        GetResolutionMinValue(_cp(vtkLineSource, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetResultArrayName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
     GetResultArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
         GetResultArrayName(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetResultArrayName")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetResultArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        GetResultArrayName(_cp(vtkGradientFilter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetResultArrayType")) && isdefined(@__MODULE__, :vtkArrayCalculator)
@@ -5160,6 +5660,16 @@ end
 if isdefined(@__MODULE__, Symbol("GetRigidBodyFileName")) && isdefined(@__MODULE__, :vtkEnSightReader)
     GetRigidBodyFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkEnSightReader}) =
         GetRigidBodyFileName(_cp(vtkEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetRotationScale")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    GetRotationScale(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        GetRotationScale(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetRotationScale")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetRotationScale(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetRotationScale(_cp(vtkStreamTracer, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetSampledMaxCellLength2")) && isdefined(@__MODULE__, :vtkDataSet)
@@ -5312,6 +5822,21 @@ if isdefined(@__MODULE__, Symbol("GetScalarsName")) && isdefined(@__MODULE__, :v
         GetScalarsName(_cp(vtkDataWriter, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetSelectedComponent")) && isdefined(@__MODULE__, :vtkThreshold)
+    GetSelectedComponent(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        GetSelectedComponent(_cp(vtkThreshold, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetSelectedComponentMaxValue")) && isdefined(@__MODULE__, :vtkThreshold)
+    GetSelectedComponentMaxValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        GetSelectedComponentMaxValue(_cp(vtkThreshold, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetSelectedComponentMinValue")) && isdefined(@__MODULE__, :vtkThreshold)
+    GetSelectedComponentMinValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        GetSelectedComponentMinValue(_cp(vtkThreshold, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetSelectedCoordinateScalarComponent")) && isdefined(@__MODULE__, :vtkArrayCalculator)
     GetSelectedCoordinateScalarComponent(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
         GetSelectedCoordinateScalarComponent(_cp(vtkArrayCalculator, a1), a2)
@@ -5330,6 +5855,16 @@ end
 if isdefined(@__MODULE__, Symbol("GetSelectedScalarComponents")) && isdefined(@__MODULE__, :vtkArrayCalculator)
     GetSelectedScalarComponents(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
         GetSelectedScalarComponents(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetSnapToCellWithClosestPoint")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    GetSnapToCellWithClosestPoint(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        GetSnapToCellWithClosestPoint(_cp(vtkProbeFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetSnappingRadius")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    GetSnappingRadius(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        GetSnappingRadius(_cp(vtkProbeFilter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetSortBy")) && isdefined(@__MODULE__, :vtkCutter)
@@ -5352,6 +5887,16 @@ if isdefined(@__MODULE__, Symbol("GetSortByMinValue")) && isdefined(@__MODULE__,
         GetSortByMinValue(_cp(vtkCutter, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetSource")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    GetSource(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        GetSource(_cp(vtkProbeFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetSource")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetSource(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetSource(_cp(vtkStreamTracer, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetSpacing")) && isdefined(@__MODULE__, :vtkImageData)
     GetSpacing(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkImageData}) =
         GetSpacing(_cp(vtkImageData, a1))
@@ -5365,6 +5910,31 @@ end
 if isdefined(@__MODULE__, Symbol("GetSpacing")) && isdefined(@__MODULE__, :vtkImageData)
     GetSpacing(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkImageData}, a2, a3, a4) =
         GetSpacing(_cp(vtkImageData, a1), a2, a3, a4)
+end
+
+if isdefined(@__MODULE__, Symbol("GetSpatialMatch")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    GetSpatialMatch(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        GetSpatialMatch(_cp(vtkProbeFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetStartPosition")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetStartPosition(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetStartPosition(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetStartPosition")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetStartPosition(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        GetStartPosition(_cp(vtkStreamTracer, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetStartPosition")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetStartPosition(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2, a3, a4) =
+        GetStartPosition(_cp(vtkStreamTracer, a1), a2, a3, a4)
+end
+
+if isdefined(@__MODULE__, Symbol("GetStaticSeeds")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    GetStaticSeeds(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        GetStaticSeeds(_cp(vtkParticleTracerBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetStrips")) && isdefined(@__MODULE__, :vtkPolyData)
@@ -5390,6 +5960,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetStructuredGridOutput")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm)
     GetStructuredGridOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPassInputTypeAlgorithm}) =
         GetStructuredGridOutput(_cp(vtkPassInputTypeAlgorithm, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetSurfaceStreamlines")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetSurfaceStreamlines(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetSurfaceStreamlines(_cp(vtkStreamTracer, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetTCoords")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
@@ -5442,6 +6017,21 @@ if isdefined(@__MODULE__, Symbol("GetTensorsName")) && isdefined(@__MODULE__, :v
         GetTensorsName(_cp(vtkDataWriter, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetTerminalSpeed")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    GetTerminalSpeed(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        GetTerminalSpeed(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetTerminalSpeed")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetTerminalSpeed(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetTerminalSpeed(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetThresholdFunction")) && isdefined(@__MODULE__, :vtkThreshold)
+    GetThresholdFunction(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        GetThresholdFunction(_cp(vtkThreshold, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetTimeStep")) && isdefined(@__MODULE__, :vtkXMLReader)
     GetTimeStep(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}) =
         GetTimeStep(_cp(vtkXMLReader, a1))
@@ -5465,6 +6055,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetTimeValue")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
     GetTimeValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
         GetTimeValue(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetTolerance")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    GetTolerance(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        GetTolerance(_cp(vtkProbeFilter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetTotalNumberOfInputConnections")) && isdefined(@__MODULE__, :vtkAlgorithm)
@@ -5627,9 +6222,29 @@ if isdefined(@__MODULE__, Symbol("GetUpdateTime")) && isdefined(@__MODULE__, :vt
         GetUpdateTime(_cp(vtkDataObject, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetUpperThreshold")) && isdefined(@__MODULE__, :vtkThreshold)
+    GetUpperThreshold(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        GetUpperThreshold(_cp(vtkThreshold, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetUse3DVector")) && isdefined(@__MODULE__, :vtkCGNSReader)
     GetUse3DVector(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
         GetUse3DVector(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetUseContinuousCellRange")) && isdefined(@__MODULE__, :vtkThreshold)
+    GetUseContinuousCellRange(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        GetUseContinuousCellRange(_cp(vtkThreshold, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetUseLocalSeedSource")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    GetUseLocalSeedSource(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        GetUseLocalSeedSource(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetUseRegularRefinement")) && isdefined(@__MODULE__, :vtkLineSource)
+    GetUseRegularRefinement(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}) =
+        GetUseRegularRefinement(_cp(vtkLineSource, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetUseScalarTree")) && isdefined(@__MODULE__, :vtkContourFilter)
@@ -5645,6 +6260,16 @@ end
 if isdefined(@__MODULE__, Symbol("GetUseValueAsOffset")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
     GetUseValueAsOffset(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkTableBasedClipDataSet}) =
         GetUseValueAsOffset(_cp(vtkTableBasedClipDataSet, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetValidPointMaskArrayName")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    GetValidPointMaskArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        GetValidPointMaskArrayName(_cp(vtkProbeFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetValidPoints")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    GetValidPoints(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        GetValidPoints(_cp(vtkProbeFilter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetValue")) && isdefined(@__MODULE__, :vtkContourFilter)
@@ -5745,6 +6370,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetVoidPointer")) && isdefined(@__MODULE__, :vtkPoints)
     GetVoidPointer(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPoints}, a2) =
         GetVoidPointer(_cp(vtkPoints, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetVorticityArrayName")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    GetVorticityArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}) =
+        GetVorticityArrayName(_cp(vtkGradientFilter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetVoxelGradient")) && isdefined(@__MODULE__, :vtkImageData) && isdefined(@__MODULE__, :vtkDataArray) && isdefined(@__MODULE__, :vtkDataArray)
@@ -5920,6 +6550,16 @@ end
 if isdefined(@__MODULE__, Symbol("IgnoreMissingArraysOn")) && isdefined(@__MODULE__, :vtkArrayCalculator)
     IgnoreMissingArraysOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
         IgnoreMissingArraysOn(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("IgnorePipelineTimeOff")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    IgnorePipelineTimeOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        IgnorePipelineTimeOff(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("IgnorePipelineTimeOn")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    IgnorePipelineTimeOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        IgnorePipelineTimeOn(_cp(vtkParticleTracerBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("Initialize")) && isdefined(@__MODULE__, :vtkAbstractArray)
@@ -6332,6 +6972,16 @@ if isdefined(@__MODULE__, Symbol("IntersectWithLine")) && isdefined(@__MODULE__,
         IntersectWithLine(_cp(vtkPlane, a1), a2, a3, a4, a5)
 end
 
+if isdefined(@__MODULE__, Symbol("InvertOff")) && isdefined(@__MODULE__, :vtkThreshold)
+    InvertOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        InvertOff(_cp(vtkThreshold, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("InvertOn")) && isdefined(@__MODULE__, :vtkThreshold)
+    InvertOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        InvertOn(_cp(vtkThreshold, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("InvokeEvent")) && isdefined(@__MODULE__, :vtkObject)
     InvokeEvent(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObject}, a2) =
         InvokeEvent(_cp(vtkObject, a1), a2)
@@ -6477,6 +7127,11 @@ if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkGenericEn
         IsA(_cp(vtkGenericEnSightReader, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}, a2) =
+        IsA(_cp(vtkGradientFilter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkIdList)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkIdList}, a2) =
         IsA(_cp(vtkIdList, a1), a2)
@@ -6497,6 +7152,11 @@ if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkIntArray)
         IsA(_cp(vtkIntArray, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkLineSource)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2) =
+        IsA(_cp(vtkLineSource, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkMultiBlockDataSet)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMultiBlockDataSet}, a2) =
         IsA(_cp(vtkMultiBlockDataSet, a1), a2)
@@ -6515,6 +7175,16 @@ end
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkObjectBase)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}, a2) =
         IsA(_cp(vtkObjectBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkParticleTracer)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracer}, a2) =
+        IsA(_cp(vtkParticleTracer, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2) =
+        IsA(_cp(vtkParticleTracerBase, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm)
@@ -6567,6 +7237,11 @@ if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkPolyDataW
         IsA(_cp(vtkPolyDataWriter, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2) =
+        IsA(_cp(vtkProbeFilter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkRectilinearGrid)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGrid}, a2) =
         IsA(_cp(vtkRectilinearGrid, a1), a2)
@@ -6580,6 +7255,11 @@ end
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkRectilinearGridWriter)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridWriter}, a2) =
         IsA(_cp(vtkRectilinearGridWriter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        IsA(_cp(vtkStreamTracer, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkStructuredGrid)
@@ -6600,6 +7280,11 @@ end
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkTableBasedClipDataSet}, a2) =
         IsA(_cp(vtkTableBasedClipDataSet, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkThreshold)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}, a2) =
+        IsA(_cp(vtkThreshold, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkUnstructuredGrid)
@@ -6917,6 +7602,16 @@ if isdefined(@__MODULE__, Symbol("ParticleCoordinatesByIndexOn")) && isdefined(@
         ParticleCoordinatesByIndexOn(_cp(vtkGenericEnSightReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("PassCellArraysOff")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    PassCellArraysOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        PassCellArraysOff(_cp(vtkProbeFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("PassCellArraysOn")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    PassCellArraysOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        PassCellArraysOn(_cp(vtkProbeFilter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("PassCellDataOff")) && isdefined(@__MODULE__, :vtkCellDataToPointData)
     PassCellDataOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCellDataToPointData}) =
         PassCellDataOff(_cp(vtkCellDataToPointData, a1))
@@ -6935,6 +7630,26 @@ end
 if isdefined(@__MODULE__, Symbol("PassData")) && isdefined(@__MODULE__, :vtkFieldData) && isdefined(@__MODULE__, :vtkFieldData)
     PassData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkFieldData}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkFieldData}) =
         PassData(_cp(vtkFieldData, a1), _cp(vtkFieldData, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("PassFieldArraysOff")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    PassFieldArraysOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        PassFieldArraysOff(_cp(vtkProbeFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("PassFieldArraysOn")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    PassFieldArraysOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        PassFieldArraysOn(_cp(vtkProbeFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("PassPointArraysOff")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    PassPointArraysOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        PassPointArraysOff(_cp(vtkProbeFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("PassPointArraysOn")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    PassPointArraysOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        PassPointArraysOn(_cp(vtkProbeFilter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("PassPointDataOff")) && isdefined(@__MODULE__, :vtkPointDataToCellData)
@@ -6985,6 +7700,11 @@ end
 if isdefined(@__MODULE__, Symbol("PrepareForNewData")) && isdefined(@__MODULE__, :vtkImageData)
     PrepareForNewData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkImageData}) =
         PrepareForNewData(_cp(vtkImageData, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("PrintParticleHistories")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    PrintParticleHistories(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        PrintParticleHistories(_cp(vtkParticleTracerBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("ProcessAllArraysOff")) && isdefined(@__MODULE__, :vtkCellDataToPointData)
@@ -7300,6 +8020,11 @@ end
 if isdefined(@__MODULE__, Symbol("RemoveAllObservers")) && isdefined(@__MODULE__, :vtkObject)
     RemoveAllObservers(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObject}) =
         RemoveAllObservers(_cp(vtkObject, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("RemoveAllSources")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    RemoveAllSources(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        RemoveAllSources(_cp(vtkParticleTracerBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("RemoveAllVariables")) && isdefined(@__MODULE__, :vtkArrayCalculator)
@@ -7662,6 +8387,11 @@ if isdefined(@__MODULE__, Symbol("SetActiveVectors")) && isdefined(@__MODULE__, 
         SetActiveVectors(_cp(vtkDataSetAttributes, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetAllScalars")) && isdefined(@__MODULE__, :vtkThreshold)
+    SetAllScalars(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}, a2) =
+        SetAllScalars(_cp(vtkThreshold, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetAllowInterpolation")) && isdefined(@__MODULE__, :vtkDataSetSurfaceFilter)
     SetAllowInterpolation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetSurfaceFilter}, a2) =
         SetAllowInterpolation(_cp(vtkDataSetSurfaceFilter, a1), a2)
@@ -7817,6 +8547,11 @@ if isdefined(@__MODULE__, Symbol("SetCategoricalData")) && isdefined(@__MODULE__
         SetCategoricalData(_cp(vtkPointDataToCellData, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetCategoricalData")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    SetCategoricalData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2) =
+        SetCategoricalData(_cp(vtkProbeFilter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetCellArrayStatus")) && isdefined(@__MODULE__, :vtkCGNSReader)
     SetCellArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2, a3) =
         SetCellArrayStatus(_cp(vtkCGNSReader, a1), a2, a3)
@@ -7832,9 +8567,49 @@ if isdefined(@__MODULE__, Symbol("SetCellArrayStatus")) && isdefined(@__MODULE__
         SetCellArrayStatus(_cp(vtkXMLReader, a1), a2, a3)
 end
 
+if isdefined(@__MODULE__, Symbol("SetCellLocator")) && isdefined(@__MODULE__, :vtkParticleTracerBase) && isdefined(@__MODULE__, :vtkAbstractCellLocator)
+    SetCellLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractCellLocator}) =
+        SetCellLocator(_cp(vtkParticleTracerBase, a1), _cp(vtkAbstractCellLocator, a2))
+end
+
 if isdefined(@__MODULE__, Symbol("SetCellLocator")) && isdefined(@__MODULE__, :vtkPointSet) && isdefined(@__MODULE__, :vtkAbstractCellLocator)
     SetCellLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPointSet}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractCellLocator}) =
         SetCellLocator(_cp(vtkPointSet, a1), _cp(vtkAbstractCellLocator, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetCellLocator")) && isdefined(@__MODULE__, :vtkProbeFilter) && isdefined(@__MODULE__, :vtkAbstractCellLocator)
+    SetCellLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractCellLocator}) =
+        SetCellLocator(_cp(vtkProbeFilter, a1), _cp(vtkAbstractCellLocator, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetCellLocator")) && isdefined(@__MODULE__, :vtkStreamTracer) && isdefined(@__MODULE__, :vtkAbstractCellLocator)
+    SetCellLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractCellLocator}) =
+        SetCellLocator(_cp(vtkStreamTracer, a1), _cp(vtkAbstractCellLocator, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetCellLocatorPrototype")) && isdefined(@__MODULE__, :vtkProbeFilter) && isdefined(@__MODULE__, :vtkAbstractCellLocator)
+    SetCellLocatorPrototype(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractCellLocator}) =
+        SetCellLocatorPrototype(_cp(vtkProbeFilter, a1), _cp(vtkAbstractCellLocator, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetCellLocatorToJumpAndWalkCellLocator")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetCellLocatorToJumpAndWalkCellLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        SetCellLocatorToJumpAndWalkCellLocator(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetCellLocatorToJumpAndWalkCellLocator")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetCellLocatorToJumpAndWalkCellLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        SetCellLocatorToJumpAndWalkCellLocator(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetCellLocatorToStaticCellLocator")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetCellLocatorToStaticCellLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        SetCellLocatorToStaticCellLocator(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetCellLocatorToStaticCellLocator")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetCellLocatorToStaticCellLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        SetCellLocatorToStaticCellLocator(_cp(vtkStreamTracer, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("SetCellOrderAndRationalWeights")) && isdefined(@__MODULE__, :vtkDataSet) && isdefined(@__MODULE__, :vtkGenericCell)
@@ -7882,6 +8657,26 @@ if isdefined(@__MODULE__, Symbol("SetComponent")) && isdefined(@__MODULE__, :vtk
         SetComponent(_cp(vtkDataArray, a1), a2, a3, a4)
 end
 
+if isdefined(@__MODULE__, Symbol("SetComponentMode")) && isdefined(@__MODULE__, :vtkThreshold)
+    SetComponentMode(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}, a2) =
+        SetComponentMode(_cp(vtkThreshold, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetComponentModeToUseAll")) && isdefined(@__MODULE__, :vtkThreshold)
+    SetComponentModeToUseAll(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        SetComponentModeToUseAll(_cp(vtkThreshold, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetComponentModeToUseAny")) && isdefined(@__MODULE__, :vtkThreshold)
+    SetComponentModeToUseAny(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        SetComponentModeToUseAny(_cp(vtkThreshold, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetComponentModeToUseSelected")) && isdefined(@__MODULE__, :vtkThreshold)
+    SetComponentModeToUseSelected(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        SetComponentModeToUseSelected(_cp(vtkThreshold, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("SetComponentName")) && isdefined(@__MODULE__, :vtkAbstractArray)
     SetComponentName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractArray}, a2, a3) =
         SetComponentName(_cp(vtkAbstractArray, a1), a2, a3)
@@ -7917,6 +8712,16 @@ if isdefined(@__MODULE__, Symbol("SetCompressorTypeToZLib")) && isdefined(@__MOD
         SetCompressorTypeToZLib(_cp(vtkXMLWriterBase, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("SetComputeDivergence")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    SetComputeDivergence(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}, a2) =
+        SetComputeDivergence(_cp(vtkGradientFilter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetComputeGradient")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    SetComputeGradient(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}, a2) =
+        SetComputeGradient(_cp(vtkGradientFilter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetComputeGradients")) && isdefined(@__MODULE__, :vtkContourFilter)
     SetComputeGradients(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkContourFilter}, a2) =
         SetComputeGradients(_cp(vtkContourFilter, a1), a2)
@@ -7927,9 +8732,34 @@ if isdefined(@__MODULE__, Symbol("SetComputeNormals")) && isdefined(@__MODULE__,
         SetComputeNormals(_cp(vtkContourFilter, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetComputeQCriterion")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    SetComputeQCriterion(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}, a2) =
+        SetComputeQCriterion(_cp(vtkGradientFilter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetComputeScalars")) && isdefined(@__MODULE__, :vtkContourFilter)
     SetComputeScalars(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkContourFilter}, a2) =
         SetComputeScalars(_cp(vtkContourFilter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetComputeTolerance")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    SetComputeTolerance(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2) =
+        SetComputeTolerance(_cp(vtkProbeFilter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetComputeVorticity")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    SetComputeVorticity(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}, a2) =
+        SetComputeVorticity(_cp(vtkGradientFilter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetComputeVorticity")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetComputeVorticity(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2) =
+        SetComputeVorticity(_cp(vtkParticleTracerBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetComputeVorticity")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetComputeVorticity(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetComputeVorticity(_cp(vtkStreamTracer, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetContainerAlgorithm")) && isdefined(@__MODULE__, :vtkAlgorithm) && isdefined(@__MODULE__, :vtkAlgorithm)
@@ -7950,6 +8780,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetContributingCellOption")) && isdefined(@__MODULE__, :vtkCellDataToPointData)
     SetContributingCellOption(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCellDataToPointData}, a2) =
         SetContributingCellOption(_cp(vtkCellDataToPointData, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetContributingCellOption")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    SetContributingCellOption(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}, a2) =
+        SetContributingCellOption(_cp(vtkGradientFilter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetCoordinateResults")) && isdefined(@__MODULE__, :vtkArrayCalculator)
@@ -8212,6 +9047,11 @@ if isdefined(@__MODULE__, Symbol("SetDistributeBlocks")) && isdefined(@__MODULE_
         SetDistributeBlocks(_cp(vtkCGNSReader, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetDivergenceArrayName")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    SetDivergenceArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}, a2) =
+        SetDivergenceArrayName(_cp(vtkGradientFilter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetDoublePrecisionMesh")) && isdefined(@__MODULE__, :vtkCGNSReader)
     SetDoublePrecisionMesh(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
         SetDoublePrecisionMesh(_cp(vtkCGNSReader, a1), a2)
@@ -8225,6 +9065,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetEditable")) && isdefined(@__MODULE__, :vtkPointSet)
     SetEditable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPointSet}, a2) =
         SetEditable(_cp(vtkPointSet, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetEnableParticleWriting")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetEnableParticleWriting(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2) =
+        SetEnableParticleWriting(_cp(vtkParticleTracerBase, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetEncodeAppendedData")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
@@ -8265,6 +9110,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetFastMode")) && isdefined(@__MODULE__, :vtkDataSetSurfaceFilter)
     SetFastMode(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetSurfaceFilter}, a2) =
         SetFastMode(_cp(vtkDataSetSurfaceFilter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetFasterApproximation")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    SetFasterApproximation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}, a2) =
+        SetFasterApproximation(_cp(vtkGradientFilter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetFieldData")) && isdefined(@__MODULE__, :vtkDataObject) && isdefined(@__MODULE__, :vtkFieldData)
@@ -8370,6 +9220,21 @@ end
 if isdefined(@__MODULE__, Symbol("SetFlipFaceNormals")) && isdefined(@__MODULE__, :vtkCGNSReader)
     SetFlipFaceNormals(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
         SetFlipFaceNormals(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetForceReinjectionEveryNSteps")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetForceReinjectionEveryNSteps(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2) =
+        SetForceReinjectionEveryNSteps(_cp(vtkParticleTracerBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetForceSerialExecution")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetForceSerialExecution(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2) =
+        SetForceSerialExecution(_cp(vtkParticleTracerBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetForceSerialExecution")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetForceSerialExecution(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetForceSerialExecution(_cp(vtkStreamTracer, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetFunction")) && isdefined(@__MODULE__, :vtkArrayCalculator)
@@ -8502,6 +9367,11 @@ if isdefined(@__MODULE__, Symbol("SetIgnoreMissingArrays")) && isdefined(@__MODU
         SetIgnoreMissingArrays(_cp(vtkArrayCalculator, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetIgnorePipelineTime")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetIgnorePipelineTime(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2) =
+        SetIgnorePipelineTime(_cp(vtkParticleTracerBase, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetInformation")) && isdefined(@__MODULE__, :vtkAlgorithm) && isdefined(@__MODULE__, :vtkInformation)
     SetInformation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}) =
         SetInformation(_cp(vtkAlgorithm, a1), _cp(vtkInformation, a2))
@@ -8510,6 +9380,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetInformation")) && isdefined(@__MODULE__, :vtkDataObject) && isdefined(@__MODULE__, :vtkInformation)
     SetInformation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}) =
         SetInformation(_cp(vtkDataObject, a1), _cp(vtkInformation, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetInitialIntegrationStep")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetInitialIntegrationStep(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetInitialIntegrationStep(_cp(vtkStreamTracer, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetInputArray")) && isdefined(@__MODULE__, :vtkContourFilter)
@@ -8612,6 +9487,11 @@ if isdefined(@__MODULE__, Symbol("SetInputDataObject")) && isdefined(@__MODULE__
         SetInputDataObject(_cp(vtkAlgorithm, a1), _cp(vtkDataObject, a2))
 end
 
+if isdefined(@__MODULE__, Symbol("SetInputScalars")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    SetInputScalars(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}, a2, a3) =
+        SetInputScalars(_cp(vtkGradientFilter, a1), a2, a3)
+end
+
 if isdefined(@__MODULE__, Symbol("SetInputString")) && isdefined(@__MODULE__, :vtkXMLReader)
     SetInputString(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}, a2, a3) =
         SetInputString(_cp(vtkXMLReader, a1), a2, a3)
@@ -8625,6 +9505,101 @@ end
 if isdefined(@__MODULE__, Symbol("SetInsideOut")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
     SetInsideOut(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkTableBasedClipDataSet}, a2) =
         SetInsideOut(_cp(vtkTableBasedClipDataSet, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetIntegrationDirection")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetIntegrationDirection(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetIntegrationDirection(_cp(vtkStreamTracer, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetIntegrationDirectionToBackward")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetIntegrationDirectionToBackward(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        SetIntegrationDirectionToBackward(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetIntegrationDirectionToBoth")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetIntegrationDirectionToBoth(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        SetIntegrationDirectionToBoth(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetIntegrationDirectionToForward")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetIntegrationDirectionToForward(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        SetIntegrationDirectionToForward(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetIntegrationStepUnit")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetIntegrationStepUnit(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetIntegrationStepUnit(_cp(vtkStreamTracer, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetIntegrator")) && isdefined(@__MODULE__, :vtkParticleTracerBase) && isdefined(@__MODULE__, :vtkInitialValueProblemSolver)
+    SetIntegrator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInitialValueProblemSolver}) =
+        SetIntegrator(_cp(vtkParticleTracerBase, a1), _cp(vtkInitialValueProblemSolver, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetIntegrator")) && isdefined(@__MODULE__, :vtkStreamTracer) && isdefined(@__MODULE__, :vtkInitialValueProblemSolver)
+    SetIntegrator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInitialValueProblemSolver}) =
+        SetIntegrator(_cp(vtkStreamTracer, a1), _cp(vtkInitialValueProblemSolver, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetIntegratorType")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetIntegratorType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2) =
+        SetIntegratorType(_cp(vtkParticleTracerBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetIntegratorType")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetIntegratorType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetIntegratorType(_cp(vtkStreamTracer, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetIntegratorTypeToRungeKutta2")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetIntegratorTypeToRungeKutta2(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        SetIntegratorTypeToRungeKutta2(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetIntegratorTypeToRungeKutta4")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetIntegratorTypeToRungeKutta4(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        SetIntegratorTypeToRungeKutta4(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetIntegratorTypeToRungeKutta45")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetIntegratorTypeToRungeKutta45(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        SetIntegratorTypeToRungeKutta45(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetInterpolatorType")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetInterpolatorType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2) =
+        SetInterpolatorType(_cp(vtkParticleTracerBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetInterpolatorType")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetInterpolatorType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetInterpolatorType(_cp(vtkStreamTracer, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetInterpolatorTypeToCellLocator")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetInterpolatorTypeToCellLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        SetInterpolatorTypeToCellLocator(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetInterpolatorTypeToCellLocator")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetInterpolatorTypeToCellLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        SetInterpolatorTypeToCellLocator(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetInterpolatorTypeToDataSetPointLocator")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetInterpolatorTypeToDataSetPointLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        SetInterpolatorTypeToDataSetPointLocator(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetInterpolatorTypeToDataSetPointLocator")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetInterpolatorTypeToDataSetPointLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        SetInterpolatorTypeToDataSetPointLocator(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetInvert")) && isdefined(@__MODULE__, :vtkThreshold)
+    SetInvert(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}, a2) =
+        SetInvert(_cp(vtkThreshold, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetLines")) && isdefined(@__MODULE__, :vtkPolyData) && isdefined(@__MODULE__, :vtkCellArray)
@@ -8682,6 +9657,11 @@ if isdefined(@__MODULE__, Symbol("SetLookupTableName")) && isdefined(@__MODULE__
         SetLookupTableName(_cp(vtkDataWriter, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetLowerThreshold")) && isdefined(@__MODULE__, :vtkThreshold)
+    SetLowerThreshold(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}, a2) =
+        SetLowerThreshold(_cp(vtkThreshold, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetMatchBoundariesIgnoringCellOrder")) && isdefined(@__MODULE__, :vtkDataSetSurfaceFilter)
     SetMatchBoundariesIgnoringCellOrder(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetSurfaceFilter}, a2) =
         SetMatchBoundariesIgnoringCellOrder(_cp(vtkDataSetSurfaceFilter, a1), a2)
@@ -8692,9 +9672,59 @@ if isdefined(@__MODULE__, Symbol("SetMaxDiscreteValues")) && isdefined(@__MODULE
         SetMaxDiscreteValues(_cp(vtkAbstractArray, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetMaximumError")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetMaximumError(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetMaximumError(_cp(vtkStreamTracer, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetMaximumIntegrationStep")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetMaximumIntegrationStep(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetMaximumIntegrationStep(_cp(vtkStreamTracer, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetMaximumNumberOfSteps")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetMaximumNumberOfSteps(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetMaximumNumberOfSteps(_cp(vtkStreamTracer, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetMaximumPropagation")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetMaximumPropagation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetMaximumPropagation(_cp(vtkStreamTracer, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetMergeTolerance")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
     SetMergeTolerance(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkTableBasedClipDataSet}, a2) =
         SetMergeTolerance(_cp(vtkTableBasedClipDataSet, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetMeshOverTime")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetMeshOverTime(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2) =
+        SetMeshOverTime(_cp(vtkParticleTracerBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetMeshOverTimeToDifferent")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetMeshOverTimeToDifferent(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        SetMeshOverTimeToDifferent(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetMeshOverTimeToLinearTransformation")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetMeshOverTimeToLinearTransformation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        SetMeshOverTimeToLinearTransformation(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetMeshOverTimeToSameTopology")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetMeshOverTimeToSameTopology(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        SetMeshOverTimeToSameTopology(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetMeshOverTimeToStatic")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetMeshOverTimeToStatic(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}) =
+        SetMeshOverTimeToStatic(_cp(vtkParticleTracerBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetMinimumIntegrationStep")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetMinimumIntegrationStep(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetMinimumIntegrationStep(_cp(vtkStreamTracer, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetName")) && isdefined(@__MODULE__, :vtkAbstractArray)
@@ -8780,6 +9810,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetNumberOfPoints")) && isdefined(@__MODULE__, :vtkPoints)
     SetNumberOfPoints(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPoints}, a2) =
         SetNumberOfPoints(_cp(vtkPoints, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetNumberOfRefinementRatios")) && isdefined(@__MODULE__, :vtkLineSource)
+    SetNumberOfRefinementRatios(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2) =
+        SetNumberOfRefinementRatios(_cp(vtkLineSource, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetNumberOfTimeSteps")) && isdefined(@__MODULE__, :vtkXMLWriter)
@@ -8887,9 +9922,19 @@ if isdefined(@__MODULE__, Symbol("SetOutputPointsPrecision")) && isdefined(@__MO
         SetOutputPointsPrecision(_cp(vtkCutter, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetOutputPointsPrecision")) && isdefined(@__MODULE__, :vtkLineSource)
+    SetOutputPointsPrecision(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2) =
+        SetOutputPointsPrecision(_cp(vtkLineSource, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetOutputPointsPrecision")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
     SetOutputPointsPrecision(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkTableBasedClipDataSet}, a2) =
         SetOutputPointsPrecision(_cp(vtkTableBasedClipDataSet, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetOutputPointsPrecision")) && isdefined(@__MODULE__, :vtkThreshold)
+    SetOutputPointsPrecision(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}, a2) =
+        SetOutputPointsPrecision(_cp(vtkThreshold, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetParserErrorObserver")) && isdefined(@__MODULE__, :vtkXMLReader) && isdefined(@__MODULE__, :vtkCommand)
@@ -8902,9 +9947,29 @@ if isdefined(@__MODULE__, Symbol("SetParticleCoordinatesByIndex")) && isdefined(
         SetParticleCoordinatesByIndex(_cp(vtkGenericEnSightReader, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetParticleFileName")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetParticleFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2) =
+        SetParticleFileName(_cp(vtkParticleTracerBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetPassCellArrays")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    SetPassCellArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2) =
+        SetPassCellArrays(_cp(vtkProbeFilter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetPassCellData")) && isdefined(@__MODULE__, :vtkCellDataToPointData)
     SetPassCellData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCellDataToPointData}, a2) =
         SetPassCellData(_cp(vtkCellDataToPointData, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetPassFieldArrays")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    SetPassFieldArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2) =
+        SetPassFieldArrays(_cp(vtkProbeFilter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetPassPointArrays")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    SetPassPointArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2) =
+        SetPassPointArrays(_cp(vtkProbeFilter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetPassPointData")) && isdefined(@__MODULE__, :vtkPointDataToCellData)
@@ -8952,6 +10017,26 @@ if isdefined(@__MODULE__, Symbol("SetPoint")) && isdefined(@__MODULE__, :vtkPoin
         SetPoint(_cp(vtkPoints, a1), a2, a3)
 end
 
+if isdefined(@__MODULE__, Symbol("SetPoint1")) && isdefined(@__MODULE__, :vtkLineSource)
+    SetPoint1(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2, a3, a4) =
+        SetPoint1(_cp(vtkLineSource, a1), a2, a3, a4)
+end
+
+if isdefined(@__MODULE__, Symbol("SetPoint1")) && isdefined(@__MODULE__, :vtkLineSource)
+    SetPoint1(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2) =
+        SetPoint1(_cp(vtkLineSource, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetPoint2")) && isdefined(@__MODULE__, :vtkLineSource)
+    SetPoint2(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2, a3, a4) =
+        SetPoint2(_cp(vtkLineSource, a1), a2, a3, a4)
+end
+
+if isdefined(@__MODULE__, Symbol("SetPoint2")) && isdefined(@__MODULE__, :vtkLineSource)
+    SetPoint2(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2) =
+        SetPoint2(_cp(vtkLineSource, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetPointArrayStatus")) && isdefined(@__MODULE__, :vtkCGNSReader)
     SetPointArrayStatus(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2, a3) =
         SetPointArrayStatus(_cp(vtkCGNSReader, a1), a2, a3)
@@ -8970,6 +10055,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetPointLocator")) && isdefined(@__MODULE__, :vtkPointSet) && isdefined(@__MODULE__, :vtkAbstractPointLocator)
     SetPointLocator(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPointSet}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractPointLocator}) =
         SetPointLocator(_cp(vtkPointSet, a1), _cp(vtkAbstractPointLocator, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetPoints")) && isdefined(@__MODULE__, :vtkLineSource) && isdefined(@__MODULE__, :vtkPoints)
+    SetPoints(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPoints}) =
+        SetPoints(_cp(vtkLineSource, a1), _cp(vtkPoints, a2))
 end
 
 if isdefined(@__MODULE__, Symbol("SetPoints")) && isdefined(@__MODULE__, :vtkPointSet) && isdefined(@__MODULE__, :vtkPoints)
@@ -9020,6 +10110,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetProgressText")) && isdefined(@__MODULE__, :vtkAlgorithm)
     SetProgressText(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2) =
         SetProgressText(_cp(vtkAlgorithm, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetQCriterionArrayName")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    SetQCriterionArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}, a2) =
+        SetQCriterionArrayName(_cp(vtkGradientFilter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetRationalWeights")) && isdefined(@__MODULE__, :vtkDataSetAttributes) && isdefined(@__MODULE__, :vtkDataArray)
@@ -9102,6 +10197,11 @@ if isdefined(@__MODULE__, Symbol("SetReferenceCount")) && isdefined(@__MODULE__,
         SetReferenceCount(_cp(vtkObjectBase, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetRefinementRatio")) && isdefined(@__MODULE__, :vtkLineSource)
+    SetRefinementRatio(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2, a3) =
+        SetRefinementRatio(_cp(vtkLineSource, a1), a2, a3)
+end
+
 if isdefined(@__MODULE__, Symbol("SetReleaseDataFlag")) && isdefined(@__MODULE__, :vtkAlgorithm)
     SetReleaseDataFlag(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2) =
         SetReleaseDataFlag(_cp(vtkAlgorithm, a1), a2)
@@ -9117,9 +10217,24 @@ if isdefined(@__MODULE__, Symbol("SetReplacementValue")) && isdefined(@__MODULE_
         SetReplacementValue(_cp(vtkArrayCalculator, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetReplacementValueOption")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    SetReplacementValueOption(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}, a2) =
+        SetReplacementValueOption(_cp(vtkGradientFilter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetResolution")) && isdefined(@__MODULE__, :vtkLineSource)
+    SetResolution(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2) =
+        SetResolution(_cp(vtkLineSource, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetResultArrayName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
     SetResultArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
         SetResultArrayName(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetResultArrayName")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    SetResultArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}, a2) =
+        SetResultArrayName(_cp(vtkGradientFilter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetResultArrayType")) && isdefined(@__MODULE__, :vtkArrayCalculator)
@@ -9135,6 +10250,16 @@ end
 if isdefined(@__MODULE__, Symbol("SetResultTCoords")) && isdefined(@__MODULE__, :vtkArrayCalculator)
     SetResultTCoords(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
         SetResultTCoords(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetRotationScale")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetRotationScale(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2) =
+        SetRotationScale(_cp(vtkParticleTracerBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetRotationScale")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetRotationScale(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetRotationScale(_cp(vtkStreamTracer, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetScalarComponentFromDouble")) && isdefined(@__MODULE__, :vtkImageData)
@@ -9167,9 +10292,24 @@ if isdefined(@__MODULE__, Symbol("SetScalarsName")) && isdefined(@__MODULE__, :v
         SetScalarsName(_cp(vtkDataWriter, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetSelectedComponent")) && isdefined(@__MODULE__, :vtkThreshold)
+    SetSelectedComponent(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}, a2) =
+        SetSelectedComponent(_cp(vtkThreshold, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetSelector")) && isdefined(@__MODULE__, :vtkXMLMultiBlockDataReader)
     SetSelector(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLMultiBlockDataReader}, a2) =
         SetSelector(_cp(vtkXMLMultiBlockDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetSnapToCellWithClosestPoint")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    SetSnapToCellWithClosestPoint(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2) =
+        SetSnapToCellWithClosestPoint(_cp(vtkProbeFilter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetSnappingRadius")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    SetSnappingRadius(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2) =
+        SetSnappingRadius(_cp(vtkProbeFilter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetSortBy")) && isdefined(@__MODULE__, :vtkCutter)
@@ -9187,6 +10327,26 @@ if isdefined(@__MODULE__, Symbol("SetSortByToSortByValue")) && isdefined(@__MODU
         SetSortByToSortByValue(_cp(vtkCutter, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("SetSourceConnection")) && isdefined(@__MODULE__, :vtkProbeFilter) && isdefined(@__MODULE__, :vtkAlgorithmOutput)
+    SetSourceConnection(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithmOutput}) =
+        SetSourceConnection(_cp(vtkProbeFilter, a1), _cp(vtkAlgorithmOutput, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetSourceConnection")) && isdefined(@__MODULE__, :vtkStreamTracer) && isdefined(@__MODULE__, :vtkAlgorithmOutput)
+    SetSourceConnection(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithmOutput}) =
+        SetSourceConnection(_cp(vtkStreamTracer, a1), _cp(vtkAlgorithmOutput, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetSourceData")) && isdefined(@__MODULE__, :vtkProbeFilter) && isdefined(@__MODULE__, :vtkDataObject)
+    SetSourceData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
+        SetSourceData(_cp(vtkProbeFilter, a1), _cp(vtkDataObject, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetSourceData")) && isdefined(@__MODULE__, :vtkStreamTracer) && isdefined(@__MODULE__, :vtkDataSet)
+    SetSourceData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSet}) =
+        SetSourceData(_cp(vtkStreamTracer, a1), _cp(vtkDataSet, a2))
+end
+
 if isdefined(@__MODULE__, Symbol("SetSpacing")) && isdefined(@__MODULE__, :vtkImageData)
     SetSpacing(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkImageData}, a2) =
         SetSpacing(_cp(vtkImageData, a1), a2)
@@ -9197,9 +10357,34 @@ if isdefined(@__MODULE__, Symbol("SetSpacing")) && isdefined(@__MODULE__, :vtkIm
         SetSpacing(_cp(vtkImageData, a1), a2, a3, a4)
 end
 
+if isdefined(@__MODULE__, Symbol("SetSpatialMatch")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    SetSpatialMatch(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2) =
+        SetSpatialMatch(_cp(vtkProbeFilter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetStartPosition")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetStartPosition(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetStartPosition(_cp(vtkStreamTracer, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetStartPosition")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetStartPosition(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2, a3, a4) =
+        SetStartPosition(_cp(vtkStreamTracer, a1), a2, a3, a4)
+end
+
+if isdefined(@__MODULE__, Symbol("SetStaticSeeds")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetStaticSeeds(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2) =
+        SetStaticSeeds(_cp(vtkParticleTracerBase, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetStrips")) && isdefined(@__MODULE__, :vtkPolyData) && isdefined(@__MODULE__, :vtkCellArray)
     SetStrips(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyData}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCellArray}) =
         SetStrips(_cp(vtkPolyData, a1), _cp(vtkCellArray, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetSurfaceStreamlines")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetSurfaceStreamlines(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetSurfaceStreamlines(_cp(vtkStreamTracer, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetTCoords")) && isdefined(@__MODULE__, :vtkDataSetAttributes) && isdefined(@__MODULE__, :vtkDataArray)
@@ -9237,6 +10422,21 @@ if isdefined(@__MODULE__, Symbol("SetTensorsName")) && isdefined(@__MODULE__, :v
         SetTensorsName(_cp(vtkDataWriter, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetTerminalSpeed")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
+    SetTerminalSpeed(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkParticleTracerBase}, a2) =
+        SetTerminalSpeed(_cp(vtkParticleTracerBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetTerminalSpeed")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetTerminalSpeed(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetTerminalSpeed(_cp(vtkStreamTracer, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetThresholdFunction")) && isdefined(@__MODULE__, :vtkThreshold)
+    SetThresholdFunction(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}, a2) =
+        SetThresholdFunction(_cp(vtkThreshold, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetTimeStep")) && isdefined(@__MODULE__, :vtkXMLReader)
     SetTimeStep(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}, a2) =
         SetTimeStep(_cp(vtkXMLReader, a1), a2)
@@ -9255,6 +10455,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetTimeValue")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
     SetTimeValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
         SetTimeValue(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetTolerance")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    SetTolerance(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2) =
+        SetTolerance(_cp(vtkProbeFilter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetTransform")) && isdefined(@__MODULE__, :vtkImplicitFunction)
@@ -9322,9 +10527,29 @@ if isdefined(@__MODULE__, Symbol("SetUnsteadySolutionStartTimestep")) && isdefin
         SetUnsteadySolutionStartTimestep(_cp(vtkCGNSReader, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetUpperThreshold")) && isdefined(@__MODULE__, :vtkThreshold)
+    SetUpperThreshold(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}, a2) =
+        SetUpperThreshold(_cp(vtkThreshold, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetUse3DVector")) && isdefined(@__MODULE__, :vtkCGNSReader)
     SetUse3DVector(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
         SetUse3DVector(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetUseContinuousCellRange")) && isdefined(@__MODULE__, :vtkThreshold)
+    SetUseContinuousCellRange(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}, a2) =
+        SetUseContinuousCellRange(_cp(vtkThreshold, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetUseLocalSeedSource")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SetUseLocalSeedSource(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}, a2) =
+        SetUseLocalSeedSource(_cp(vtkStreamTracer, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetUseRegularRefinement")) && isdefined(@__MODULE__, :vtkLineSource)
+    SetUseRegularRefinement(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2) =
+        SetUseRegularRefinement(_cp(vtkLineSource, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetUseScalarTree")) && isdefined(@__MODULE__, :vtkContourFilter)
@@ -9340,6 +10565,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetUseValueAsOffset")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
     SetUseValueAsOffset(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkTableBasedClipDataSet}, a2) =
         SetUseValueAsOffset(_cp(vtkTableBasedClipDataSet, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetValidPointMaskArrayName")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    SetValidPointMaskArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}, a2) =
+        SetValidPointMaskArrayName(_cp(vtkProbeFilter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetValue")) && isdefined(@__MODULE__, :vtkContourFilter)
@@ -9390,6 +10620,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetVoidArray")) && isdefined(@__MODULE__, :vtkAbstractArray)
     SetVoidArray(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractArray}, a2, a3, a4, a5) =
         SetVoidArray(_cp(vtkAbstractArray, a1), a2, a3, a4, a5)
+end
+
+if isdefined(@__MODULE__, Symbol("SetVorticityArrayName")) && isdefined(@__MODULE__, :vtkGradientFilter)
+    SetVorticityArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGradientFilter}, a2) =
+        SetVorticityArrayName(_cp(vtkGradientFilter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetWholeSlices")) && isdefined(@__MODULE__, :vtkXMLStructuredDataReader)
@@ -9547,9 +10782,29 @@ if isdefined(@__MODULE__, Symbol("ShallowCopy")) && isdefined(@__MODULE__, :vtkU
         ShallowCopy(_cp(vtkUnstructuredGrid, a1), _cp(vtkDataObject, a2))
 end
 
+if isdefined(@__MODULE__, Symbol("SnapToCellWithClosestPointOff")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    SnapToCellWithClosestPointOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        SnapToCellWithClosestPointOff(_cp(vtkProbeFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SnapToCellWithClosestPointOn")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    SnapToCellWithClosestPointOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        SnapToCellWithClosestPointOn(_cp(vtkProbeFilter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("Sort")) && isdefined(@__MODULE__, :vtkIdList)
     Sort(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkIdList}) =
         Sort(_cp(vtkIdList, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SpatialMatchOff")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    SpatialMatchOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        SpatialMatchOff(_cp(vtkProbeFilter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SpatialMatchOn")) && isdefined(@__MODULE__, :vtkProbeFilter)
+    SpatialMatchOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
+        SpatialMatchOn(_cp(vtkProbeFilter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("Squeeze")) && isdefined(@__MODULE__, :vtkAbstractArray)
@@ -9615,6 +10870,16 @@ end
 if isdefined(@__MODULE__, Symbol("SupportsGhostArray")) && isdefined(@__MODULE__, :vtkDataSet)
     SupportsGhostArray(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSet}, a2) =
         SupportsGhostArray(_cp(vtkDataSet, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SurfaceStreamlinesOff")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SurfaceStreamlinesOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        SurfaceStreamlinesOff(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SurfaceStreamlinesOn")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    SurfaceStreamlinesOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        SurfaceStreamlinesOn(_cp(vtkStreamTracer, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("ToAOSDataArray")) && isdefined(@__MODULE__, :vtkDataArray)
@@ -9780,6 +11045,36 @@ end
 if isdefined(@__MODULE__, Symbol("Use3DVectorOn")) && isdefined(@__MODULE__, :vtkCGNSReader)
     Use3DVectorOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
         Use3DVectorOn(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("UseContinuousCellRangeOff")) && isdefined(@__MODULE__, :vtkThreshold)
+    UseContinuousCellRangeOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        UseContinuousCellRangeOff(_cp(vtkThreshold, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("UseContinuousCellRangeOn")) && isdefined(@__MODULE__, :vtkThreshold)
+    UseContinuousCellRangeOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
+        UseContinuousCellRangeOn(_cp(vtkThreshold, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("UseLocalSeedSourceOff")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    UseLocalSeedSourceOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        UseLocalSeedSourceOff(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("UseLocalSeedSourceOn")) && isdefined(@__MODULE__, :vtkStreamTracer)
+    UseLocalSeedSourceOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStreamTracer}) =
+        UseLocalSeedSourceOn(_cp(vtkStreamTracer, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("UseRegularRefinementOff")) && isdefined(@__MODULE__, :vtkLineSource)
+    UseRegularRefinementOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}) =
+        UseRegularRefinementOff(_cp(vtkLineSource, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("UseRegularRefinementOn")) && isdefined(@__MODULE__, :vtkLineSource)
+    UseRegularRefinementOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}) =
+        UseRegularRefinementOn(_cp(vtkLineSource, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("UseScalarTreeOff")) && isdefined(@__MODULE__, :vtkContourFilter)
@@ -10187,6 +11482,11 @@ if isdefined(@__MODULE__, Symbol("vtkGenericEnSightReader!SafeDownCast")) && isd
         vtkGenericEnSightReader!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("vtkGradientFilter!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkGradientFilter!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkGradientFilter!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("vtkIdList!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkIdList!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkIdList!SafeDownCast(_cp(vtkObjectBase, a1))
@@ -10227,6 +11527,11 @@ if isdefined(@__MODULE__, Symbol("vtkIntArray!SafeDownCast")) && isdefined(@__MO
         vtkIntArray!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("vtkLineSource!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkLineSource!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkLineSource!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("vtkMultiBlockDataSet!GetData")) && isdefined(@__MODULE__, :vtkInformation)
     vtkMultiBlockDataSet!GetData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}) =
         vtkMultiBlockDataSet!GetData(_cp(vtkInformation, a1))
@@ -10255,6 +11560,16 @@ end
 if isdefined(@__MODULE__, Symbol("vtkObject!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkObject!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkObject!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkParticleTracer!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkParticleTracer!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkParticleTracer!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkParticleTracerBase!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkParticleTracerBase!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkParticleTracerBase!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("vtkPassInputTypeAlgorithm!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
@@ -10342,6 +11657,11 @@ if isdefined(@__MODULE__, Symbol("vtkPolyDataWriter!SafeDownCast")) && isdefined
         vtkPolyDataWriter!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("vtkProbeFilter!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkProbeFilter!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkProbeFilter!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("vtkRectilinearGrid!GetData")) && isdefined(@__MODULE__, :vtkInformation)
     vtkRectilinearGrid!GetData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}) =
         vtkRectilinearGrid!GetData(_cp(vtkInformation, a1))
@@ -10370,6 +11690,11 @@ end
 if isdefined(@__MODULE__, Symbol("vtkRectilinearGridWriter!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkRectilinearGridWriter!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkRectilinearGridWriter!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkStreamTracer!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkStreamTracer!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkStreamTracer!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("vtkStructuredGrid!GetData")) && isdefined(@__MODULE__, :vtkInformation)
@@ -10405,6 +11730,11 @@ end
 if isdefined(@__MODULE__, Symbol("vtkTableBasedClipDataSet!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkTableBasedClipDataSet!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkTableBasedClipDataSet!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkThreshold!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkThreshold!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkThreshold!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("vtkUnstructuredGrid!DecomposeAPolyhedronCell")) && isdefined(@__MODULE__, :vtkCellArray) && isdefined(@__MODULE__, :vtkCellArray) && isdefined(@__MODULE__, :vtkIdTypeArray)

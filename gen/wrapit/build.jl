@@ -278,7 +278,8 @@ compiler() = Sys.which("g++") !== nothing ? Sys.which("g++") :
 function vtk_libs()
     libdir = joinpath(VTK_jll.artifact_dir, "lib")
     names = ["vtkCommonCore", "vtkCommonDataModel", "vtkCommonExecutionModel",
-             "vtkFiltersCore", "vtkFiltersGeneral", "vtkIOXML",
+             "vtkFiltersCore", "vtkFiltersGeneral", "vtkFiltersFlowPaths",
+             "vtkFiltersSources", "vtkIOXML",
              "vtkIOEnSight", "vtkIOCGNSReader", "vtkIOLegacy"]
     [joinpath(libdir, only(filter(n -> startswith(n, "lib$m-") &&
                                       endswith(n, ".so"), readdir(libdir))))

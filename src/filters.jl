@@ -236,3 +236,134 @@ grid = calculator(grid; scalars="temperature", expression="temperature * 2", res
     SetFunction(f, String(expression))
     SetResultArrayName(f, String(result))
 end
+
+"""
+    gradient(grid; scalars, result="Gradients") -> vtkUnstructuredGrid
+
+Compute the gradient of a scalar field. Pass `scalars` to select the input
+array by name (default: active scalars). The result is stored as a new
+point-data array named `result` (3-component vectors).
+
+# Example
+
+```julia
+grid2 = gradient(grid; scalars="temperature", result="grad_T")
+```
+"""
+@vtk_filter gradient(grid, GradientFilter → vtkUnstructuredGrid;
+                    scalars=nothing, result="Gradients") begin
+    scalars === nothing || SetInputScalars(f, 0, String(scalars))
+    SetResultArrayName(f, String(result))
+    SetComputeGradient(f, 1)
+end
+
+"""
+    threshold(grid; scalars, lower=nothing, upper=nothing, invert=false) -> vtkUnstructuredGrid
+
+Extract cells where the scalar value is within [lower, upper]. Pass `scalars`
+to select the input array by name (default: active scalars). Set `invert=true`
+to extract cells *outside* the range.
+
+# Example
+
+```julia
+hot = threshold(grid; scalars="temperature", lower=1.5, upper=3.0)
+```
+"""
+@vtk_filter threshold(grid, Threshold → vtkUnstructuredGrid;
+                     scalars=nothing, lower=nothing, upper=nothing, invert=false) begin
+    scalars === nothing || activate_point_data!(grid, scalars)
+    lower === nothing || SetLowerThreshold(f, lower)
+    upper === nothing || SetUpperThreshold(f, upper)
+    SetInvert(f, invert)
+end
+
+"""
+    stream_tracer(grid, seeds; vectors, integration_direction="forward") -> vtkPolyData
+
+Trace streamlines through a vector field. `seeds` is a vtkDataSet with seed
+points (e.g. from `line_source`). Pass `vectors` to select the vector array
+by name (default: active vectors).
+
+# Example
+
+```julia
+seeds = line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution=10)
+lines = stream_tracer(grid, seeds; vectors="velocity")
+```
+"""
+@vtk_filter stream_tracer(grid, seeds, StreamTracer → vtkPolyData;
+                         vectors=nothing, integration_direction="forward") begin
+    vectors === nothing || activate_point_data!(grid, vectors)
+    SetSourceData(f, seeds)
+    if integration_direction == "backward"
+        SetIntegrationDirection(f, 0)
+    elseif integration_direction == "both"
+        SetIntegrationDirection(f, 2)
+    else
+        SetIntegrationDirection(f, 1)  # forward
+    end
+end
+
+"""
+    particle_tracer(grid, seeds; vectors) -> vtkPolyData
+
+Trace particles through a vector field (advection). `seeds` is a vtkDataSet
+with seed points. Pass `vectors` to select the vector array by name.
+
+# Example
+
+```julia
+seeds = line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution=10)
+particles = particle_tracer(grid, seeds; vectors="velocity")
+```
+"""
+@vtk_filter particle_tracer(grid, seeds, ParticleTracer → vtkPolyData;
+                           vectors=nothing) begin
+    vectors === nothing || activate_point_data!(grid, vectors)
+    AddSourceConnection(f, GetOutputPort(seeds))
+end
+
+"""
+    line_source(p1, p2; resolution=100) -> vtkPolyData
+
+Generate a line of points from `p1` to `p2` with `resolution` points. Useful
+as seed points for `stream_tracer` or `particle_tracer`, or as a probe line
+for `sample_over_line`.
+
+# Example
+
+```julia
+line = line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution=50)
+```
+"""
+function line_source(p1, p2; resolution=100)
+    src = LineSource_new()
+    SetPoint1(src, Float64.(p1)...)
+    SetPoint2(src, Float64.(p2)...)
+    SetResolution(src, resolution)
+    update!(src)
+    return PolyData(GetOutput(src))
+end
+
+"""
+    sample_over_line(grid, p1, p2; resolution=100, scalars=nothing) -> vtkDataSet
+
+Sample a dataset along a line from `p1` to `p2` with `resolution` points.
+Returns a dataset with the sampled values. This is the VTK equivalent of
+ParaView's "Plot Over Line".
+
+# Example
+
+```julia
+profile = sample_over_line(grid, (0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution=50)
+```
+"""
+function sample_over_line(grid, p1, p2; resolution=100, scalars=nothing)
+    line = line_source(p1, p2; resolution=resolution)
+    probe = ProbeFilter_new()
+    SetInputData(probe, line)   # points to probe at
+    SetSourceData(probe, grid)  # dataset to probe from
+    update!(probe)
+    return downcast(GetOutput(probe))
+end
