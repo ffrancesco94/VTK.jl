@@ -5,9 +5,8 @@ model, XML I/O, and manipulation filters (clip, slice, cell↔point data
 conversion, contour, surface extraction). No rendering, no MPI-aware API.
 
 Status: early development. Built on `VTK_jll` (binaries) + `CxxWrap.jl`
-(bindings). Default build is the WrapIt-generated + shim-merged library
-(`gen/build_wrapper.jl`); the legacy hand-written CMake wrapper is the
-fallback. CI tests both.
+(bindings). The build is WrapIt-generated + shim-merged
+(`gen/build_wrapper.jl`); CI tests it on Julia 1.11 and 1.12.
 
 ## Building
 
@@ -29,13 +28,11 @@ shim, generates Julia smart-pointer forwarding overloads, compiles, and
 installs the result at `wrapper/build/libvtk_julia.so`,
 the default location loaded by the package.
 
-- Fallback: the legacy hand-written CMake wrapper is still available via
-  `julia --project=. gen/build_wrapper_cmake.jl`.
-- Override the loaded library with the `VTKJL_LIB` environment variable.
-  Note Julia's precompile cache does **not** track `VTKJL_LIB`: after
-  switching libraries, clear the package cache
-  (`rm -rf ~/.julia/compiled/v1.*/VTK`) or you silently keep testing the
-  previous one.
+Override the loaded library with the `VTKJL_LIB` environment variable.
+Note Julia's precompile cache does **not** track `VTKJL_LIB`: after
+switching libraries, clear the package cache
+(`rm -rf ~/.julia/compiled/v1.*/VTK`) or you silently keep testing the
+previous one.
 
 ## Usage
 

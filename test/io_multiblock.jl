@@ -8,11 +8,6 @@ using WriteVTK
 # reader).
 
 @testset "multiblock XML I/O (vtm)" begin
-    if !isdefined(VTK, :XMLMultiBlockDataReader_new)
-        @info "multiblock XML reader not present (hand-written wrapper) — skipping"
-        return
-    end
-
     # Unit hex, reused for both blocks.
     coords = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0),
         (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)]

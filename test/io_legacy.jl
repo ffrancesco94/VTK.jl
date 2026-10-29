@@ -5,11 +5,6 @@ using Test
 # reader/writer; the writer emits ASCII legacy format.
 
 @testset "legacy VTK I/O" begin
-    if !isdefined(VTK, :GenericDataObjectReader_new)
-        @info "legacy VTK I/O not present (hand-written wrapper) — skipping"
-        return
-    end
-
     mktempdir() do dir
         # ---- unstructured grid round-trip ----
         coords = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0),

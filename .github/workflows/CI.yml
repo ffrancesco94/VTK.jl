@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 jobs:
   test:
-    name: Julia ${{ matrix.version }} - ${{ matrix.wrapper }} wrapper
+    name: Julia ${{ matrix.version }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     permissions: # needed to allow julia-actions/cache to proactively delete old caches that it has created
@@ -25,13 +25,10 @@ jobs:
         version:
           - '1.11'
           - '1.12'
-        wrapper:
-          - generated   # WrapIt-driven default build (gen/build_wrapper.jl)
-          - hand        # legacy CMake wrapper (gen/build_wrapper_cmake.jl)
     # VTK.jl does not track VTKJL_LIB in its precompile cache, so pin the
     # library for the whole job (before buildpkg precompiles VTK).
     env:
-      VTKJL_LIB: ${{ github.workspace }}/${{ matrix.wrapper == 'generated' && 'gen/wrapit/build/shipped' || 'wrapper/build' }}/libvtk_julia.so
+      VTKJL_LIB: ${{ github.workspace }}/gen/wrapit/build/shipped/libvtk_julia.so
     steps:
       - uses: actions/checkout@v7
       - uses: julia-actions/setup-julia@v3
@@ -45,11 +42,9 @@ jobs:
       # default find_library path, so derive CLANG_PREFIX from the installed
       # clang's resource dir and hand it to the wrapit build (wrapit_src.jl
       # forwards VTKJL_CLANG_PREFIX as -DCLANG_PREFIX).
-      - name: Install libclang + OpenSSL headers (wrapit build)
-        if: matrix.wrapper == 'generated'
+      - name: Install libclang + OpenSSL headers
         run: sudo apt-get update && sudo apt-get install -y libclang-dev clang libssl-dev
       - name: Prepare libclang for wrapit
-        if: matrix.wrapper == 'generated'
         run: |
           res="$(clang -print-resource-dir)"   # e.g. /usr/lib/llvm-21/lib/clang/21
           prefix="${res%/lib/clang/*}"
@@ -64,14 +59,10 @@ jobs:
           echo "VTKJL_CLANG_PREFIX=$prefix" >> "$GITHUB_ENV"
       # The C++ wrapper must exist before julia-buildpkg precompiles VTK.jl
       # (@wrapmodule dlopens the library at module definition time).
-      - name: Build C++ wrapper (${{ matrix.wrapper }})
+      - name: Build C++ wrapper
         run: |
           julia --project=. -e 'using Pkg; Pkg.instantiate()'
           julia --project=gen/wrapit -e 'using Pkg; Pkg.instantiate()'
-          if [ "${{ matrix.wrapper }}" = "generated" ]; then
-            julia --project=. gen/build_wrapper.jl
-          else
-            julia --project=. gen/build_wrapper_cmake.jl
-          fi
+          julia --project=. gen/build_wrapper.jl
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
