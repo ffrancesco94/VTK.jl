@@ -42,6 +42,36 @@ if isdefined(@__MODULE__, Symbol("AddCellReference")) && isdefined(@__MODULE__, 
         AddCellReference(_cp(vtkPolyData, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("AddCoordinateScalarVariable")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddCoordinateScalarVariable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        AddCoordinateScalarVariable(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("AddCoordinateScalarVariable")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddCoordinateScalarVariable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2, a3) =
+        AddCoordinateScalarVariable(_cp(vtkArrayCalculator, a1), a2, a3)
+end
+
+if isdefined(@__MODULE__, Symbol("AddCoordinateVectorVariable")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddCoordinateVectorVariable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        AddCoordinateVectorVariable(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("AddCoordinateVectorVariable")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddCoordinateVectorVariable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2, a3) =
+        AddCoordinateVectorVariable(_cp(vtkArrayCalculator, a1), a2, a3)
+end
+
+if isdefined(@__MODULE__, Symbol("AddCoordinateVectorVariable")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddCoordinateVectorVariable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2, a3, a4) =
+        AddCoordinateVectorVariable(_cp(vtkArrayCalculator, a1), a2, a3, a4)
+end
+
+if isdefined(@__MODULE__, Symbol("AddCoordinateVectorVariable")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddCoordinateVectorVariable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2, a3, a4, a5) =
+        AddCoordinateVectorVariable(_cp(vtkArrayCalculator, a1), a2, a3, a4, a5)
+end
+
 if isdefined(@__MODULE__, Symbol("AddInputConnection")) && isdefined(@__MODULE__, :vtkAlgorithm) && isdefined(@__MODULE__, :vtkAlgorithmOutput)
     AddInputConnection(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithmOutput}) =
         AddInputConnection(_cp(vtkAlgorithm, a1), a2, _cp(vtkAlgorithmOutput, a3))
@@ -80,6 +110,16 @@ end
 if isdefined(@__MODULE__, Symbol("AddInputData")) && isdefined(@__MODULE__, :vtkDataSetAlgorithm) && isdefined(@__MODULE__, :vtkDataSet)
     AddInputData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSet}) =
         AddInputData(_cp(vtkDataSetAlgorithm, a1), _cp(vtkDataSet, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("AddInputData")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm) && isdefined(@__MODULE__, :vtkDataObject)
+    AddInputData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPassInputTypeAlgorithm}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
+        AddInputData(_cp(vtkPassInputTypeAlgorithm, a1), a2, _cp(vtkDataObject, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("AddInputData")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm) && isdefined(@__MODULE__, :vtkDataObject)
+    AddInputData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPassInputTypeAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
+        AddInputData(_cp(vtkPassInputTypeAlgorithm, a1), _cp(vtkDataObject, a2))
 end
 
 if isdefined(@__MODULE__, Symbol("AddInputData")) && isdefined(@__MODULE__, :vtkPolyDataAlgorithm) && isdefined(@__MODULE__, :vtkDataObject)
@@ -137,9 +177,69 @@ if isdefined(@__MODULE__, Symbol("AddReferenceToCell")) && isdefined(@__MODULE__
         AddReferenceToCell(_cp(vtkUnstructuredGrid, a1), a2, a3)
 end
 
+if isdefined(@__MODULE__, Symbol("AddScalarArrayName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddScalarArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        AddScalarArrayName(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("AddScalarArrayName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddScalarArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2, a3) =
+        AddScalarArrayName(_cp(vtkArrayCalculator, a1), a2, a3)
+end
+
+if isdefined(@__MODULE__, Symbol("AddScalarVariable")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddScalarVariable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2, a3) =
+        AddScalarVariable(_cp(vtkArrayCalculator, a1), a2, a3)
+end
+
+if isdefined(@__MODULE__, Symbol("AddScalarVariable")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddScalarVariable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2, a3, a4) =
+        AddScalarVariable(_cp(vtkArrayCalculator, a1), a2, a3, a4)
+end
+
 if isdefined(@__MODULE__, Symbol("AddSelector")) && isdefined(@__MODULE__, :vtkXMLMultiBlockDataReader)
     AddSelector(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLMultiBlockDataReader}, a2) =
         AddSelector(_cp(vtkXMLMultiBlockDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("AddVectorArrayName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddVectorArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        AddVectorArrayName(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("AddVectorArrayName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddVectorArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2, a3) =
+        AddVectorArrayName(_cp(vtkArrayCalculator, a1), a2, a3)
+end
+
+if isdefined(@__MODULE__, Symbol("AddVectorArrayName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddVectorArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2, a3, a4) =
+        AddVectorArrayName(_cp(vtkArrayCalculator, a1), a2, a3, a4)
+end
+
+if isdefined(@__MODULE__, Symbol("AddVectorArrayName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddVectorArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2, a3, a4, a5) =
+        AddVectorArrayName(_cp(vtkArrayCalculator, a1), a2, a3, a4, a5)
+end
+
+if isdefined(@__MODULE__, Symbol("AddVectorVariable")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddVectorVariable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2, a3) =
+        AddVectorVariable(_cp(vtkArrayCalculator, a1), a2, a3)
+end
+
+if isdefined(@__MODULE__, Symbol("AddVectorVariable")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddVectorVariable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2, a3, a4) =
+        AddVectorVariable(_cp(vtkArrayCalculator, a1), a2, a3, a4)
+end
+
+if isdefined(@__MODULE__, Symbol("AddVectorVariable")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddVectorVariable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2, a3, a4, a5) =
+        AddVectorVariable(_cp(vtkArrayCalculator, a1), a2, a3, a4, a5)
+end
+
+if isdefined(@__MODULE__, Symbol("AddVectorVariable")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    AddVectorVariable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2, a3, a4, a5, a6) =
+        AddVectorVariable(_cp(vtkArrayCalculator, a1), a2, a3, a4, a5, a6)
 end
 
 if isdefined(@__MODULE__, Symbol("Allocate")) && isdefined(@__MODULE__, :vtkAbstractArray)
@@ -520,6 +620,16 @@ end
 if isdefined(@__MODULE__, Symbol("ConvertTotalInputToPortConnection")) && isdefined(@__MODULE__, :vtkAlgorithm)
     ConvertTotalInputToPortConnection(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2, a3, a4) =
         ConvertTotalInputToPortConnection(_cp(vtkAlgorithm, a1), a2, a3, a4)
+end
+
+if isdefined(@__MODULE__, Symbol("CoordinateResultsOff")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    CoordinateResultsOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        CoordinateResultsOff(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("CoordinateResultsOn")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    CoordinateResultsOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        CoordinateResultsOn(_cp(vtkArrayCalculator, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("CopyAllOff")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
@@ -1697,6 +1807,16 @@ if isdefined(@__MODULE__, Symbol("GetAttributeIndices")) && isdefined(@__MODULE_
         GetAttributeIndices(_cp(vtkDataSetAttributes, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetAttributeType")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetAttributeType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetAttributeType(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetAttributeTypeAsString")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetAttributeTypeAsString(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetAttributeTypeAsString(_cp(vtkArrayCalculator, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetAttributeTypeForArray")) && isdefined(@__MODULE__, :vtkDataObject) && isdefined(@__MODULE__, :vtkAbstractArray)
     GetAttributeTypeForArray(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractArray}) =
         GetAttributeTypeForArray(_cp(vtkDataObject, a1), _cp(vtkAbstractArray, a2))
@@ -2287,6 +2407,31 @@ if isdefined(@__MODULE__, Symbol("GetContributingCellOptionMinValue")) && isdefi
         GetContributingCellOptionMinValue(_cp(vtkCellDataToPointData, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetCoordinateResults")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetCoordinateResults(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetCoordinateResults(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetCoordinateScalarVariableName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetCoordinateScalarVariableName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        GetCoordinateScalarVariableName(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetCoordinateScalarVariableNames")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetCoordinateScalarVariableNames(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetCoordinateScalarVariableNames(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetCoordinateVectorVariableName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetCoordinateVectorVariableName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        GetCoordinateVectorVariableName(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetCoordinateVectorVariableNames")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetCoordinateVectorVariableNames(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetCoordinateVectorVariableNames(_cp(vtkArrayCalculator, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetCopyAttribute")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
     GetCopyAttribute(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}, a2, a3) =
         GetCopyAttribute(_cp(vtkDataSetAttributes, a1), a2, a3)
@@ -2505,6 +2650,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetDataReleased")) && isdefined(@__MODULE__, :vtkDataObject)
     GetDataReleased(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
         GetDataReleased(_cp(vtkDataObject, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetDataSetOutput")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetDataSetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetDataSetOutput(_cp(vtkArrayCalculator, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetDataType")) && isdefined(@__MODULE__, :vtkAbstractArray)
@@ -2837,6 +2987,11 @@ if isdefined(@__MODULE__, Symbol("GetFlipFaceNormals")) && isdefined(@__MODULE__
         GetFlipFaceNormals(_cp(vtkCGNSReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetFunction")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetFunction(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetFunction(_cp(vtkArrayCalculator, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetGenerateClipPointTypes")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
     GetGenerateClipPointTypes(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkTableBasedClipDataSet}) =
         GetGenerateClipPointTypes(_cp(vtkTableBasedClipDataSet, a1))
@@ -2977,9 +3132,19 @@ if isdefined(@__MODULE__, Symbol("GetIgnoreFlowSolutionPointers")) && isdefined(
         GetIgnoreFlowSolutionPointers(_cp(vtkCGNSReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetIgnoreMissingArrays")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetIgnoreMissingArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetIgnoreMissingArrays(_cp(vtkArrayCalculator, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetImageDataOutput")) && isdefined(@__MODULE__, :vtkDataSetAlgorithm)
     GetImageDataOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAlgorithm}) =
         GetImageDataOutput(_cp(vtkDataSetAlgorithm, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetImageDataOutput")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm)
+    GetImageDataOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPassInputTypeAlgorithm}) =
+        GetImageDataOutput(_cp(vtkPassInputTypeAlgorithm, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetIncrements")) && isdefined(@__MODULE__, :vtkImageData)
@@ -3050,6 +3215,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkDataSetWriter)
     GetInput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetWriter}, a2) =
         GetInput(_cp(vtkDataSetWriter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm)
+    GetInput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPassInputTypeAlgorithm}) =
+        GetInput(_cp(vtkPassInputTypeAlgorithm, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkPolyDataAlgorithm)
@@ -3642,6 +3812,16 @@ if isdefined(@__MODULE__, Symbol("GetNumberOfContours")) && isdefined(@__MODULE_
         GetNumberOfContours(_cp(vtkCutter, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfCoordinateScalarVariables")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetNumberOfCoordinateScalarVariables(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetNumberOfCoordinateScalarVariables(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfCoordinateVectorVariables")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetNumberOfCoordinateVectorVariables(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetNumberOfCoordinateVectorVariables(_cp(vtkArrayCalculator, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfElements")) && isdefined(@__MODULE__, :vtkDataObject)
     GetNumberOfElements(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}, a2) =
         GetNumberOfElements(_cp(vtkDataObject, a1), a2)
@@ -3670,6 +3850,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkAlgorithm)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkAlgorithm, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkArrayCalculator, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkCGNSReader)
@@ -3830,6 +4015,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkObjectBase)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkObjectBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPassInputTypeAlgorithm}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkPassInputTypeAlgorithm, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkPlane)
@@ -4162,6 +4352,11 @@ if isdefined(@__MODULE__, Symbol("GetNumberOfPolys")) && isdefined(@__MODULE__, 
         GetNumberOfPolys(_cp(vtkXMLPolyDataReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfScalarArrays")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetNumberOfScalarArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetNumberOfScalarArrays(_cp(vtkArrayCalculator, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfScalarsPerElement")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
     GetNumberOfScalarsPerElement(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
         GetNumberOfScalarsPerElement(_cp(vtkGenericEnSightReader, a1))
@@ -4235,6 +4430,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfVariables")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
     GetNumberOfVariables(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
         GetNumberOfVariables(_cp(vtkGenericEnSightReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfVectorArrays")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetNumberOfVectorArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetNumberOfVectorArrays(_cp(vtkArrayCalculator, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfVectorsPerElement")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
@@ -4697,6 +4897,11 @@ if isdefined(@__MODULE__, Symbol("GetPolyDataOutput")) && isdefined(@__MODULE__,
         GetPolyDataOutput(_cp(vtkGenericDataObjectReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetPolyDataOutput")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm)
+    GetPolyDataOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPassInputTypeAlgorithm}) =
+        GetPolyDataOutput(_cp(vtkPassInputTypeAlgorithm, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetPolyhedronFaceLocations")) && isdefined(@__MODULE__, :vtkUnstructuredGrid)
     GetPolyhedronFaceLocations(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGrid}) =
         GetPolyhedronFaceLocations(_cp(vtkUnstructuredGrid, a1))
@@ -4907,6 +5112,11 @@ if isdefined(@__MODULE__, Symbol("GetRectilinearGridOutput")) && isdefined(@__MO
         GetRectilinearGridOutput(_cp(vtkGenericDataObjectReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetRectilinearGridOutput")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm)
+    GetRectilinearGridOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPassInputTypeAlgorithm}) =
+        GetRectilinearGridOutput(_cp(vtkPassInputTypeAlgorithm, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetReferenceCount")) && isdefined(@__MODULE__, :vtkObjectBase)
     GetReferenceCount(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         GetReferenceCount(_cp(vtkObjectBase, a1))
@@ -4915,6 +5125,36 @@ end
 if isdefined(@__MODULE__, Symbol("GetReleaseDataFlag")) && isdefined(@__MODULE__, :vtkAlgorithm)
     GetReleaseDataFlag(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}) =
         GetReleaseDataFlag(_cp(vtkAlgorithm, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetReplaceInvalidValues")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetReplaceInvalidValues(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetReplaceInvalidValues(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetReplacementValue")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetReplacementValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetReplacementValue(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetResultArrayName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetResultArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetResultArrayName(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetResultArrayType")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetResultArrayType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetResultArrayType(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetResultNormals")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetResultNormals(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetResultNormals(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetResultTCoords")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetResultTCoords(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetResultTCoords(_cp(vtkArrayCalculator, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetRigidBodyFileName")) && isdefined(@__MODULE__, :vtkEnSightReader)
@@ -4930,6 +5170,16 @@ end
 if isdefined(@__MODULE__, Symbol("GetSampledMaxCellLength2")) && isdefined(@__MODULE__, :vtkDataSet)
     GetSampledMaxCellLength2(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSet}, a2) =
         GetSampledMaxCellLength2(_cp(vtkDataSet, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetScalarArrayName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetScalarArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        GetScalarArrayName(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetScalarArrayNames")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetScalarArrayNames(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetScalarArrayNames(_cp(vtkArrayCalculator, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetScalarComponentAsDouble")) && isdefined(@__MODULE__, :vtkImageData)
@@ -5032,6 +5282,16 @@ if isdefined(@__MODULE__, Symbol("GetScalarTypeMin")) && isdefined(@__MODULE__, 
         GetScalarTypeMin(_cp(vtkImageData, a1), _cp(vtkInformation, a2))
 end
 
+if isdefined(@__MODULE__, Symbol("GetScalarVariableName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetScalarVariableName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        GetScalarVariableName(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetScalarVariableNames")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetScalarVariableNames(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetScalarVariableNames(_cp(vtkArrayCalculator, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetScalars")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
     GetScalars(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}) =
         GetScalars(_cp(vtkDataSetAttributes, a1))
@@ -5050,6 +5310,26 @@ end
 if isdefined(@__MODULE__, Symbol("GetScalarsName")) && isdefined(@__MODULE__, :vtkDataWriter)
     GetScalarsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
         GetScalarsName(_cp(vtkDataWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetSelectedCoordinateScalarComponent")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetSelectedCoordinateScalarComponent(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        GetSelectedCoordinateScalarComponent(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetSelectedCoordinateScalarComponents")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetSelectedCoordinateScalarComponents(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetSelectedCoordinateScalarComponents(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetSelectedScalarComponent")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetSelectedScalarComponent(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        GetSelectedScalarComponent(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetSelectedScalarComponents")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetSelectedScalarComponents(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetSelectedScalarComponents(_cp(vtkArrayCalculator, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetSortBy")) && isdefined(@__MODULE__, :vtkCutter)
@@ -5105,6 +5385,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetStructuredGridOutput")) && isdefined(@__MODULE__, :vtkGenericDataObjectReader)
     GetStructuredGridOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericDataObjectReader}) =
         GetStructuredGridOutput(_cp(vtkGenericDataObjectReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetStructuredGridOutput")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm)
+    GetStructuredGridOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPassInputTypeAlgorithm}) =
+        GetStructuredGridOutput(_cp(vtkPassInputTypeAlgorithm, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetTCoords")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
@@ -5277,6 +5562,11 @@ if isdefined(@__MODULE__, Symbol("GetUnstructuredGridOutput")) && isdefined(@__M
         GetUnstructuredGridOutput(_cp(vtkGenericDataObjectReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetUnstructuredGridOutput")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm)
+    GetUnstructuredGridOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPassInputTypeAlgorithm}) =
+        GetUnstructuredGridOutput(_cp(vtkPassInputTypeAlgorithm, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetUpdateExtent")) && isdefined(@__MODULE__, :vtkAlgorithm)
     GetUpdateExtent(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}) =
         GetUpdateExtent(_cp(vtkAlgorithm, a1))
@@ -5400,6 +5690,26 @@ end
 if isdefined(@__MODULE__, Symbol("GetVariantValue")) && isdefined(@__MODULE__, :vtkAbstractArray)
     GetVariantValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractArray}, a2) =
         GetVariantValue(_cp(vtkAbstractArray, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetVectorArrayName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetVectorArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        GetVectorArrayName(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetVectorArrayNames")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetVectorArrayNames(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetVectorArrayNames(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetVectorVariableName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetVectorVariableName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        GetVectorVariableName(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetVectorVariableNames")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    GetVectorVariableNames(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        GetVectorVariableNames(_cp(vtkArrayCalculator, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetVectors")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
@@ -5600,6 +5910,16 @@ end
 if isdefined(@__MODULE__, Symbol("IgnoreFlowSolutionPointersOn")) && isdefined(@__MODULE__, :vtkCGNSReader)
     IgnoreFlowSolutionPointersOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
         IgnoreFlowSolutionPointersOn(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("IgnoreMissingArraysOff")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    IgnoreMissingArraysOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        IgnoreMissingArraysOff(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("IgnoreMissingArraysOn")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    IgnoreMissingArraysOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        IgnoreMissingArraysOn(_cp(vtkArrayCalculator, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("Initialize")) && isdefined(@__MODULE__, :vtkAbstractArray)
@@ -6032,6 +6352,11 @@ if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkAlgorithm
         IsA(_cp(vtkAlgorithm, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        IsA(_cp(vtkArrayCalculator, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkCGNSReader)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
         IsA(_cp(vtkCGNSReader, a1), a2)
@@ -6190,6 +6515,11 @@ end
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkObjectBase)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}, a2) =
         IsA(_cp(vtkObjectBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPassInputTypeAlgorithm}, a2) =
+        IsA(_cp(vtkPassInputTypeAlgorithm, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkPlane)
@@ -6702,6 +7032,11 @@ if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :v
         ProcessRequest(_cp(vtkMultiBlockDataSetAlgorithm, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
 end
 
+if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector)
+    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPassInputTypeAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
+        ProcessRequest(_cp(vtkPassInputTypeAlgorithm, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
+end
+
 if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkPolyDataAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector)
     ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
         ProcessRequest(_cp(vtkPolyDataAlgorithm, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
@@ -6967,6 +7302,11 @@ if isdefined(@__MODULE__, Symbol("RemoveAllObservers")) && isdefined(@__MODULE__
         RemoveAllObservers(_cp(vtkObject, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("RemoveAllVariables")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    RemoveAllVariables(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        RemoveAllVariables(_cp(vtkArrayCalculator, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("RemoveArray")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
     RemoveArray(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}, a2) =
         RemoveArray(_cp(vtkDataSetAttributes, a1), a2)
@@ -6990,6 +7330,16 @@ end
 if isdefined(@__MODULE__, Symbol("RemoveCellReference")) && isdefined(@__MODULE__, :vtkPolyData)
     RemoveCellReference(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyData}, a2) =
         RemoveCellReference(_cp(vtkPolyData, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("RemoveCoordinateScalarVariables")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    RemoveCoordinateScalarVariables(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        RemoveCoordinateScalarVariables(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("RemoveCoordinateVectorVariables")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    RemoveCoordinateVectorVariables(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        RemoveCoordinateVectorVariables(_cp(vtkArrayCalculator, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("RemoveDeletedCells")) && isdefined(@__MODULE__, :vtkPolyData)
@@ -7067,9 +7417,19 @@ if isdefined(@__MODULE__, Symbol("RemoveReferenceToCell")) && isdefined(@__MODUL
         RemoveReferenceToCell(_cp(vtkUnstructuredGrid, a1), a2, a3)
 end
 
+if isdefined(@__MODULE__, Symbol("RemoveScalarVariables")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    RemoveScalarVariables(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        RemoveScalarVariables(_cp(vtkArrayCalculator, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("RemoveTuple")) && isdefined(@__MODULE__, :vtkDataArray)
     RemoveTuple(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataArray}, a2) =
         RemoveTuple(_cp(vtkDataArray, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("RemoveVectorVariables")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    RemoveVectorVariables(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        RemoveVectorVariables(_cp(vtkArrayCalculator, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("ReplaceCell")) && isdefined(@__MODULE__, :vtkPolyData)
@@ -7095,6 +7455,16 @@ end
 if isdefined(@__MODULE__, Symbol("ReplaceCellPoint")) && isdefined(@__MODULE__, :vtkPolyData) && isdefined(@__MODULE__, :vtkIdList)
     ReplaceCellPoint(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyData}, a2, a3, a4, a5::CxxWrap.CxxWrapCore.SmartPointer{<:vtkIdList}) =
         ReplaceCellPoint(_cp(vtkPolyData, a1), a2, a3, a4, _cp(vtkIdList, a5))
+end
+
+if isdefined(@__MODULE__, Symbol("ReplaceInvalidValuesOff")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    ReplaceInvalidValuesOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        ReplaceInvalidValuesOff(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReplaceInvalidValuesOn")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    ReplaceInvalidValuesOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        ReplaceInvalidValuesOn(_cp(vtkArrayCalculator, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("ReplaceLinkedCell")) && isdefined(@__MODULE__, :vtkPolyData)
@@ -7180,6 +7550,26 @@ end
 if isdefined(@__MODULE__, Symbol("ResizeCellList")) && isdefined(@__MODULE__, :vtkUnstructuredGrid)
     ResizeCellList(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGrid}, a2, a3) =
         ResizeCellList(_cp(vtkUnstructuredGrid, a1), a2, a3)
+end
+
+if isdefined(@__MODULE__, Symbol("ResultNormalsOff")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    ResultNormalsOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        ResultNormalsOff(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ResultNormalsOn")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    ResultNormalsOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        ResultNormalsOn(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ResultTCoordsOff")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    ResultTCoordsOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        ResultTCoordsOff(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ResultTCoordsOn")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    ResultTCoordsOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        ResultTCoordsOn(_cp(vtkArrayCalculator, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("ReverseCell")) && isdefined(@__MODULE__, :vtkPolyData)
@@ -7300,6 +7690,41 @@ end
 if isdefined(@__MODULE__, Symbol("SetAttribute")) && isdefined(@__MODULE__, :vtkDataSetAttributes) && isdefined(@__MODULE__, :vtkAbstractArray)
     SetAttribute(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractArray}, a3) =
         SetAttribute(_cp(vtkDataSetAttributes, a1), _cp(vtkAbstractArray, a2), a3)
+end
+
+if isdefined(@__MODULE__, Symbol("SetAttributeType")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetAttributeType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        SetAttributeType(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetAttributeTypeToCellData")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetAttributeTypeToCellData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        SetAttributeTypeToCellData(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetAttributeTypeToDefault")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetAttributeTypeToDefault(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        SetAttributeTypeToDefault(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetAttributeTypeToEdgeData")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetAttributeTypeToEdgeData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        SetAttributeTypeToEdgeData(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetAttributeTypeToPointData")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetAttributeTypeToPointData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        SetAttributeTypeToPointData(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetAttributeTypeToRowData")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetAttributeTypeToRowData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        SetAttributeTypeToRowData(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetAttributeTypeToVertexData")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetAttributeTypeToVertexData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        SetAttributeTypeToVertexData(_cp(vtkArrayCalculator, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("SetAxisAligned")) && isdefined(@__MODULE__, :vtkPlane)
@@ -7525,6 +7950,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetContributingCellOption")) && isdefined(@__MODULE__, :vtkCellDataToPointData)
     SetContributingCellOption(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCellDataToPointData}, a2) =
         SetContributingCellOption(_cp(vtkCellDataToPointData, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetCoordinateResults")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetCoordinateResults(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        SetCoordinateResults(_cp(vtkArrayCalculator, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetCopyAttribute")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
@@ -7942,6 +8372,26 @@ if isdefined(@__MODULE__, Symbol("SetFlipFaceNormals")) && isdefined(@__MODULE__
         SetFlipFaceNormals(_cp(vtkCGNSReader, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetFunction")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetFunction(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        SetFunction(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetFunctionParserType")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetFunctionParserType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        SetFunctionParserType(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetFunctionParserTypeToExprTkFunctionParser")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetFunctionParserTypeToExprTkFunctionParser(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        SetFunctionParserTypeToExprTkFunctionParser(_cp(vtkArrayCalculator, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetFunctionParserTypeToFunctionParser")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetFunctionParserTypeToFunctionParser(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}) =
+        SetFunctionParserTypeToFunctionParser(_cp(vtkArrayCalculator, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("SetGenerateClipPointTypes")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
     SetGenerateClipPointTypes(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkTableBasedClipDataSet}, a2) =
         SetGenerateClipPointTypes(_cp(vtkTableBasedClipDataSet, a1), a2)
@@ -8047,6 +8497,11 @@ if isdefined(@__MODULE__, Symbol("SetIgnoreFlowSolutionPointers")) && isdefined(
         SetIgnoreFlowSolutionPointers(_cp(vtkCGNSReader, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetIgnoreMissingArrays")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetIgnoreMissingArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        SetIgnoreMissingArrays(_cp(vtkArrayCalculator, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetInformation")) && isdefined(@__MODULE__, :vtkAlgorithm) && isdefined(@__MODULE__, :vtkInformation)
     SetInformation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}) =
         SetInformation(_cp(vtkAlgorithm, a1), _cp(vtkInformation, a2))
@@ -8125,6 +8580,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetInputData")) && isdefined(@__MODULE__, :vtkMultiBlockDataSetAlgorithm) && isdefined(@__MODULE__, :vtkDataObject)
     SetInputData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMultiBlockDataSetAlgorithm}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
         SetInputData(_cp(vtkMultiBlockDataSetAlgorithm, a1), a2, _cp(vtkDataObject, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("SetInputData")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm) && isdefined(@__MODULE__, :vtkDataObject)
+    SetInputData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPassInputTypeAlgorithm}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
+        SetInputData(_cp(vtkPassInputTypeAlgorithm, a1), a2, _cp(vtkDataObject, a3))
 end
 
 if isdefined(@__MODULE__, Symbol("SetInputData")) && isdefined(@__MODULE__, :vtkPolyDataAlgorithm) && isdefined(@__MODULE__, :vtkDataObject)
@@ -8645,6 +9105,36 @@ end
 if isdefined(@__MODULE__, Symbol("SetReleaseDataFlag")) && isdefined(@__MODULE__, :vtkAlgorithm)
     SetReleaseDataFlag(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2) =
         SetReleaseDataFlag(_cp(vtkAlgorithm, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetReplaceInvalidValues")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetReplaceInvalidValues(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        SetReplaceInvalidValues(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetReplacementValue")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetReplacementValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        SetReplacementValue(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetResultArrayName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetResultArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        SetResultArrayName(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetResultArrayType")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetResultArrayType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        SetResultArrayType(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetResultNormals")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetResultNormals(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        SetResultNormals(_cp(vtkArrayCalculator, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetResultTCoords")) && isdefined(@__MODULE__, :vtkArrayCalculator)
+    SetResultTCoords(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
+        SetResultTCoords(_cp(vtkArrayCalculator, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetScalarComponentFromDouble")) && isdefined(@__MODULE__, :vtkImageData)
@@ -9497,6 +9987,11 @@ if isdefined(@__MODULE__, Symbol("vtkAlgorithm!SetDefaultExecutivePrototype")) &
         vtkAlgorithm!SetDefaultExecutivePrototype(_cp(vtkExecutive, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("vtkArrayCalculator!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkArrayCalculator!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkArrayCalculator!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("vtkCGNSReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkCGNSReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkCGNSReader!SafeDownCast(_cp(vtkObjectBase, a1))
@@ -9760,6 +10255,11 @@ end
 if isdefined(@__MODULE__, Symbol("vtkObject!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkObject!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkObject!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkPassInputTypeAlgorithm!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkPassInputTypeAlgorithm!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkPassInputTypeAlgorithm!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("vtkPlane!ComputeBestFittingPlane")) && isdefined(@__MODULE__, :vtkPoints)

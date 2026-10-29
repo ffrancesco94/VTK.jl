@@ -98,6 +98,15 @@ end
     ext = VTK.extract_surface(ug)
     @test VTK.npoints(ext) == 8
 
+    # calculator: double the temperature field
+    if isdefined(VTK, :ArrayCalculator_new)
+        calc = VTK.calculator(ug; scalars = "temperature",
+                              expression = "temperature * 2", result = "T2")
+        arr = VTK.field_array(VTK.point_data(calc), "T2")
+        @test arr !== nothing
+        @test vec(VTK.data(arr)) ≈ 2 .* [0, 1, 2, 1, 1, 2, 3, 2]
+    end
+
     # GC stress across the full pipeline
     for _ in 1:50
         g = hex_mesh_with_temperature()
