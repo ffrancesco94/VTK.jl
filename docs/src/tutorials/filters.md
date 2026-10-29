@@ -96,6 +96,20 @@ VTK.field_array(VTK.cell_data(back), "temperature")[1, :]   # 1.5
 `cell_to_point`/`point_to_cell` return the same type as the input grid
 (pass-through) — no downcast needed for further filtering.
 
+## Calculator
+
+Evaluate expressions on field data arrays:
+
+```julia
+grid2 = VTK.calculator(grid; scalars = "temperature",
+                       expression = "temperature * 2", result = "T2")
+VTK.field_array(VTK.point_data(grid2), "T2")[1, :]   # [0, 2, 4, 2, 2, 4, 6, 4]
+```
+
+Variables are referenced by name in the expression. Use `scalars` to select
+the input array (default: active scalars). The result is stored as a new
+point-data array named `result`.
+
 ## Adding new filters
 
 The `@vtk_filter` macro generates filter wrappers declaratively:
@@ -111,13 +125,15 @@ Output annotations:
 - `→ vtkPolyData` — fixed output type (uses `PolyData(...)`)
 - `→ auto` — generic `downcast`
 
-Example — adding a calculator filter:
+Example — the calculator filter (already included):
 
 ```julia
-@vtk_filter calculator(grid, Calculator → pass_through;
-                      scalars=nothing, expression="") begin
-    scalars === nothing || SetInputScalars(f, 0, String(scalars))
+@vtk_filter calculator(grid, ArrayCalculator → pass_through;
+                      scalars=nothing, expression="", result="result") begin
+    SetAttributeType(f, 0)  # POINT data
+    scalars === nothing || AddScalarVariable(f, String(scalars), String(scalars))
     SetFunction(f, String(expression))
+    SetResultArrayName(f, String(result))
 end
 ```
 
