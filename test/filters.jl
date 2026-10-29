@@ -99,13 +99,11 @@ end
     @test VTK.npoints(ext) == 8
 
     # calculator: double the temperature field
-    if isdefined(VTK, :ArrayCalculator_new)
-        calc = VTK.calculator(ug; scalars = "temperature",
-                              expression = "temperature * 2", result = "T2")
-        arr = VTK.field_array(VTK.point_data(calc), "T2")
-        @test arr !== nothing
-        @test vec(VTK.data(arr)) ≈ 2 .* [0, 1, 2, 1, 1, 2, 3, 2]
-    end
+    calc = VTK.calculator(ug; scalars = "temperature",
+                          expression = "temperature * 2", result = "T2")
+    arr = VTK.field_array(VTK.point_data(calc), "T2")
+    @test arr !== nothing
+    @test vec(VTK.data(arr)) ≈ 2 .* [0, 1, 2, 1, 1, 2, 3, 2]
 
     # GC stress across the full pipeline
     for _ in 1:50
@@ -117,13 +115,8 @@ end
 end
 
 # Auto-generated shim (gen/wrapit/auto_shim.jl): factories and macro
-# accessors derived from the VTK headers. Present only in the WrapIt-built
-# library, not in the legacy hand-written CMake wrapper.
+# accessors derived from the VTK headers.
 @testset "auto-generated shim accessors and factories" begin
-    if !isdefined(VTK, :InsideOutOn)
-        @info "auto-shim not present (hand-written wrapper) — skipping"
-        return
-    end
     ug = hex_mesh_with_temperature()
     f = VTK.TableBasedClipDataSet_new()
     VTK.SetInputData(VTK._cp(VTK.vtkAlgorithm, f), VTK._cp(VTK.vtkDataObject, ug))

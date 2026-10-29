@@ -37,10 +37,6 @@ function make_vts(dir)
 end
 
 @testset "structured XML I/O (vti/vtr/vts)" begin
-    if !isdefined(VTK, :XMLImageDataReader_new)
-        @info "structured XML readers not present (hand-written wrapper) — skipping"
-        return
-    end
     mktempdir() do dir
         # ---- read WriteVTK.jl output (oracle) ----
         vti_path = make_vti(dir)
