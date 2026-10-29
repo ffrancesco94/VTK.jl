@@ -64,7 +64,7 @@ workflow changes.
   of type.
 - The wrapit generation was validated with clang 13 (jll) and clang 22
   (system); other libclang versions may behave differently.
-- Kaimon MCP Julia sessions are optional for this repo; plain
+- Kaimon MCP Julia sessions are optional for this repo, but should be used when possible; plain
   `julia --project=...` works for builds/tests.
 
 ## Quick commands
