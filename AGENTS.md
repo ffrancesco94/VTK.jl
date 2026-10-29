@@ -20,9 +20,9 @@ workflow changes.
     raw-pointer bindings through `_cp`; regenerate it after binding changes.
   - **Fallback**: legacy hand-written CMake wrapper,
     `julia --project=. gen/build_wrapper_cmake.jl`. Lacks the auto-shim.
-- Test counts: **158/158 on the merged lib** (15 extra CFD-reader + auto-shim tests),
-  **96/96 on the hand-written fallback** (auto-shim and CFD testsets self-skip via
-  `isdefined(VTK, :InsideOutOn)` / `isdefined(VTK, :EnSightGoldReader_new)`).
+- Test counts: **168/168 on the merged lib** (15 CFD-reader + 10 legacy-VTK + auto-shim tests),
+  **96/96 on the hand-written fallback** (auto-shim, CFD, and legacy testsets self-skip via
+  `isdefined(VTK, :InsideOutOn)` / `isdefined(VTK, :EnSightGoldReader_new)` / `isdefined(VTK, :GenericDataObjectReader_new)`).
 - WrapIt is built **from source** from the fork `ffrancesco94/wrapit` (main),
   not from WrapIt_jll; see `gen/wrapit/wrapit_src.jl`. The upstream bugs we
   patched are documented in `docs/wrapit-upstream-bugs.md`.

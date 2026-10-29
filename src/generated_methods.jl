@@ -412,6 +412,11 @@ if isdefined(@__MODULE__, Symbol("ClearSelectors")) && isdefined(@__MODULE__, :v
         ClearSelectors(_cp(vtkXMLMultiBlockDataReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("CloseVTKFile")) && isdefined(@__MODULE__, :vtkDataReader)
+    CloseVTKFile(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        CloseVTKFile(_cp(vtkDataReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("ComputeBounds")) && isdefined(@__MODULE__, :vtkDataSet)
     ComputeBounds(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSet}) =
         ComputeBounds(_cp(vtkDataSet, a1))
@@ -2612,6 +2617,11 @@ if isdefined(@__MODULE__, Symbol("GetDoublePrecisionMesh")) && isdefined(@__MODU
         GetDoublePrecisionMesh(_cp(vtkCGNSReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetEdgeFlagsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetEdgeFlagsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetEdgeFlagsName(_cp(vtkDataWriter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetEditable")) && isdefined(@__MODULE__, :vtkPointSet)
     GetEditable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPointSet}) =
         GetEditable(_cp(vtkPointSet, a1))
@@ -2707,9 +2717,44 @@ if isdefined(@__MODULE__, Symbol("GetFieldData")) && isdefined(@__MODULE__, :vtk
         GetFieldData(_cp(vtkDataObject, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetFieldDataName")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetFieldDataName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetFieldDataName(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFieldDataName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetFieldDataName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetFieldDataName(_cp(vtkDataWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFileMajorVersion")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetFileMajorVersion(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetFileMajorVersion(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFileMajorVersion")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetFileMajorVersion(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetFileMajorVersion(_cp(vtkDataWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFileMinorVersion")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetFileMinorVersion(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetFileMinorVersion(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFileMinorVersion")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetFileMinorVersion(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetFileMinorVersion(_cp(vtkDataWriter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetFileName")) && isdefined(@__MODULE__, :vtkCGNSReader)
     GetFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}) =
         GetFileName(_cp(vtkCGNSReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFileName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetFileName(_cp(vtkDataWriter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetFileName")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -2725,6 +2770,36 @@ end
 if isdefined(@__MODULE__, Symbol("GetFilePath")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
     GetFilePath(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
         GetFilePath(_cp(vtkGenericEnSightReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFileType")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetFileType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetFileType(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFileType")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetFileType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetFileType(_cp(vtkDataWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFileTypeMaxValue")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetFileTypeMaxValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetFileTypeMaxValue(_cp(vtkDataWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFileTypeMinValue")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetFileTypeMinValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetFileTypeMinValue(_cp(vtkDataWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFileVersion")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetFileVersion(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetFileVersion(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFileVersion")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetFileVersion(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetFileVersion(_cp(vtkDataWriter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetFiniteRange")) && isdefined(@__MODULE__, :vtkDataArray)
@@ -2847,6 +2922,21 @@ if isdefined(@__MODULE__, Symbol("GetGlobalIds")) && isdefined(@__MODULE__, :vtk
         GetGlobalIds(_cp(vtkDataSetAttributes, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetGlobalIdsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetGlobalIdsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetGlobalIdsName(_cp(vtkDataWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetHeader")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetHeader(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetHeader(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetHeader")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetHeader(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetHeader(_cp(vtkDataWriter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetHeaderType")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
     GetHeaderType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLWriterBase}) =
         GetHeaderType(_cp(vtkXMLWriterBase, a1))
@@ -2952,6 +3042,16 @@ if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkData
         GetInput(_cp(vtkDataSetAlgorithm, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkDataSetWriter)
+    GetInput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetWriter}) =
+        GetInput(_cp(vtkDataSetWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkDataSetWriter)
+    GetInput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetWriter}, a2) =
+        GetInput(_cp(vtkDataSetWriter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkPolyDataAlgorithm)
     GetInput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataAlgorithm}) =
         GetInput(_cp(vtkPolyDataAlgorithm, a1))
@@ -2962,6 +3062,36 @@ if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkPoly
         GetInput(_cp(vtkPolyDataAlgorithm, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkPolyDataWriter)
+    GetInput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataWriter}) =
+        GetInput(_cp(vtkPolyDataWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkPolyDataWriter)
+    GetInput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataWriter}, a2) =
+        GetInput(_cp(vtkPolyDataWriter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkRectilinearGridWriter)
+    GetInput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridWriter}) =
+        GetInput(_cp(vtkRectilinearGridWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkRectilinearGridWriter)
+    GetInput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridWriter}, a2) =
+        GetInput(_cp(vtkRectilinearGridWriter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkStructuredGridWriter)
+    GetInput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGridWriter}) =
+        GetInput(_cp(vtkStructuredGridWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkStructuredGridWriter)
+    GetInput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGridWriter}, a2) =
+        GetInput(_cp(vtkStructuredGridWriter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkUnstructuredGridAlgorithm)
     GetInput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridAlgorithm}) =
         GetInput(_cp(vtkUnstructuredGridAlgorithm, a1))
@@ -2970,6 +3100,16 @@ end
 if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkUnstructuredGridAlgorithm)
     GetInput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridAlgorithm}, a2) =
         GetInput(_cp(vtkUnstructuredGridAlgorithm, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkUnstructuredGridWriter)
+    GetInput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridWriter}) =
+        GetInput(_cp(vtkUnstructuredGridWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkUnstructuredGridWriter)
+    GetInput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridWriter}, a2) =
+        GetInput(_cp(vtkUnstructuredGridWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetInput")) && isdefined(@__MODULE__, :vtkXMLImageDataWriter)
@@ -3062,6 +3202,16 @@ if isdefined(@__MODULE__, Symbol("GetInputPortInformation")) && isdefined(@__MOD
         GetInputPortInformation(_cp(vtkAlgorithm, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetInputString")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetInputString(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetInputString(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetInputStringLength")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetInputStringLength(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetInputStringLength(_cp(vtkDataReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetInsideOut")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
     GetInsideOut(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkTableBasedClipDataSet}) =
         GetInsideOut(_cp(vtkTableBasedClipDataSet, a1))
@@ -3122,6 +3272,16 @@ if isdefined(@__MODULE__, Symbol("GetLocator")) && isdefined(@__MODULE__, :vtkTa
         GetLocator(_cp(vtkTableBasedClipDataSet, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetLookupTableName")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetLookupTableName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetLookupTableName(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetLookupTableName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetLookupTableName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetLookupTableName(_cp(vtkDataWriter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetMTime")) && isdefined(@__MODULE__, :vtkContourFilter)
     GetMTime(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkContourFilter}) =
         GetMTime(_cp(vtkContourFilter, a1))
@@ -3135,6 +3295,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetMTime")) && isdefined(@__MODULE__, :vtkDataObject)
     GetMTime(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
         GetMTime(_cp(vtkDataObject, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetMTime")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetMTime(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetMTime(_cp(vtkDataReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetMTime")) && isdefined(@__MODULE__, :vtkDataSet)
@@ -3357,6 +3522,16 @@ if isdefined(@__MODULE__, Symbol("GetNormals")) && isdefined(@__MODULE__, :vtkDa
         GetNormals(_cp(vtkDataSetAttributes, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetNormalsName")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetNormalsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetNormalsName(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetNormalsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetNormalsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetNormalsName(_cp(vtkDataWriter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfArrays")) && isdefined(@__MODULE__, :vtkFieldData)
     GetNumberOfArrays(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkFieldData}) =
         GetNumberOfArrays(_cp(vtkFieldData, a1))
@@ -3537,6 +3712,11 @@ if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined
         GetNumberOfGenerationsFromBase(_cp(vtkDataObjectAlgorithm, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkDataReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkDataSet)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSet}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkDataSet, a1), a2)
@@ -3552,9 +3732,24 @@ if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined
         GetNumberOfGenerationsFromBase(_cp(vtkDataSetAttributes, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkDataSetReader)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetReader}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkDataSetReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkDataSetSurfaceFilter)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetSurfaceFilter}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkDataSetSurfaceFilter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkDataSetWriter)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetWriter}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkDataSetWriter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkDataWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkDoubleArray)
@@ -3580,6 +3775,16 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkFloatArray)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkFloatArray}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkFloatArray, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkGenericDataObjectReader)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericDataObjectReader}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkGenericDataObjectReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkGenericDataObjectWriter)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericDataObjectWriter}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkGenericDataObjectWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
@@ -3662,14 +3867,44 @@ if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined
         GetNumberOfGenerationsFromBase(_cp(vtkPolyDataAlgorithm, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkPolyDataReader)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataReader}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkPolyDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkPolyDataWriter)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataWriter}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkPolyDataWriter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkRectilinearGrid)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGrid}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkRectilinearGrid, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkRectilinearGridReader)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridReader}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkRectilinearGridReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkRectilinearGridWriter)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridWriter}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkRectilinearGridWriter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkStructuredGrid)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGrid}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkStructuredGrid, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkStructuredGridReader)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGridReader}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkStructuredGridReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkStructuredGridWriter)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGridWriter}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkStructuredGridWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
@@ -3690,6 +3925,16 @@ end
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkUnstructuredGridBase)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridBase}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkUnstructuredGridBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkUnstructuredGridReader)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridReader}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkUnstructuredGridReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkUnstructuredGridWriter)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridWriter}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkUnstructuredGridWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkXMLDataReader)
@@ -4062,6 +4307,66 @@ if isdefined(@__MODULE__, Symbol("GetOutput")) && isdefined(@__MODULE__, :vtkAlg
         GetOutput(_cp(vtkAlgorithm, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetOutput")) && isdefined(@__MODULE__, :vtkDataSetReader)
+    GetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetReader}) =
+        GetOutput(_cp(vtkDataSetReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetOutput")) && isdefined(@__MODULE__, :vtkDataSetReader)
+    GetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetReader}, a2) =
+        GetOutput(_cp(vtkDataSetReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetOutput")) && isdefined(@__MODULE__, :vtkGenericDataObjectReader)
+    GetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericDataObjectReader}) =
+        GetOutput(_cp(vtkGenericDataObjectReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetOutput")) && isdefined(@__MODULE__, :vtkGenericDataObjectReader)
+    GetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericDataObjectReader}, a2) =
+        GetOutput(_cp(vtkGenericDataObjectReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetOutput")) && isdefined(@__MODULE__, :vtkPolyDataReader)
+    GetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataReader}) =
+        GetOutput(_cp(vtkPolyDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetOutput")) && isdefined(@__MODULE__, :vtkPolyDataReader)
+    GetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataReader}, a2) =
+        GetOutput(_cp(vtkPolyDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetOutput")) && isdefined(@__MODULE__, :vtkRectilinearGridReader)
+    GetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridReader}) =
+        GetOutput(_cp(vtkRectilinearGridReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetOutput")) && isdefined(@__MODULE__, :vtkRectilinearGridReader)
+    GetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridReader}, a2) =
+        GetOutput(_cp(vtkRectilinearGridReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetOutput")) && isdefined(@__MODULE__, :vtkStructuredGridReader)
+    GetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGridReader}) =
+        GetOutput(_cp(vtkStructuredGridReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetOutput")) && isdefined(@__MODULE__, :vtkStructuredGridReader)
+    GetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGridReader}, a2) =
+        GetOutput(_cp(vtkStructuredGridReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetOutput")) && isdefined(@__MODULE__, :vtkUnstructuredGridReader)
+    GetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridReader}) =
+        GetOutput(_cp(vtkUnstructuredGridReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetOutput")) && isdefined(@__MODULE__, :vtkUnstructuredGridReader)
+    GetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridReader}, a2) =
+        GetOutput(_cp(vtkUnstructuredGridReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetOutputAsDataSet")) && isdefined(@__MODULE__, :vtkXMLReader)
     GetOutputAsDataSet(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}) =
         GetOutputAsDataSet(_cp(vtkXMLReader, a1))
@@ -4132,9 +4437,19 @@ if isdefined(@__MODULE__, Symbol("GetOutputPortInformation")) && isdefined(@__MO
         GetOutputPortInformation(_cp(vtkAlgorithm, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetOutputString")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetOutputString(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetOutputString(_cp(vtkDataWriter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetOutputString")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
     GetOutputString(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLWriterBase}) =
         GetOutputString(_cp(vtkXMLWriterBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetOutputStringLength")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetOutputStringLength(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetOutputStringLength(_cp(vtkDataWriter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetParserErrorObserver")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -4175,6 +4490,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetPedigreeIds")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
     GetPedigreeIds(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}, a2) =
         GetPedigreeIds(_cp(vtkDataSetAttributes, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetPedigreeIdsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetPedigreeIdsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetPedigreeIdsName(_cp(vtkDataWriter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetPiece")) && isdefined(@__MODULE__, :vtkPolyData)
@@ -4367,6 +4687,16 @@ if isdefined(@__MODULE__, Symbol("GetPolyDataOutput")) && isdefined(@__MODULE__,
         GetPolyDataOutput(_cp(vtkDataSetAlgorithm, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetPolyDataOutput")) && isdefined(@__MODULE__, :vtkDataSetReader)
+    GetPolyDataOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetReader}) =
+        GetPolyDataOutput(_cp(vtkDataSetReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetPolyDataOutput")) && isdefined(@__MODULE__, :vtkGenericDataObjectReader)
+    GetPolyDataOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericDataObjectReader}) =
+        GetPolyDataOutput(_cp(vtkGenericDataObjectReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetPolyhedronFaceLocations")) && isdefined(@__MODULE__, :vtkUnstructuredGrid)
     GetPolyhedronFaceLocations(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGrid}) =
         GetPolyhedronFaceLocations(_cp(vtkUnstructuredGrid, a1))
@@ -4385,6 +4715,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetPolys")) && isdefined(@__MODULE__, :vtkPolyData)
     GetPolys(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyData}) =
         GetPolys(_cp(vtkPolyData, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetPrecision")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetPrecision(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetPrecision(_cp(vtkDataWriter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetPrecision")) && isdefined(@__MODULE__, :vtkXMLWriter)
@@ -4487,14 +4822,59 @@ if isdefined(@__MODULE__, Symbol("GetRationalWeights")) && isdefined(@__MODULE__
         GetRationalWeights(_cp(vtkDataSetAttributes, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetReadAllColorScalars")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetReadAllColorScalars(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetReadAllColorScalars(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetReadAllFields")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetReadAllFields(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetReadAllFields(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetReadAllNormals")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetReadAllNormals(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetReadAllNormals(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetReadAllScalars")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetReadAllScalars(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetReadAllScalars(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetReadAllTCoords")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetReadAllTCoords(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetReadAllTCoords(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetReadAllTensors")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetReadAllTensors(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetReadAllTensors(_cp(vtkDataReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetReadAllVariables")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
     GetReadAllVariables(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
         GetReadAllVariables(_cp(vtkGenericEnSightReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetReadAllVectors")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetReadAllVectors(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetReadAllVectors(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetReadFromInputStream")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetReadFromInputStream(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetReadFromInputStream(_cp(vtkDataReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetReadFromInputStream")) && isdefined(@__MODULE__, :vtkXMLReader)
     GetReadFromInputStream(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}) =
         GetReadFromInputStream(_cp(vtkXMLReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetReadFromInputString")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetReadFromInputString(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetReadFromInputString(_cp(vtkDataReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetReadFromInputString")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -4515,6 +4895,16 @@ end
 if isdefined(@__MODULE__, Symbol("GetRectilinearGridOutput")) && isdefined(@__MODULE__, :vtkDataSetAlgorithm)
     GetRectilinearGridOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAlgorithm}) =
         GetRectilinearGridOutput(_cp(vtkDataSetAlgorithm, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetRectilinearGridOutput")) && isdefined(@__MODULE__, :vtkDataSetReader)
+    GetRectilinearGridOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetReader}) =
+        GetRectilinearGridOutput(_cp(vtkDataSetReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetRectilinearGridOutput")) && isdefined(@__MODULE__, :vtkGenericDataObjectReader)
+    GetRectilinearGridOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericDataObjectReader}) =
+        GetRectilinearGridOutput(_cp(vtkGenericDataObjectReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetReferenceCount")) && isdefined(@__MODULE__, :vtkObjectBase)
@@ -4652,6 +5042,16 @@ if isdefined(@__MODULE__, Symbol("GetScalars")) && isdefined(@__MODULE__, :vtkDa
         GetScalars(_cp(vtkDataSetAttributes, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetScalarsName")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetScalarsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetScalarsName(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetScalarsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetScalarsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetScalarsName(_cp(vtkDataWriter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetSortBy")) && isdefined(@__MODULE__, :vtkCutter)
     GetSortBy(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCutter}) =
         GetSortBy(_cp(vtkCutter, a1))
@@ -4697,6 +5097,16 @@ if isdefined(@__MODULE__, Symbol("GetStructuredGridOutput")) && isdefined(@__MOD
         GetStructuredGridOutput(_cp(vtkDataSetAlgorithm, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetStructuredGridOutput")) && isdefined(@__MODULE__, :vtkDataSetReader)
+    GetStructuredGridOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetReader}) =
+        GetStructuredGridOutput(_cp(vtkDataSetReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetStructuredGridOutput")) && isdefined(@__MODULE__, :vtkGenericDataObjectReader)
+    GetStructuredGridOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericDataObjectReader}) =
+        GetStructuredGridOutput(_cp(vtkGenericDataObjectReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetTCoords")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
     GetTCoords(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}) =
         GetTCoords(_cp(vtkDataSetAttributes, a1))
@@ -4705,6 +5115,16 @@ end
 if isdefined(@__MODULE__, Symbol("GetTCoords")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
     GetTCoords(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}, a2) =
         GetTCoords(_cp(vtkDataSetAttributes, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetTCoordsName")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetTCoordsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetTCoordsName(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetTCoordsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetTCoordsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetTCoordsName(_cp(vtkDataWriter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetTangents")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
@@ -4725,6 +5145,16 @@ end
 if isdefined(@__MODULE__, Symbol("GetTensors")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
     GetTensors(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}, a2) =
         GetTensors(_cp(vtkDataSetAttributes, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetTensorsName")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetTensorsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetTensorsName(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetTensorsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetTensorsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetTensorsName(_cp(vtkDataWriter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetTimeStep")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -4835,6 +5265,16 @@ end
 if isdefined(@__MODULE__, Symbol("GetUnstructuredGridOutput")) && isdefined(@__MODULE__, :vtkDataSetAlgorithm)
     GetUnstructuredGridOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAlgorithm}) =
         GetUnstructuredGridOutput(_cp(vtkDataSetAlgorithm, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetUnstructuredGridOutput")) && isdefined(@__MODULE__, :vtkDataSetReader)
+    GetUnstructuredGridOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetReader}) =
+        GetUnstructuredGridOutput(_cp(vtkDataSetReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetUnstructuredGridOutput")) && isdefined(@__MODULE__, :vtkGenericDataObjectReader)
+    GetUnstructuredGridOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericDataObjectReader}) =
+        GetUnstructuredGridOutput(_cp(vtkGenericDataObjectReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetUpdateExtent")) && isdefined(@__MODULE__, :vtkAlgorithm)
@@ -4972,6 +5412,16 @@ if isdefined(@__MODULE__, Symbol("GetVectors")) && isdefined(@__MODULE__, :vtkDa
         GetVectors(_cp(vtkDataSetAttributes, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetVectorsName")) && isdefined(@__MODULE__, :vtkDataReader)
+    GetVectorsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        GetVectorsName(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetVectorsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetVectorsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetVectorsName(_cp(vtkDataWriter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetVerts")) && isdefined(@__MODULE__, :vtkPolyData)
     GetVerts(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyData}) =
         GetVerts(_cp(vtkPolyData, a1))
@@ -4995,6 +5445,21 @@ end
 if isdefined(@__MODULE__, Symbol("GetWholeSlices")) && isdefined(@__MODULE__, :vtkXMLStructuredDataReader)
     GetWholeSlices(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLStructuredDataReader}) =
         GetWholeSlices(_cp(vtkXMLStructuredDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetWriteArrayMetaData")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetWriteArrayMetaData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetWriteArrayMetaData(_cp(vtkDataWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetWriteExtent")) && isdefined(@__MODULE__, :vtkRectilinearGridWriter)
+    GetWriteExtent(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridWriter}) =
+        GetWriteExtent(_cp(vtkRectilinearGridWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetWriteExtent")) && isdefined(@__MODULE__, :vtkStructuredGridWriter)
+    GetWriteExtent(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGridWriter}) =
+        GetWriteExtent(_cp(vtkStructuredGridWriter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetWriteExtent")) && isdefined(@__MODULE__, :vtkXMLStructuredDataWriter)
@@ -5025,6 +5490,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetWriteTimeValue")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
     GetWriteTimeValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLWriterBase}) =
         GetWriteTimeValue(_cp(vtkXMLWriterBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetWriteToOutputString")) && isdefined(@__MODULE__, :vtkDataWriter)
+    GetWriteToOutputString(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        GetWriteToOutputString(_cp(vtkDataWriter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetWriteToOutputString")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
@@ -5602,6 +6072,11 @@ if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkDataObjec
         IsA(_cp(vtkDataObjectAlgorithm, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkDataReader)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        IsA(_cp(vtkDataReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkDataSet)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSet}, a2) =
         IsA(_cp(vtkDataSet, a1), a2)
@@ -5617,9 +6092,24 @@ if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkDataSetAt
         IsA(_cp(vtkDataSetAttributes, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkDataSetReader)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetReader}, a2) =
+        IsA(_cp(vtkDataSetReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkDataSetSurfaceFilter)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetSurfaceFilter}, a2) =
         IsA(_cp(vtkDataSetSurfaceFilter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkDataSetWriter)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetWriter}, a2) =
+        IsA(_cp(vtkDataSetWriter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkDataWriter)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        IsA(_cp(vtkDataWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkDoubleArray)
@@ -5645,6 +6135,16 @@ end
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkFloatArray)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkFloatArray}, a2) =
         IsA(_cp(vtkFloatArray, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkGenericDataObjectReader)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericDataObjectReader}, a2) =
+        IsA(_cp(vtkGenericDataObjectReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkGenericDataObjectWriter)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericDataObjectWriter}, a2) =
+        IsA(_cp(vtkGenericDataObjectWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
@@ -5727,14 +6227,44 @@ if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkPolyDataA
         IsA(_cp(vtkPolyDataAlgorithm, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkPolyDataReader)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataReader}, a2) =
+        IsA(_cp(vtkPolyDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkPolyDataWriter)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataWriter}, a2) =
+        IsA(_cp(vtkPolyDataWriter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkRectilinearGrid)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGrid}, a2) =
         IsA(_cp(vtkRectilinearGrid, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkRectilinearGridReader)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridReader}, a2) =
+        IsA(_cp(vtkRectilinearGridReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkRectilinearGridWriter)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridWriter}, a2) =
+        IsA(_cp(vtkRectilinearGridWriter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkStructuredGrid)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGrid}, a2) =
         IsA(_cp(vtkStructuredGrid, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkStructuredGridReader)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGridReader}, a2) =
+        IsA(_cp(vtkStructuredGridReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkStructuredGridWriter)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGridWriter}, a2) =
+        IsA(_cp(vtkStructuredGridWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkTableBasedClipDataSet)
@@ -5755,6 +6285,16 @@ end
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkUnstructuredGridBase)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridBase}, a2) =
         IsA(_cp(vtkUnstructuredGridBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkUnstructuredGridReader)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridReader}, a2) =
+        IsA(_cp(vtkUnstructuredGridReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkUnstructuredGridWriter)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridWriter}, a2) =
+        IsA(_cp(vtkUnstructuredGridWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkXMLDataReader)
@@ -5890,6 +6430,31 @@ end
 if isdefined(@__MODULE__, Symbol("IsEdge")) && isdefined(@__MODULE__, :vtkPolyData)
     IsEdge(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyData}, a2, a3) =
         IsEdge(_cp(vtkPolyData, a1), a2, a3)
+end
+
+if isdefined(@__MODULE__, Symbol("IsFilePolyData")) && isdefined(@__MODULE__, :vtkDataReader)
+    IsFilePolyData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        IsFilePolyData(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("IsFileRectilinearGrid")) && isdefined(@__MODULE__, :vtkDataReader)
+    IsFileRectilinearGrid(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        IsFileRectilinearGrid(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("IsFileStructuredGrid")) && isdefined(@__MODULE__, :vtkDataReader)
+    IsFileStructuredGrid(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        IsFileStructuredGrid(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("IsFileStructuredPoints")) && isdefined(@__MODULE__, :vtkDataReader)
+    IsFileStructuredPoints(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        IsFileStructuredPoints(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("IsFileUnstructuredGrid")) && isdefined(@__MODULE__, :vtkDataReader)
+    IsFileUnstructuredGrid(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        IsFileUnstructuredGrid(_cp(vtkDataReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("IsHomogeneous")) && isdefined(@__MODULE__, :vtkUnstructuredGrid)
@@ -6182,6 +6747,66 @@ if isdefined(@__MODULE__, Symbol("Push")) && isdefined(@__MODULE__, :vtkPlane)
         Push(_cp(vtkPlane, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("ReadAllColorScalarsOff")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadAllColorScalarsOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadAllColorScalarsOff(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadAllColorScalarsOn")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadAllColorScalarsOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadAllColorScalarsOn(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadAllFieldsOff")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadAllFieldsOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadAllFieldsOff(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadAllFieldsOn")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadAllFieldsOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadAllFieldsOn(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadAllNormalsOff")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadAllNormalsOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadAllNormalsOff(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadAllNormalsOn")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadAllNormalsOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadAllNormalsOn(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadAllScalarsOff")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadAllScalarsOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadAllScalarsOff(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadAllScalarsOn")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadAllScalarsOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadAllScalarsOn(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadAllTCoordsOff")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadAllTCoordsOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadAllTCoordsOff(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadAllTCoordsOn")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadAllTCoordsOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadAllTCoordsOn(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadAllTensorsOff")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadAllTensorsOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadAllTensorsOff(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadAllTensorsOn")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadAllTensorsOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadAllTensorsOn(_cp(vtkDataReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("ReadAllVariablesOff")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
     ReadAllVariablesOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
         ReadAllVariablesOff(_cp(vtkGenericEnSightReader, a1))
@@ -6192,9 +6817,29 @@ if isdefined(@__MODULE__, Symbol("ReadAllVariablesOn")) && isdefined(@__MODULE__
         ReadAllVariablesOn(_cp(vtkGenericEnSightReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("ReadAllVectorsOff")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadAllVectorsOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadAllVectorsOff(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadAllVectorsOn")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadAllVectorsOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadAllVectorsOn(_cp(vtkDataReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadFromInputStreamOff")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadFromInputStreamOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadFromInputStreamOff(_cp(vtkDataReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("ReadFromInputStreamOff")) && isdefined(@__MODULE__, :vtkXMLReader)
     ReadFromInputStreamOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}) =
         ReadFromInputStreamOff(_cp(vtkXMLReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadFromInputStreamOn")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadFromInputStreamOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadFromInputStreamOn(_cp(vtkDataReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("ReadFromInputStreamOn")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -6202,14 +6847,84 @@ if isdefined(@__MODULE__, Symbol("ReadFromInputStreamOn")) && isdefined(@__MODUL
         ReadFromInputStreamOn(_cp(vtkXMLReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("ReadFromInputStringOff")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadFromInputStringOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadFromInputStringOff(_cp(vtkDataReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("ReadFromInputStringOff")) && isdefined(@__MODULE__, :vtkXMLReader)
     ReadFromInputStringOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}) =
         ReadFromInputStringOff(_cp(vtkXMLReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("ReadFromInputStringOn")) && isdefined(@__MODULE__, :vtkDataReader)
+    ReadFromInputStringOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}) =
+        ReadFromInputStringOn(_cp(vtkDataReader, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("ReadFromInputStringOn")) && isdefined(@__MODULE__, :vtkXMLReader)
     ReadFromInputStringOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}) =
         ReadFromInputStringOn(_cp(vtkXMLReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadMeshSimple")) && isdefined(@__MODULE__, :vtkDataSetReader) && isdefined(@__MODULE__, :vtkDataObject)
+    ReadMeshSimple(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetReader}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
+        ReadMeshSimple(_cp(vtkDataSetReader, a1), a2, _cp(vtkDataObject, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadMeshSimple")) && isdefined(@__MODULE__, :vtkGenericDataObjectReader) && isdefined(@__MODULE__, :vtkDataObject)
+    ReadMeshSimple(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericDataObjectReader}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
+        ReadMeshSimple(_cp(vtkGenericDataObjectReader, a1), a2, _cp(vtkDataObject, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadMeshSimple")) && isdefined(@__MODULE__, :vtkPolyDataReader) && isdefined(@__MODULE__, :vtkDataObject)
+    ReadMeshSimple(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataReader}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
+        ReadMeshSimple(_cp(vtkPolyDataReader, a1), a2, _cp(vtkDataObject, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadMeshSimple")) && isdefined(@__MODULE__, :vtkRectilinearGridReader) && isdefined(@__MODULE__, :vtkDataObject)
+    ReadMeshSimple(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridReader}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
+        ReadMeshSimple(_cp(vtkRectilinearGridReader, a1), a2, _cp(vtkDataObject, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadMeshSimple")) && isdefined(@__MODULE__, :vtkStructuredGridReader) && isdefined(@__MODULE__, :vtkDataObject)
+    ReadMeshSimple(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGridReader}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
+        ReadMeshSimple(_cp(vtkStructuredGridReader, a1), a2, _cp(vtkDataObject, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadMeshSimple")) && isdefined(@__MODULE__, :vtkUnstructuredGridReader) && isdefined(@__MODULE__, :vtkDataObject)
+    ReadMeshSimple(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridReader}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
+        ReadMeshSimple(_cp(vtkUnstructuredGridReader, a1), a2, _cp(vtkDataObject, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadMetaDataSimple")) && isdefined(@__MODULE__, :vtkDataSetReader) && isdefined(@__MODULE__, :vtkInformation)
+    ReadMetaDataSimple(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetReader}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}) =
+        ReadMetaDataSimple(_cp(vtkDataSetReader, a1), a2, _cp(vtkInformation, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadMetaDataSimple")) && isdefined(@__MODULE__, :vtkGenericDataObjectReader) && isdefined(@__MODULE__, :vtkInformation)
+    ReadMetaDataSimple(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericDataObjectReader}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}) =
+        ReadMetaDataSimple(_cp(vtkGenericDataObjectReader, a1), a2, _cp(vtkInformation, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadMetaDataSimple")) && isdefined(@__MODULE__, :vtkRectilinearGridReader) && isdefined(@__MODULE__, :vtkInformation)
+    ReadMetaDataSimple(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridReader}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}) =
+        ReadMetaDataSimple(_cp(vtkRectilinearGridReader, a1), a2, _cp(vtkInformation, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadMetaDataSimple")) && isdefined(@__MODULE__, :vtkStructuredGridReader) && isdefined(@__MODULE__, :vtkInformation)
+    ReadMetaDataSimple(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGridReader}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}) =
+        ReadMetaDataSimple(_cp(vtkStructuredGridReader, a1), a2, _cp(vtkInformation, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadOutputType")) && isdefined(@__MODULE__, :vtkDataSetReader)
+    ReadOutputType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetReader}) =
+        ReadOutputType(_cp(vtkDataSetReader, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ReadOutputType")) && isdefined(@__MODULE__, :vtkGenericDataObjectReader)
+    ReadOutputType(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericDataObjectReader}) =
+        ReadOutputType(_cp(vtkGenericDataObjectReader, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("Register")) && isdefined(@__MODULE__, :vtkObjectBase) && isdefined(@__MODULE__, :vtkObjectBase)
@@ -7072,6 +7787,11 @@ if isdefined(@__MODULE__, Symbol("SetDoublePrecisionMesh")) && isdefined(@__MODU
         SetDoublePrecisionMesh(_cp(vtkCGNSReader, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetEdgeFlagsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetEdgeFlagsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        SetEdgeFlagsName(_cp(vtkDataWriter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetEditable")) && isdefined(@__MODULE__, :vtkPointSet)
     SetEditable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPointSet}, a2) =
         SetEditable(_cp(vtkPointSet, a1), a2)
@@ -7122,9 +7842,29 @@ if isdefined(@__MODULE__, Symbol("SetFieldData")) && isdefined(@__MODULE__, :vtk
         SetFieldData(_cp(vtkDataObject, a1), _cp(vtkFieldData, a2))
 end
 
+if isdefined(@__MODULE__, Symbol("SetFieldDataName")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetFieldDataName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetFieldDataName(_cp(vtkDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetFieldDataName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetFieldDataName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        SetFieldDataName(_cp(vtkDataWriter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetFileName")) && isdefined(@__MODULE__, :vtkCGNSReader)
     SetFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
         SetFileName(_cp(vtkCGNSReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetFileName")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetFileName(_cp(vtkDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetFileName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetFileName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        SetFileName(_cp(vtkDataWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetFileName")) && isdefined(@__MODULE__, :vtkXMLImageDataWriter)
@@ -7187,6 +7927,16 @@ if isdefined(@__MODULE__, Symbol("SetFilePath")) && isdefined(@__MODULE__, :vtkG
         SetFilePath(_cp(vtkGenericEnSightReader, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetFileTypeToASCII")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetFileTypeToASCII(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        SetFileTypeToASCII(_cp(vtkDataWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("SetFileTypeToBinary")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetFileTypeToBinary(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        SetFileTypeToBinary(_cp(vtkDataWriter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("SetFlipFaceNormals")) && isdefined(@__MODULE__, :vtkCGNSReader)
     SetFlipFaceNormals(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
         SetFlipFaceNormals(_cp(vtkCGNSReader, a1), a2)
@@ -7240,6 +7990,16 @@ end
 if isdefined(@__MODULE__, Symbol("SetGlobalIds")) && isdefined(@__MODULE__, :vtkDataSetAttributes) && isdefined(@__MODULE__, :vtkDataArray)
     SetGlobalIds(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataArray}) =
         SetGlobalIds(_cp(vtkDataSetAttributes, a1), _cp(vtkDataArray, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetGlobalIdsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetGlobalIdsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        SetGlobalIdsName(_cp(vtkDataWriter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetHeader")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetHeader(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        SetHeader(_cp(vtkDataWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetHeaderType")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
@@ -7452,6 +8212,16 @@ if isdefined(@__MODULE__, Symbol("SetLocator")) && isdefined(@__MODULE__, :vtkTa
         SetLocator(_cp(vtkTableBasedClipDataSet, a1), _cp(vtkIncrementalPointLocator, a2))
 end
 
+if isdefined(@__MODULE__, Symbol("SetLookupTableName")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetLookupTableName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetLookupTableName(_cp(vtkDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetLookupTableName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetLookupTableName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        SetLookupTableName(_cp(vtkDataWriter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetMatchBoundariesIgnoringCellOrder")) && isdefined(@__MODULE__, :vtkDataSetSurfaceFilter)
     SetMatchBoundariesIgnoringCellOrder(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetSurfaceFilter}, a2) =
         SetMatchBoundariesIgnoringCellOrder(_cp(vtkDataSetSurfaceFilter, a1), a2)
@@ -7500,6 +8270,16 @@ end
 if isdefined(@__MODULE__, Symbol("SetNormals")) && isdefined(@__MODULE__, :vtkDataSetAttributes) && isdefined(@__MODULE__, :vtkDataArray)
     SetNormals(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataArray}) =
         SetNormals(_cp(vtkDataSetAttributes, a1), _cp(vtkDataArray, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetNormalsName")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetNormalsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetNormalsName(_cp(vtkDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetNormalsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetNormalsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        SetNormalsName(_cp(vtkDataWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetNumberOfBlocks")) && isdefined(@__MODULE__, :vtkMultiBlockDataSet)
@@ -7612,9 +8392,29 @@ if isdefined(@__MODULE__, Symbol("SetOutput")) && isdefined(@__MODULE__, :vtkPol
         SetOutput(_cp(vtkPolyDataAlgorithm, a1), _cp(vtkDataObject, a2))
 end
 
+if isdefined(@__MODULE__, Symbol("SetOutput")) && isdefined(@__MODULE__, :vtkPolyDataReader) && isdefined(@__MODULE__, :vtkPolyData)
+    SetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataReader}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyData}) =
+        SetOutput(_cp(vtkPolyDataReader, a1), _cp(vtkPolyData, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetOutput")) && isdefined(@__MODULE__, :vtkRectilinearGridReader) && isdefined(@__MODULE__, :vtkRectilinearGrid)
+    SetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridReader}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGrid}) =
+        SetOutput(_cp(vtkRectilinearGridReader, a1), _cp(vtkRectilinearGrid, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetOutput")) && isdefined(@__MODULE__, :vtkStructuredGridReader) && isdefined(@__MODULE__, :vtkStructuredGrid)
+    SetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGridReader}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGrid}) =
+        SetOutput(_cp(vtkStructuredGridReader, a1), _cp(vtkStructuredGrid, a2))
+end
+
 if isdefined(@__MODULE__, Symbol("SetOutput")) && isdefined(@__MODULE__, :vtkUnstructuredGridAlgorithm) && isdefined(@__MODULE__, :vtkDataObject)
     SetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
         SetOutput(_cp(vtkUnstructuredGridAlgorithm, a1), _cp(vtkDataObject, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetOutput")) && isdefined(@__MODULE__, :vtkUnstructuredGridReader) && isdefined(@__MODULE__, :vtkUnstructuredGrid)
+    SetOutput(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridReader}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGrid}) =
+        SetOutput(_cp(vtkUnstructuredGridReader, a1), _cp(vtkUnstructuredGrid, a2))
 end
 
 if isdefined(@__MODULE__, Symbol("SetOutputPointsPrecision")) && isdefined(@__MODULE__, :vtkContourFilter)
@@ -7665,6 +8465,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetPedigreeIds")) && isdefined(@__MODULE__, :vtkDataSetAttributes) && isdefined(@__MODULE__, :vtkAbstractArray)
     SetPedigreeIds(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAbstractArray}) =
         SetPedigreeIds(_cp(vtkDataSetAttributes, a1), _cp(vtkAbstractArray, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetPedigreeIdsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetPedigreeIdsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        SetPedigreeIdsName(_cp(vtkDataWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetPieceInvariant")) && isdefined(@__MODULE__, :vtkCellDataToPointData)
@@ -7767,14 +8572,59 @@ if isdefined(@__MODULE__, Symbol("SetRawAppendedData")) && isdefined(@__MODULE__
         SetRawAppendedData(_cp(vtkXMLUnstructuredGridWriter, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("SetReadAllColorScalars")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetReadAllColorScalars(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetReadAllColorScalars(_cp(vtkDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetReadAllFields")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetReadAllFields(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetReadAllFields(_cp(vtkDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetReadAllNormals")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetReadAllNormals(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetReadAllNormals(_cp(vtkDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetReadAllScalars")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetReadAllScalars(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetReadAllScalars(_cp(vtkDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetReadAllTCoords")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetReadAllTCoords(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetReadAllTCoords(_cp(vtkDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetReadAllTensors")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetReadAllTensors(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetReadAllTensors(_cp(vtkDataReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetReadAllVariables")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
     SetReadAllVariables(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}, a2) =
         SetReadAllVariables(_cp(vtkGenericEnSightReader, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("SetReadAllVectors")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetReadAllVectors(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetReadAllVectors(_cp(vtkDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetReadFromInputStream")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetReadFromInputStream(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetReadFromInputStream(_cp(vtkDataReader, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetReadFromInputStream")) && isdefined(@__MODULE__, :vtkXMLReader)
     SetReadFromInputStream(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}, a2) =
         SetReadFromInputStream(_cp(vtkXMLReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetReadFromInputString")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetReadFromInputString(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetReadFromInputString(_cp(vtkDataReader, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetReadFromInputString")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -7817,6 +8667,16 @@ if isdefined(@__MODULE__, Symbol("SetScalars")) && isdefined(@__MODULE__, :vtkDa
         SetScalars(_cp(vtkDataSetAttributes, a1), _cp(vtkDataArray, a2))
 end
 
+if isdefined(@__MODULE__, Symbol("SetScalarsName")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetScalarsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetScalarsName(_cp(vtkDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetScalarsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetScalarsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        SetScalarsName(_cp(vtkDataWriter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetSelector")) && isdefined(@__MODULE__, :vtkXMLMultiBlockDataReader)
     SetSelector(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLMultiBlockDataReader}, a2) =
         SetSelector(_cp(vtkXMLMultiBlockDataReader, a1), a2)
@@ -7857,6 +8717,16 @@ if isdefined(@__MODULE__, Symbol("SetTCoords")) && isdefined(@__MODULE__, :vtkDa
         SetTCoords(_cp(vtkDataSetAttributes, a1), _cp(vtkDataArray, a2))
 end
 
+if isdefined(@__MODULE__, Symbol("SetTCoordsName")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetTCoordsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetTCoordsName(_cp(vtkDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetTCoordsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetTCoordsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        SetTCoordsName(_cp(vtkDataWriter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetTangents")) && isdefined(@__MODULE__, :vtkDataSetAttributes) && isdefined(@__MODULE__, :vtkDataArray)
     SetTangents(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataArray}) =
         SetTangents(_cp(vtkDataSetAttributes, a1), _cp(vtkDataArray, a2))
@@ -7865,6 +8735,16 @@ end
 if isdefined(@__MODULE__, Symbol("SetTensors")) && isdefined(@__MODULE__, :vtkDataSetAttributes) && isdefined(@__MODULE__, :vtkDataArray)
     SetTensors(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataArray}) =
         SetTensors(_cp(vtkDataSetAttributes, a1), _cp(vtkDataArray, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("SetTensorsName")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetTensorsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetTensorsName(_cp(vtkDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetTensorsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetTensorsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        SetTensorsName(_cp(vtkDataWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetTimeStep")) && isdefined(@__MODULE__, :vtkXMLReader)
@@ -7997,6 +8877,16 @@ if isdefined(@__MODULE__, Symbol("SetVectors")) && isdefined(@__MODULE__, :vtkDa
         SetVectors(_cp(vtkDataSetAttributes, a1), _cp(vtkDataArray, a2))
 end
 
+if isdefined(@__MODULE__, Symbol("SetVectorsName")) && isdefined(@__MODULE__, :vtkDataReader)
+    SetVectorsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataReader}, a2) =
+        SetVectorsName(_cp(vtkDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetVectorsName")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetVectorsName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        SetVectorsName(_cp(vtkDataWriter, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetVerts")) && isdefined(@__MODULE__, :vtkPolyData) && isdefined(@__MODULE__, :vtkCellArray)
     SetVerts(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyData}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCellArray}) =
         SetVerts(_cp(vtkPolyData, a1), _cp(vtkCellArray, a2))
@@ -8015,6 +8905,21 @@ end
 if isdefined(@__MODULE__, Symbol("SetWholeSlices")) && isdefined(@__MODULE__, :vtkXMLStructuredDataReader)
     SetWholeSlices(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLStructuredDataReader}, a2) =
         SetWholeSlices(_cp(vtkXMLStructuredDataReader, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetWriteArrayMetaData")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetWriteArrayMetaData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        SetWriteArrayMetaData(_cp(vtkDataWriter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetWriteExtent")) && isdefined(@__MODULE__, :vtkRectilinearGridWriter)
+    SetWriteExtent(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridWriter}, a2) =
+        SetWriteExtent(_cp(vtkRectilinearGridWriter, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetWriteExtent")) && isdefined(@__MODULE__, :vtkStructuredGridWriter)
+    SetWriteExtent(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGridWriter}, a2) =
+        SetWriteExtent(_cp(vtkStructuredGridWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetWriteExtent")) && isdefined(@__MODULE__, :vtkXMLStructuredDataWriter)
@@ -8040,6 +8945,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetWriteTimeValue")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
     SetWriteTimeValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLWriterBase}, a2) =
         SetWriteTimeValue(_cp(vtkXMLWriterBase, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetWriteToOutputString")) && isdefined(@__MODULE__, :vtkDataWriter)
+    SetWriteToOutputString(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}, a2) =
+        SetWriteToOutputString(_cp(vtkDataWriter, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("SetWriteToOutputString")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
@@ -8422,6 +9332,11 @@ if isdefined(@__MODULE__, Symbol("WholeSlicesOn")) && isdefined(@__MODULE__, :vt
         WholeSlicesOn(_cp(vtkXMLStructuredDataReader, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("Write")) && isdefined(@__MODULE__, :vtkDataWriter)
+    Write(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        Write(_cp(vtkDataWriter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("Write")) && isdefined(@__MODULE__, :vtkXMLImageDataWriter)
     Write(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLImageDataWriter}) =
         Write(_cp(vtkXMLImageDataWriter, a1))
@@ -8452,6 +9367,36 @@ if isdefined(@__MODULE__, Symbol("Write")) && isdefined(@__MODULE__, :vtkXMLUnst
         Write(_cp(vtkXMLUnstructuredGridWriter, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("WriteArrayMetaDataOff")) && isdefined(@__MODULE__, :vtkDataWriter)
+    WriteArrayMetaDataOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        WriteArrayMetaDataOff(_cp(vtkDataWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("WriteArrayMetaDataOn")) && isdefined(@__MODULE__, :vtkDataWriter)
+    WriteArrayMetaDataOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        WriteArrayMetaDataOn(_cp(vtkDataWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("WriteExtentOff")) && isdefined(@__MODULE__, :vtkRectilinearGridWriter)
+    WriteExtentOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridWriter}) =
+        WriteExtentOff(_cp(vtkRectilinearGridWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("WriteExtentOff")) && isdefined(@__MODULE__, :vtkStructuredGridWriter)
+    WriteExtentOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGridWriter}) =
+        WriteExtentOff(_cp(vtkStructuredGridWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("WriteExtentOn")) && isdefined(@__MODULE__, :vtkRectilinearGridWriter)
+    WriteExtentOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkRectilinearGridWriter}) =
+        WriteExtentOn(_cp(vtkRectilinearGridWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("WriteExtentOn")) && isdefined(@__MODULE__, :vtkStructuredGridWriter)
+    WriteExtentOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGridWriter}) =
+        WriteExtentOn(_cp(vtkStructuredGridWriter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("WriteNextTime")) && isdefined(@__MODULE__, :vtkXMLWriter)
     WriteNextTime(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLWriter}, a2) =
         WriteNextTime(_cp(vtkXMLWriter, a1), a2)
@@ -8472,9 +9417,19 @@ if isdefined(@__MODULE__, Symbol("WriteTimeValueOn")) && isdefined(@__MODULE__, 
         WriteTimeValueOn(_cp(vtkXMLWriterBase, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("WriteToOutputStringOff")) && isdefined(@__MODULE__, :vtkDataWriter)
+    WriteToOutputStringOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        WriteToOutputStringOff(_cp(vtkDataWriter, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("WriteToOutputStringOff")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
     WriteToOutputStringOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLWriterBase}) =
         WriteToOutputStringOff(_cp(vtkXMLWriterBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("WriteToOutputStringOn")) && isdefined(@__MODULE__, :vtkDataWriter)
+    WriteToOutputStringOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
+        WriteToOutputStringOn(_cp(vtkDataWriter, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("WriteToOutputStringOn")) && isdefined(@__MODULE__, :vtkXMLWriterBase)
@@ -8632,6 +9587,11 @@ if isdefined(@__MODULE__, Symbol("vtkDataObjectAlgorithm!SafeDownCast")) && isde
         vtkDataObjectAlgorithm!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("vtkDataReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkDataReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkDataReader!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("vtkDataSet!GetData")) && isdefined(@__MODULE__, :vtkInformation)
     vtkDataSet!GetData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}) =
         vtkDataSet!GetData(_cp(vtkInformation, a1))
@@ -8662,9 +9622,24 @@ if isdefined(@__MODULE__, Symbol("vtkDataSetAttributes!SafeDownCast")) && isdefi
         vtkDataSetAttributes!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("vtkDataSetReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkDataSetReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkDataSetReader!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("vtkDataSetSurfaceFilter!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkDataSetSurfaceFilter!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkDataSetSurfaceFilter!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkDataSetWriter!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkDataSetWriter!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkDataSetWriter!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkDataWriter!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkDataWriter!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkDataWriter!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("vtkDoubleArray!FastDownCast")) && isdefined(@__MODULE__, :vtkAbstractArray)
@@ -8700,6 +9675,16 @@ end
 if isdefined(@__MODULE__, Symbol("vtkFloatArray!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkFloatArray!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkFloatArray!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkGenericDataObjectReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkGenericDataObjectReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkGenericDataObjectReader!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkGenericDataObjectWriter!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkGenericDataObjectWriter!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkGenericDataObjectWriter!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("vtkGenericEnSightReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
@@ -8847,6 +9832,16 @@ if isdefined(@__MODULE__, Symbol("vtkPolyDataAlgorithm!SafeDownCast")) && isdefi
         vtkPolyDataAlgorithm!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("vtkPolyDataReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkPolyDataReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkPolyDataReader!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkPolyDataWriter!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkPolyDataWriter!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkPolyDataWriter!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("vtkRectilinearGrid!GetData")) && isdefined(@__MODULE__, :vtkInformation)
     vtkRectilinearGrid!GetData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}) =
         vtkRectilinearGrid!GetData(_cp(vtkInformation, a1))
@@ -8867,6 +9862,16 @@ if isdefined(@__MODULE__, Symbol("vtkRectilinearGrid!SafeDownCast")) && isdefine
         vtkRectilinearGrid!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("vtkRectilinearGridReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkRectilinearGridReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkRectilinearGridReader!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkRectilinearGridWriter!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkRectilinearGridWriter!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkRectilinearGridWriter!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("vtkStructuredGrid!GetData")) && isdefined(@__MODULE__, :vtkInformation)
     vtkStructuredGrid!GetData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}) =
         vtkStructuredGrid!GetData(_cp(vtkInformation, a1))
@@ -8885,6 +9890,16 @@ end
 if isdefined(@__MODULE__, Symbol("vtkStructuredGrid!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkStructuredGrid!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkStructuredGrid!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkStructuredGridReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkStructuredGridReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkStructuredGridReader!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkStructuredGridWriter!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkStructuredGridWriter!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkStructuredGridWriter!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("vtkTableBasedClipDataSet!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
@@ -8940,6 +9955,16 @@ end
 if isdefined(@__MODULE__, Symbol("vtkUnstructuredGridBase!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkUnstructuredGridBase!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkUnstructuredGridBase!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkUnstructuredGridReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkUnstructuredGridReader!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkUnstructuredGridReader!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkUnstructuredGridWriter!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkUnstructuredGridWriter!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkUnstructuredGridWriter!SafeDownCast(_cp(vtkObjectBase, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("vtkXMLDataReader!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)

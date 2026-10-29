@@ -23,6 +23,7 @@ reads multiblock containers (see below).  For CFD workflows,
 `read_ensight` reads EnSight Gold case files, `read_cgns` reads CGNS
 files, and `read_pvtp` reads parallel PVTK poly-data summaries — all
 returning `vtkMultiBlockDataSet` (or `vtkPolyData` for `read_pvtp`).
+`read_legacy_vtk` reads legacy VTK files (`.vtk`) of any dataset type.
 Readers return owning smart pointers, so the grid stays alive as long as
 you hold it.
 
@@ -36,6 +37,7 @@ VTK.write_vti(img, "img.vti")                     # structured formats
 VTK.write_vtr(rg, "rg.vtr")
 VTK.write_vts(sg, "sg.vts")
 VTK.write_vtm(mb, "case.vtm")                     # multiblock container
+VTK.write_legacy_vtk(ug, "hex.vtk")               # legacy VTK format
 ```
 
 The default mode writes zlib-compressed appended data — ideal for ParaView.
@@ -113,9 +115,8 @@ VTK.insert_cell!(grid, VTK.VTKCellTypes.VTK_TETRA, [0, 1, 2, 3])
 
 ## What is *not* covered (yet)
 
-Legacy `.vtk` and parallel unstructured-grid readers (`.pvtu`) are
-unwrapped — see the roadmap in `STATUS.md`.  For structured data, the
-pragmatic path today is going through WriteVTK/ReadVTK and converting
-via the constructors above.
+Parallel unstructured-grid readers (`.pvtu`) are unwrapped — see the
+roadmap in `STATUS.md`.  For structured data, the pragmatic path today is
+going through WriteVTK/ReadVTK and converting via the constructors above.
 
 Next: [filter pipelines](filters.md).

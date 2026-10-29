@@ -79,6 +79,21 @@ input = [
   "vtkXMLPDataReader.h",
   "vtkXMLPUnstructuredDataReader.h",
   "vtkXMLPPolyDataReader.h",
+  # legacy VTK I/O (.vtk format)
+  "vtkDataReader.h",
+  "vtkDataWriter.h",
+  "vtkDataSetReader.h",
+  "vtkDataSetWriter.h",
+  "vtkUnstructuredGridReader.h",
+  "vtkUnstructuredGridWriter.h",
+  "vtkPolyDataReader.h",
+  "vtkPolyDataWriter.h",
+  "vtkStructuredGridReader.h",
+  "vtkStructuredGridWriter.h",
+  "vtkRectilinearGridReader.h",
+  "vtkRectilinearGridWriter.h",
+  "vtkGenericDataObjectReader.h",
+  "vtkGenericDataObjectWriter.h",
 ]
 extra_headers = [
   "vtkInformation.h",
