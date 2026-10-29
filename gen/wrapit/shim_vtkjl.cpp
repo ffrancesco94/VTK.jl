@@ -66,6 +66,20 @@
 #include <vtkXMLPDataReader.h>
 #include <vtkXMLPUnstructuredDataReader.h>
 #include <vtkXMLPPolyDataReader.h>
+#include <vtkDataReader.h>
+#include <vtkDataWriter.h>
+#include <vtkDataSetReader.h>
+#include <vtkDataSetWriter.h>
+#include <vtkUnstructuredGridReader.h>
+#include <vtkUnstructuredGridWriter.h>
+#include <vtkPolyDataReader.h>
+#include <vtkPolyDataWriter.h>
+#include <vtkStructuredGridReader.h>
+#include <vtkStructuredGridWriter.h>
+#include <vtkRectilinearGridReader.h>
+#include <vtkRectilinearGridWriter.h>
+#include <vtkGenericDataObjectReader.h>
+#include <vtkGenericDataObjectWriter.h>
 #include <vtkArrayDispatch.h>
 #include <array>
 #include <cstdint>
@@ -451,6 +465,53 @@ void register_shim_methods(jlcxx::Module& mod)
   mod.method("XMLPPolyDataReader_new", []() {
     return vtkSmartPointer<vtkXMLPPolyDataReader>::New();
   });
+
+  // ---- legacy VTK I/O (.vtk format) ----
+  mod.method("DataSetReader_new", []() {
+    return vtkSmartPointer<vtkDataSetReader>::New();
+  });
+  mod.method("GenericDataObjectReader_new", []() {
+    return vtkSmartPointer<vtkGenericDataObjectReader>::New();
+  });
+  mod.method("UnstructuredGridReader_new", []() {
+    return vtkSmartPointer<vtkUnstructuredGridReader>::New();
+  });
+  mod.method("PolyDataReader_new", []() {
+    return vtkSmartPointer<vtkPolyDataReader>::New();
+  });
+  mod.method("StructuredGridReader_new", []() {
+    return vtkSmartPointer<vtkStructuredGridReader>::New();
+  });
+  mod.method("RectilinearGridReader_new", []() {
+    return vtkSmartPointer<vtkRectilinearGridReader>::New();
+  });
+  mod.method("SetFileName",
+    [](vtkDataReader* r, const std::string& name) {
+      r->SetFileName(name.c_str());
+    });
+  mod.method("SetFileName",
+    [](vtkDataWriter* w, const std::string& name) {
+      w->SetFileName(name.c_str());
+    });
+  mod.method("DataSetWriter_new", []() {
+    return vtkSmartPointer<vtkDataSetWriter>::New();
+  });
+  mod.method("GenericDataObjectWriter_new", []() {
+    return vtkSmartPointer<vtkGenericDataObjectWriter>::New();
+  });
+  mod.method("UnstructuredGridWriter_new", []() {
+    return vtkSmartPointer<vtkUnstructuredGridWriter>::New();
+  });
+  mod.method("PolyDataWriter_new", []() {
+    return vtkSmartPointer<vtkPolyDataWriter>::New();
+  });
+  mod.method("StructuredGridWriter_new", []() {
+    return vtkSmartPointer<vtkStructuredGridWriter>::New();
+  });
+  mod.method("RectilinearGridWriter_new", []() {
+    return vtkSmartPointer<vtkRectilinearGridWriter>::New();
+  });
+  mod.method("Write", [](vtkDataWriter* w) { return w->Write(); });
 
   // ---- XML writers ----
   mod.method("XMLUnstructuredGridWriter_new", []() {
