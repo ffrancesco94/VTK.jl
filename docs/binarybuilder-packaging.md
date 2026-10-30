@@ -119,13 +119,16 @@ Two changes are therefore needed:
 1. Declare the library product with `dont_dlopen=true`, so `using
    VTK_julia_jll` exposes its path without loading it prematurely.
 2. In VTK.jl, load the linked VTK component libraries with
-   `Libdl.RTLD_GLOBAL` **before** `@wrapmodule` loads `libvtk_julia`.
+   `Libdl.RTLD_GLOBAL` both before `@wrapmodule` (which inspects the library
+   during precompilation) and in `__init__` before `@initcxx`. Precompilation
+   does not preserve `dlopen` state when a cached module is restored in a
+   fresh process.
 
-The original machine has an uncommitted, Linux-specific implementation of
-this preload loop in `src/VTK.jl`. It works, but currently constructs names
-like `libvtkIOXML-9.7.so.1` and must be made platform-aware before
-publication. `LD_LIBRARY_PATH` was used only as a temporary diagnostic
-workaround and is not part of the intended user setup.
+The preload loop in `src/VTK.jl` uses `Libdl.dlext` and VTK's unversioned
+library symlinks rather than hard-coding Linux `.so.1` filenames. It must
+still be validated on non-Linux targets as the platform matrix expands.
+`LD_LIBRARY_PATH` was used only as a temporary diagnostic workaround and is
+not part of the intended user setup.
 
 ## Next steps
 
@@ -159,13 +162,11 @@ sources = [
 Rebuild, deploy locally, and rerun the 180 tests to ensure the published
 source bundle is complete.
 
-### 3. Finish portable runtime loading
+### 3. Validate portable runtime loading
 
-- Replace the Linux-specific `libvtk*-9.7.so.1` filenames with
-  platform-aware discovery using the VTK artifact's library directory.
 - Preserve the existing MPI preload before loading VTK components.
-- Keep component loading ahead of `@wrapmodule`.
-- Test without `LD_LIBRARY_PATH` in a fresh process.
+- Keep component loading ahead of both `@wrapmodule` and `@initcxx`.
+- Test without `LD_LIBRARY_PATH` in fresh processes on each supported OS.
 - Avoid absolute RPATHs to artifact directories.
 
 ### 4. Add reproducibility tooling
