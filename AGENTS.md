@@ -18,8 +18,7 @@ workflow changes.
   The legacy hand-written CMake wrapper was removed 2026-10-29.
 - Test counts: **180/180**.
 - WrapIt is built **from source** from the fork `ffrancesco94/wrapit` (main),
-  not from WrapIt_jll; see `gen/wrapit/wrapit_src.jl`. The upstream bugs we
-  patched are documented in `docs/wrapit-upstream-bugs.md`.
+  not from WrapIt_jll; see `gen/wrapit/wrapit_src.jl`.
 
 ## Gotchas (learned the hard way)
 

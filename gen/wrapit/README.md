@@ -7,10 +7,7 @@ with the macro-truncation fix, PR #1) — merged with a hand-written shim for
 everything a generator cannot infer. **This is the generator behind the
 shipped `VTK.jl` module**: `gen/build_wrapper.jl` runs this driver and
 installs the merged library at `wrapper/build/libvtk_julia.so` (the default
-location `src/VTK.jl` loads). The legacy hand-written CMake wrapper
-(`gen/build_wrapper_cmake.jl`, `wrapper/`) remains as a fallback; CI
-exercises both (A/B via `ENV["VTKJL_LIB"]`). Full story:
-[`docs/wrapit-spike.md`](../../docs/wrapit-spike.md); migration notes:
+location `src/VTK.jl` loads). Migration notes:
 [`MIGRATION_STATUS.md`](MIGRATION_STATUS.md).
 
 Requirements: git, CMake, a C++17 compiler, libclang dev headers + resource
@@ -53,6 +50,4 @@ Julia-side `MethodError` on inherited calls), then re-run `build.jl`.
 Shim clashes are vetoed mechanically ("REGENERATE" message — run again).
 **Factories, macro accessors and `SetInputData`/`GetOutput` come for free**,
 so most new filters/readers/writers need no shim edits; only add ownership
-policy, downcasts or special conveniences to `shim_vtkjl.cpp` (WrapIt bugs
-are documented in `docs/wrapit-spike.md` and
-`docs/wrapit-upstream-bugs.md`).
+policy, downcasts or special conveniences to `shim_vtkjl.cpp`.
