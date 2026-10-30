@@ -163,7 +163,7 @@ Single shared library `gen/wrapit/build/shipped/libvtk_julia.so`, one
 
 - Retire `wrapper/` entirely once the generated lib proves itself over a
   few weeks of CI (keep `VTKJL_LIB` as the documented escape hatch).
-- WrapIt upstream bug reports (4 candidates, repros in `docs/wrapit-spike.md`).
+- WrapIt upstream bug reports (4 candidates).
 - Remaining roadmap items are unchanged (more I/O formats/filters, generic
   `downcast`, jll packaging — see `STATUS.md` §6).
 
@@ -201,8 +201,8 @@ auto-shim assertions) and 91/91 on the hand wrapper (auto-shim testset
 skips there); conformance PASSED. Suite includes `InsideOutOn/Off`,
 `GetInsideOut`, `GetUseValueAsOffset`, `GetFileName` and `PolyData_new`.
 
-Upstream: `docs/wrapit-upstream-bugs.md` now has issue-ready write-ups for
-the four WrapIt bugs. **Bug 1's fix is validated** (3-line null guard in
+Upstream: issue-ready write-ups were prepared for the four WrapIt bugs.
+**Bug 1's fix is validated** (3-line null guard in
 `operator<<(CXString)`, patch `docs/patches/wrapit-bug1-null-cstring.patch`):
 with an empty veto list, the truncated 676-line `JlClasses.cxx` becomes a
 complete 12 578-line one with macro accessors generated. That makes the

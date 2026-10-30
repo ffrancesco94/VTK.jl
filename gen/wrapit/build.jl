@@ -3,7 +3,7 @@
 #
 #   julia --project=gen/wrapit gen/wrapit/build.jl
 #
-# Pipeline (see docs/wrapit-spike.md):
+# Pipeline:
 #   1. render wrapit.toml from the template with runtime artifact paths
 #   2. build wrapit from source (wrapit_src.jl, our fork with the macro
 #      truncation fix) and run it on the input headers

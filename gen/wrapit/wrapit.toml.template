@@ -1,6 +1,6 @@
 # WrapIt configuration for the VTKGen spike/driver.
 # Rendered by build.jl: __VTK_INCLUDE__, __MPI_INCLUDE__ and __VETO_LIST__
-# are replaced with runtime artifact paths. See docs/wrapit-spike.md.
+# are replaced with runtime artifact paths.
 module_name = "VTKGen"
 uuid = "b25c3a5e-7abd-d1ba-3670-c950568681d3"
 out_cxx_dir = "cxx"
@@ -125,7 +125,7 @@ cxx-std = "c++17"
 veto_list = "__VETO_LIST__"
 n_classes_per_file = 1
 export = "all"
-# Bug 3 workaround (docs/wrapit-spike.md): never export Julia keywords.
+# WrapIt bug 3 workaround: never export Julia keywords.
 export_blacklist = ["begin", "end", "assign", "copy", "empty", "iterator", "collect"]
 # Field accessors trigger macro-generated getters on VTK (Bug 1); not needed.
 fields_and_variables = false

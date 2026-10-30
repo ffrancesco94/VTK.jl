@@ -85,5 +85,4 @@ raises instead of returning half-baked data.
 
 `gen/wrapit/` drives [WrapIt](https://github.com/grasph/wrapit) to generate
 the same C++ surface from VTK headers automatically (63 classes / 1250+
-methods for the CFD subset). See [The WrapIt driver](wrapit.md) and
-[`docs/wrapit-spike.md`](https://github.com/ffrancesco94/VTK.jl/blob/main/docs/wrapit-spike.md).
+methods for the CFD subset). See [The WrapIt driver](wrapit.md).
