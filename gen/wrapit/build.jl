@@ -3,7 +3,7 @@
 #
 #   julia --project=gen/wrapit gen/wrapit/build.jl
 #
-# Pipeline (see docs/wrapit-spike.md):
+# Pipeline:
 #   1. render wrapit.toml from the template with runtime artifact paths
 #   2. build wrapit from source (wrapit_src.jl, our fork with the macro
 #      truncation fix) and run it on the input headers
@@ -255,7 +255,7 @@ function postprocess!()
     println("post-processed JlClasses.cxx + jlVTKGen.cxx")
 end
 
-const SP_TRAITS = r"namespace jlcxx \{\s*template<typename T>\s*struct BuildParameterList<vtkSmartPointer<T>>.*?\n\}\n"s
+const SP_TRAITS = r"namespace jlcxx \{\s*template<typename \w+>\s*struct BuildParameterList<vtkSmartPointer<\w+>>.*?\n\}\n"s
 const SP_STRUCT = r"// Class generating the wrapper for type vtkSmartPointer\n// signature to use in the veto file: vtkSmartPointer\nstruct JlvtkSmartPointer.*?\n\};\nstd::shared_ptr<Wrapper> newJlvtkSmartPointer\(jlcxx::Module& module\)\{\n  return std::shared_ptr<Wrapper>\(new JlvtkSmartPointer\(module\)\);\n\}\n"s
 
 function strip_vtksmartpointer(s)

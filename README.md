@@ -107,5 +107,3 @@ julia --project=docs docs/make.jl                        # renders to docs/build
 ```
 
 Deployment to GitHub Pages is opt-in (`DOCS_DEPLOY=true julia --project=docs docs/make.jl`).
-The full WrapIt spike write-up with upstream bug reports lives in
-[docs/wrapit-spike.md](docs/wrapit-spike.md).

@@ -4,11 +4,7 @@
 from VTK headers using [WrapIt](https://github.com/grasph/wrapit) (libclang →
 CxxWrap code), replacing hand-writing of the bulk method surface. **This is
 the generator behind the shipped library**: `gen/build_wrapper.jl` drives it
-and installs the merged library at `wrapper/build/libvtk_julia.so`. The
-hand-written CMake wrapper (`gen/build_wrapper_cmake.jl`) remains as a
-fallback (CI exercises both). See the
-[full spike report](https://github.com/ffrancesco94/VTK.jl/blob/main/docs/wrapit-spike.md)
-for the WrapIt-vs-custom-generator verdict and the four upstream bugs found.
+and installs the merged library at `wrapper/build/libvtk_julia.so`.
 
 ## Quick start
 
@@ -89,12 +85,9 @@ orthogonal by design.
 4. Verify with `conformance.jl`, then with the main test suite (both wrapper
    variants are exercised in CI).
 
-## Upstream bugs (report candidates)
+## Upstream bugs
 
-Documented with repros in
-[`docs/wrapit-spike.md`](https://github.com/ffrancesco94/VTK.jl/blob/main/docs/wrapit-spike.md)
-and issue-ready write-ups in
-[`docs/wrapit-upstream-bugs.md`](https://github.com/ffrancesco94/VTK.jl/blob/main/docs/wrapit-upstream-bugs.md):
+Four issues were identified while developing the driver:
 (1) silent truncation on macro-generated methods; (2) `inheritances`
 ignored for template parents; (3) Julia keywords exported; (4)
 `std::basic_ostream` wrapped into uncompilable code.

@@ -48,9 +48,8 @@ Binary/runtime foundations:
   method, `veto_shim_clashes!()` mechanically adds the generated overload to
   `veto.txt` (11 hand-maintained lines + ~65 auto-derived) and regenerates
   until converged.
-- Upstream engagement: issue-ready WrapIt bug reports + validated patches
-  (Bug-1 merged as `ffrancesco94/wrapit#1`, upstream how-to documented):
-  `docs/wrapit-upstream-bugs.md`, `docs/patches/`.
+- Upstream engagement: WrapIt bug reports + validated patches (Bug-1 merged
+  as `ffrancesco94/wrapit#1`); local patches live in `docs/patches/`.
 - MPI: VTK_jll is an MPI-enabled build; `libmpi` (MPICH/OpenMPI/MPIABI
   flavor) is pre-loaded in `VTK.jl` before the wrapper library is dlopened.
 - Ownership: all factories/outputs return `vtkSmartPointer{T}` registered via
@@ -212,9 +211,9 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 7. **Distribution**: wrapper builds locally via system CMake; no
    `VTK_julia_jll` BinaryBuilder recipe yet — every user needs a C++17
    toolchain.
-8. **WrapIt upstream**: Bug 1 fixed only in our fork (patch + upstream
-   how-to ready); Bugs 2–4 worked around in the driver (AOS post-processor,
-   `export_blacklist`, ostream vetoes). See `docs/wrapit-upstream-bugs.md`.
+8. **WrapIt upstream**: Bug 1 fixed only in our fork, with an upstream issue
+   opened; Bugs 2–4 worked around in the driver (AOS post-processor,
+   `export_blacklist`, ostream vetoes).
 
 ## 5. Risks
 
@@ -247,7 +246,7 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 ### Phase 2 — breadth + automation (generator done)
 
 - [x] WrapIt spike on the conformance subset — **done 2026-10-24: WrapIt+shim
-      viable, `vtkWrapJulia` rejected**; full report `docs/wrapit-spike.md`
+      viable, `vtkWrapJulia` rejected**
 - [x] WrapIt migration: the generated+shim-merged library is the **shipped
       default** (`gen/build_wrapper.jl` installs it at `wrapper/build/`);
       the CMake wrapper is the fallback and CI runs the full suite against
@@ -321,18 +320,11 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 The generator migration is done and CI-green, so the next sprint is about
 **breadth** (more VTK surface through the now-working pipeline) and
 **upstream** (reducing our fork delta). Roughly in priority order:
-
-1. **More I/O** (Phase 2): legacy `.vtk` readers/writers. Structured XML
-   (`.vti/.vtr/.vts`) and multiblock `.vtm` are complete. With the generator
-   in place, legacy support is mostly `wrapit.toml.template` + Julian plumbing.
-2. **Upstream WrapIt Bug 1** (Phase 2/4 hygiene): submit
-   `docs/patches/wrapit-bug1-null-cstring.patch` to `grasph/wrapit` per the
-   how-to in `docs/wrapit-upstream-bugs.md`; unblocks dropping the fork.
-   Then Bugs 3 (easy) and 2 (deletes the AOS post-processor).
-3. **More filters** (Phase 2): calculator, gradient, threshold, stream
-   tracer — as CFD needs arise; each is config + a thin `src/filters.jl`
-   wrapper.
-4. **Meshes.jl/GeometryBasics bridges** (Phase 3): needs a target-representation
+1. **Upstream WrapIt Bug 1** (Phase 2/4 hygiene): the issue is open; submit
+   `docs/patches/wrapit-bug1-null-cstring.patch` to `grasph/wrapit` after
+   maintainer feedback. This unblocks dropping the fork. Then Bugs 3 (easy)
+   and 2 (deletes the AOS post-processor).
+2. **Meshes.jl/GeometryBasics bridges** (Phase 3): needs a target-representation
    decision for mixed-cell grids.
-5. **`VTK_julia_jll` BinaryBuilder recipe** (Phase 4): removes the local
+3. **`VTK_julia_jll` BinaryBuilder recipe** (Phase 4): removes the local
    C++17 toolchain requirement for end users.
