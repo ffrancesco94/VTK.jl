@@ -5,34 +5,36 @@ model, XML I/O, and manipulation filters (clip, slice, cell↔point data
 conversion, contour, surface extraction). No rendering, no MPI-aware API.
 
 Status: early development. Built on `VTK_jll` (binaries) + `CxxWrap.jl`
-(bindings). The build is WrapIt-generated + shim-merged
-(`gen/build_wrapper.jl`); CI tests it on Julia 1.11 and 1.12.
+(bindings). The C++ wrapper is WrapIt-generated + shim-merged, distributed
+as `VTK_julia_jll`. CI tests on Julia 1.11 and 1.12.
 
-## Building
+## Installation
 
-The C++ binding module must be built once against the `VTK_jll` artifact.
-Requirements: a C++17 toolchain (`g++` or `clang`), `git`, `CMake`, libclang
-development headers (and its resource directory), and OpenSSL development
-headers — on Debian/Ubuntu:
-`sudo apt-get install g++ cmake git libclang-dev clang libssl-dev`.
+The package is not registered in General yet. Install directly from GitHub:
+
+```julia
+using Pkg
+Pkg.add(url="https://github.com/ffrancesco94/VTK.jl")
+```
+
+The C++ binding module (`libvtk_julia`) comes pre-built via `VTK_julia_jll`
+for supported platforms — no local toolchain needed.
+
+For development, build the wrapper from source (requires C++17, CMake,
+libclang, OpenSSL):
 
 ```sh
 julia --project=. gen/build_wrapper.jl
 ```
 
-This drives the WrapIt-based generator ([`gen/wrapit`](gen/wrapit)): it
-builds **wrapit from source** ([`ffrancesco94/wrapit`](https://github.com/ffrancesco94/wrapit),
-which contains the macro-truncation fix), generates CxxWrap bindings from
-the VTK headers plus a header-derived mechanical shim, merges the hand
-shim, generates Julia smart-pointer forwarding overloads, compiles, and
-installs the result at `wrapper/build/libvtk_julia.so`,
-the default location loaded by the package.
+This drives the WrapIt-based generator ([`gen/wrapit`](gen/wrapit)): clones
+and builds [our wrapit fork](https://github.com/ffrancesco94/wrapit) from
+source (needs `git` + network), generates CxxWrap bindings from VTK headers
+plus a mechanical shim, merges the hand shim, compiles, and installs to
+`gen/wrapit/build/shipped/libvtk_julia.so`.
 
-Override the loaded library with the `VTKJL_LIB` environment variable.
-Note Julia's precompile cache does **not** track `VTKJL_LIB`: after
-switching libraries, clear the package cache
-(`rm -rf ~/.julia/compiled/v1.*/VTK`) or you silently keep testing the
-previous one.
+Override the loaded library with `VTKJL_LIB`. The precompile cache does not
+track this variable — clear it after switching (`rm -rf ~/.julia/compiled/v1.*/VTK`).
 
 ## Usage
 
