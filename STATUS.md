@@ -329,10 +329,7 @@ The generator migration is done and CI-green, so the next sprint is about
    `docs/patches/wrapit-bug1-null-cstring.patch` to `grasph/wrapit` per the
    how-to in `docs/wrapit-upstream-bugs.md`; unblocks dropping the fork.
    Then Bugs 3 (easy) and 2 (deletes the AOS post-processor).
-3. **More filters** (Phase 2): calculator, gradient, threshold, stream
-   tracer — as CFD needs arise; each is config + a thin `src/filters.jl`
-   wrapper.
-4. **Meshes.jl/GeometryBasics bridges** (Phase 3): needs a target-representation
+3. **Meshes.jl/GeometryBasics bridges** (Phase 3): needs a target-representation
    decision for mixed-cell grids.
-5. **`VTK_julia_jll` BinaryBuilder recipe** (Phase 4): removes the local
+4. **`VTK_julia_jll` BinaryBuilder recipe** (Phase 4): removes the local
    C++17 toolchain requirement for end users.
