@@ -1,12 +1,9 @@
 # VTK.jl
 
-Julia bindings for a CFD-oriented subset of [VTK](https://vtk.org) 9.7: the
-data model, XML I/O, and manipulation filters — with zero-copy array access
-and idiomatic Julian wrappers on top.
-
-Built on [`VTK_jll`](https://github.com/JuliaBinaryWrappers/VTK_jll.jl)
+Julia bindings for a CFD-oriented subset of [VTK](https://vtk.org) 9.7. There is the data model, some common formats for I/O (VTK XML formats, CGNS, EnSight) and some manipulation filters.
+It is built on [`VTK_jll`](https://github.com/JuliaBinaryWrappers/VTK_jll.jl)
 (binaries) and [`CxxWrap.jl`](https://github.com/JuliaInterop/CxxWrap.jl)
-(bindings). No rendering, no MPI-aware API.
+(bindings). At the moment there are is no visualisation pipeline, nor a MPI-aware pipeline.
 
 ```julia
 using VTK
@@ -22,17 +19,16 @@ VTK.write_vtu(clipped, "clipped.vtu")            # zlib-compressed XML
 
 ## What works
 
-- **Data model**: points, unstructured grids, poly data, image data, with
-  VTK's inheritance mirrored on the Julia side (`vtkUnstructuredGrid <:
-  vtkPointSet <: vtkDataSet`).
-- **Zero-copy arrays**: typed `VTKDataArray{T}` views of VTK's AOS storage —
-  plain, type-stable `AbstractMatrix{T}` indexing in both directions.
-- **I/O**: `.vtu`/`.vtp` readers and writers; interop with ReadVTK.jl and
-  WriteVTK.jl in both directions.
+- **Data model**: points, unstructured grids, poly data, image data, with VTK's
+inheritance mirrored on the Julia side (`vtkUnstructuredGrid <: vtkPointSet <:
+vtkDataSet`).
+- **Zero-copy arrays**: typed `VTKDataArray{T}` views of VTK's C++ objects
+- **I/O**: `.vtu`/`.vtp` readers and writers, as well as `.vtm`, CGNS and
+EnSight; interop with ReadVTK.jl and WriteVTK.jl in both directions.
 - **Filters**: clip, slice, cell↔point data conversion, contour, surface
-  extraction, plus the plane implicit function.
-- **Cells**: VTKBase cell-type registry, iterators, and `MeshCell`
-  conversion straight into `WriteVTK.vtk_grid`.
+extraction, line probes, plus the plane implicit function.
+- **Cells**: VTKBase cell-type registry, iterators, and `MeshCell` conversion
+straight into `WriteVTK.vtk_grid`.
 
 ## Where to go next
 

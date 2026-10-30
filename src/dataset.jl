@@ -146,6 +146,26 @@ function add_array!(fd, da)
 end
 
 """
+    remove_array!(grid, name; point=true, cell=true)
+
+Remove the named array from point data, cell data, or both. Searches point
+data first, then cell data. Throws an error if the array is not found.
+"""
+function remove_array!(grid, name; point=true, cell=true)
+    name = String(name)
+    if point && HasArray(point_data(grid), name)
+        RemoveArray(point_data(grid), name)
+        return grid
+    end
+    if cell && HasArray(cell_data(grid), name)
+        RemoveArray(cell_data(grid), name)
+        return grid
+    end
+    error("array '$name' not found in " *
+          (point && cell ? "point or cell data" : point ? "point data" : "cell data"))
+end
+
+"""
     activate_point_data!(grid, name)
     activate_cell_data!(grid, name)
 

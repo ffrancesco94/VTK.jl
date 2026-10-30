@@ -179,18 +179,40 @@ Cross-section of `grid` where the implicit function evaluates to zero.
 end
 
 """
-    cell_to_point(grid) -> vtkDataObject (downcast to access)
-    point_to_cell(grid) -> vtkDataObject
+    cell_to_point(grid; pass_data=false, arrays=nothing) -> vtkDataObject
+    point_to_cell(grid; pass_data=false, arrays=nothing) -> vtkDataObject
 
 Interpolate cell data to points and vice versa. The output type matches the
 input grid type.
+
+Keywords:
+- `pass_data`: pass the input field data through to the output (default false)
+- `arrays`: process only these arrays (default all). Disables `ProcessAllArrays`.
 """
-@vtk_filter cell_to_point(grid, CellDataToPointData → pass_through) begin
-    # no extra configuration
+@vtk_filter cell_to_point(grid, CellDataToPointData → pass_through;
+                          pass_data=false, arrays=nothing) begin
+    if pass_data
+        PassCellDataOn(f)
+    end
+    if arrays !== nothing
+        ProcessAllArraysOff(f)
+        for name in arrays
+            AddCellDataArray(f, String(name))
+        end
+    end
 end
 
-@vtk_filter point_to_cell(grid, PointDataToCellData → pass_through) begin
-    # no extra configuration
+@vtk_filter point_to_cell(grid, PointDataToCellData → pass_through;
+                          pass_data=false, arrays=nothing) begin
+    if pass_data
+        PassPointDataOn(f)
+    end
+    if arrays !== nothing
+        ProcessAllArraysOff(f)
+        for name in arrays
+            AddPointDataArray(f, String(name))
+        end
+    end
 end
 
 """

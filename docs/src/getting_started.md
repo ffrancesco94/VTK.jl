@@ -11,28 +11,30 @@ Pkg.instantiate()
 ```
 
 The package itself is pure Julia; the heavy dependencies (`VTK_jll` with its
-MPI flavor, `CxxWrap`) come from the Julia binary repository automatically.
+MPI flavor, `CxxWrap`, and the pre-built `libvtk_julia` wrapper via
+`VTK_julia_jll`) come from the Julia binary repository automatically. No
+local C++ toolchain is required.
 
-## Building the C++ wrapper
+## The C++ wrapper
 
-One compile step is required: the C++ binding module is generated from the
-VTK headers by the WrapIt driver and built against the `VTK_jll` artifact.
-Requirements: a C++17 toolchain (`g++` or `clang`), `git`, `CMake`, libclang
-development headers, and OpenSSL development headers
-(`sudo apt-get install g++ cmake git libclang-dev clang libssl-dev` on
-Debian/Ubuntu):
+The C++ binding module (`libvtk_julia`) is available as a pre-built binary
+through `VTK_julia_jll` on Yggdrasil for supported platforms. It is loaded
+automatically — no build step is needed.
+
+For development or unsupported platforms, the wrapper can still be built
+locally from the VTK.jl source tree. Requirements: a C++17 toolchain
+(`g++` or `clang`), `git`, `CMake`, libclang development headers, and
+OpenSSL development headers (`sudo apt-get install g++ cmake git libclang-dev
+clang libssl-dev` on Debian/Ubuntu):
 
 ```shell
 julia --project=. gen/build_wrapper.jl
 ```
 
-This produces `wrapper/build/libvtk_julia.so` (the wrapit executable itself
-is built from source, from [`ffrancesco94/wrapit`](https://github.com/ffrancesco94/wrapit)).
-The legacy hand-written CMake wrapper remains available as
-`julia --project=. gen/build_wrapper_cmake.jl`.
-Override the location with the `VTKJL_LIB` environment variable if you build
-it elsewhere — and after switching libraries, clear the precompile cache
-(`rm -rf ~/.julia/compiled/v1.*/VTK`), which does not track `VTKJL_LIB`:
+This produces `gen/wrapit/build/shipped/libvtk_julia.so`. Override the
+location with the `VTKJL_LIB` environment variable — and after switching
+libraries, clear the precompile cache (`rm -rf ~/.julia/compiled/v1.*/VTK`),
+which does not track `VTKJL_LIB`:
 
 ```julia
 ENV["VTKJL_LIB"] = "/path/to/libvtk_julia.so"
@@ -50,8 +52,7 @@ using VTK
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-The suite (131 tests on the merged library, 91 on the hand-written
-fallback) includes analytic oracles — e.g. clipping a unit hex
+The suite (180 tests) includes analytic oracles — e.g. clipping a unit hex
 against the plane x+y+z=1 yields exactly the tetrahedron — and
 cross-validation against the independent pure-Julia packages ReadVTK.jl and
 WriteVTK.jl.
