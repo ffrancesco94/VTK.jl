@@ -4,7 +4,13 @@
 from VTK headers using [WrapIt](https://github.com/grasph/wrapit) (libclang →
 CxxWrap code), replacing hand-writing of the bulk method surface. **This is
 the generator behind the shipped library**: `gen/build_wrapper.jl` drives it
-and installs the merged library at `wrapper/build/libvtk_julia.so`.
+and installs the merged library at `gen/wrapit/build/shipped/libvtk_julia.so`.
+
+The approach follows the same pattern as [Geant4.jl](https://github.com/JuliaHEP/Geant4.jl)
+and [ROOT.jl](https://github.com/JuliaHEP/ROOT.jl): WrapIt generates the
+C++ bindings from the library headers, a companion shim layer handles
+ownership and convenience methods, and the result is distributed as a JLL
+binary package.
 
 ## Quick start
 
