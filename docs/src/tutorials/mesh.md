@@ -35,7 +35,7 @@ convention.
 
 ## Inspecting cells as plain data
 
-The mesh can be read back as plain Julia objects — `cells` returns
+The mesh can be read back as plain Julia objects: `cells` returns
 `VTKBase.MeshCell`s with 1-based connectivity (WriteVTK convention), and
 `coordinates` a zero-copy typed view of the coordinates:
 

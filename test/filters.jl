@@ -74,12 +74,12 @@ end
     vec(VTK.data(cd))[:] .= 2.5
     ugc = hex_mesh_with_temperature()
     VTK.add_array!(VTK.cell_data(ugc), cd)
-    c2p = VTK.UnstructuredGrid(VTK.cell_to_point(ugc))
+    c2p = VTK.cell_to_point(ugc)
     arr = VTK.field_array(VTK.point_data(c2p), "constant")
     @test all(==(2.5), vec(VTK.data(arr)))
 
     # point data -> cell data of the linear field averages to 1.5 on the hex
-    p2c = VTK.UnstructuredGrid(VTK.point_to_cell(ug))
+    p2c = VTK.point_to_cell(ug)
     carr = VTK.field_array(VTK.cell_data(p2c), "temperature")
     @test vec(VTK.data(carr))[] ≈ 1.5
 
