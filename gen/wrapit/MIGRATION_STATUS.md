@@ -118,7 +118,7 @@ Single shared library `gen/wrapit/build/shipped/libvtk_julia.so`, one
    referenced by the shim against `add_type<...>` emissions — this caught
    the missing `vtkXMLPolyDataReader`, `vtkCellDataToPointData`,
    `vtkPointDataToCellData`, `vtkDataSetSurfaceFilter`, `vtkImageData` (all
-   now in `wrapit.toml.template`, plus `vtkDataSetAlgorithm.h`,
+   now in `VTK.wit.in`, plus `vtkDataSetAlgorithm.h`,
    `vtkObjectBase.h`).
 7. **Driver bug fixed:** the veto loop must write `veto.txt` after EACH new
    veto (wrapit reads the file each run), not at the end.

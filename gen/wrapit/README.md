@@ -34,7 +34,7 @@ julia --project=gen/wrapit gen/wrapit/conformance.jl
 |---|---|
 | `build.jl` | driver: renders `wrapit.toml` from the template (runtime artifact paths), builds wrapit from source (`wrapit_src.jl`), generates, audits shim clashes/types, post-processes (AOS re-base, smart-pointer strip, shim injection), compiles the single merged library |
 | `wrapit_src.jl` | clones and builds [`ffrancesco94/wrapit`](https://github.com/ffrancesco94/wrapit) (contains the Bug-1 fix) into `build/wrapit-build/wrapit`. Update with `VTKJL_WRAPIT_UPDATE=1`; override repo/ref with `VTKJL_WRAPIT_REPO`/`VTKJL_WRAPIT_REF` |
-| `wrapit.toml.template` | WrapIt config; `__VTK_INCLUDE__`/`__MPI_INCLUDE__`/`__VETO_LIST__` are substituted by `build.jl` |
+| `VTK.wit.in` | WrapIt config; `__VTK_INCLUDE__`/`__MPI_INCLUDE__`/`__VETO_LIST__` are substituted by `build.jl` |
 | `veto.txt` | small hand-maintained list: ostream wrappers (bug 4) and ownership-overridden getters. The ~200 macro-accessor vetoes and the veto loop are **gone** (Bug 1 fixed in our fork); clash vetoes are re-derived mechanically when needed |
 | `auto_shim.jl` | generates the mechanical shim (`build/cxx/shim_auto.cpp`) from the headers: owning `X_new` factories (from `static vtkX* New();`) and macro accessors. Only public members of non-template classes, whitelisted scalar types; dedups against hand shim and WrapIt's own output |
 | `smartptr_wrappers.jl` | generates `src/generated_methods.jl`: Julia overloads that accept CxxWrap smart pointers and forward through `_cp` to the raw-pointer bindings. It reads the actual WrapIt/hand-shim/auto-shim registrations, so new methods get forwarding overloads automatically |
@@ -44,7 +44,7 @@ julia --project=gen/wrapit gen/wrapit/conformance.jl
 
 ## Extending the wrapped surface
 
-Add the class's header to `input` in `wrapit.toml.template` **including any
+Add the class's header to `input` in `VTK.wit.in` **including any
 missing intermediate base-class headers** (a broken chain shows up as a
 Julia-side `MethodError` on inherited calls), then re-run `build.jl`.
 Shim clashes are vetoed mechanically ("REGENERATE" message — run again).

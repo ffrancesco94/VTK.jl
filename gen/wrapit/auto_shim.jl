@@ -238,9 +238,9 @@ end
 # Generate build/cxx/shim_auto.cpp from the driver's input headers.
 # `registered` filters classes WrapIt actually emitted add_type<> for.
 function generate_auto_shim!(driver_dir, build_dir, include_dir)
-    template = read(joinpath(driver_dir, "wrapit.toml.template"), String)
+    template = read(joinpath(driver_dir, "VTK.wit.in"), String)
     m = match(r"input\s*=\s*\[(.*?)\]"s, template)
-    m === nothing && error("no input list in wrapit.toml.template")
+    m === nothing && error("no input list in VTK.wit.in")
     headers = [m.captures[1] for m in eachmatch(r"\"([^\"]+\.h)\"", m.captures[1])]
     registered = Set(m.captures[1] for m in eachmatch(
         r"add_type<(vtk[A-Za-z0-9_]+)>",

@@ -11,7 +11,7 @@ a CFD-useful filter we have not bound yet.
 ```
 VTK headers (VTK_jll)                what you edit
         │                            ┌──────────────────────────────┐
-        ▼                            │ 1. gen/wrapit/wrapit.toml.template │
+        ▼                            │ 1. gen/wrapit/VTK.wit.in │
    ┌─────────┐  generates  ┌──────────────┐  merges  ┌────────────────┐
    │ WrapIt  │ ──────────► │ JlClasses.cxx│ ◄─────── │ shim_vtkjl.cpp │
    │ (fork)  │   ~95%      │  (generated) │          │  (hand-written)│
@@ -39,7 +39,7 @@ libclang + OpenSSL dev headers, and the Julia project instantiated. You do
 ## Step 1 — tell WrapIt about the class
 
 Add the class's header to the `input` list in
-`gen/wrapit/wrapit.toml.template`:
+`gen/wrapit/VTK.wit.in`:
 
 ```toml
 input = [

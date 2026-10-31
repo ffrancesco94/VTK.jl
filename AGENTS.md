@@ -40,7 +40,7 @@ workflow changes.
 - **Downcast registry is automated**: `DOWNCAST_REGISTRY` (src/dataset.jl) is
   built at module load from `DOWNCAST_SOURCES` triples, filtered by what the
   loaded library actually registers. Adding a grid type = header in
-  wrapit.toml.template + `downcast_foo` shim binding + typed constructor —
+  VTK.wit.in + `downcast_foo` shim binding + typed constructor —
   no registry edit. Only extend `DOWNCAST_SOURCES` for a genuinely new kind
   of type.
 - The wrapit generation was validated with clang 13 (jll) and clang 22

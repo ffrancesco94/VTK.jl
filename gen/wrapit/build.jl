@@ -44,7 +44,7 @@ mpi_include_dir() =
     end
 
 function render_config!()
-    tpl = read(joinpath(DRIVER_DIR, "wrapit.toml.template"), String)
+    tpl = read(joinpath(DRIVER_DIR, "VTK.wit.in"), String)
     s = replace(tpl, "__VTK_INCLUDE__" => vtk_include_dir())
     s = replace(s, "__VETO_LIST__" => joinpath(DRIVER_DIR, "veto.txt"))
     mpi = mpi_include_dir()
@@ -95,7 +95,7 @@ function check_shim_types_registered!()
         !occursin("add_type<$t>", classes)))
     isempty(missing) ||
         error("shim references types the generated module does not register: ",
-              join(missing, ", "), " — add their headers to wrapit.toml.template")
+              join(missing, ", "), " — add their headers to VTK.wit.in")
     println("shim type audit OK (", length(used), " referenced types registered)")
 end
 

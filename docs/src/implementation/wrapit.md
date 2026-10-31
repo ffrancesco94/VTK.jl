@@ -57,7 +57,7 @@ returns raw pointers, which WrapIt maps to non-owning `CxxPtr`.
 
 | piece | why |
 |---|---|
-| `wrapit.toml.template` | input headers — **every link of every inheritance chain** must be listed or Julia-side upcasts break (`MethodError` on inherited calls) |
+| `VTK.wit.in` | input headers — **every link of every inheritance chain** must be listed or Julia-side upcasts break (`MethodError` on inherited calls) |
 | `veto.txt` | small hand-maintained list: ostream wrappers (WrapIt bug 4) and the getters whose ownership the shim overrides. The macro-accessor vetoes are **gone** (bug 1 is fixed in our wrapit fork); clash vetoes are still re-derived mechanically by `veto_shim_clashes!()` when needed |
 | post-processor in `build.jl` | Bug 2 family: AOS leaf arrays and other public classes whose direct parent is unmapped are re-pointed at their nearest registered VTK ancestor with `jlcxx::SuperType`. This covers structured data, multiblock datasets/readers/writers, and `vtkIdTypeArray`. Also strips WrapIt's parametric `vtkSmartPointer` wrapper (the shim registers the real one) and injects the shim into the module init |
 | `veto_shim_clashes!()` / `check_shim_types_registered!()` in `build.jl` | mechanical audits, re-run on every build: generated methods colliding with the shim are vetoed (duplicate Julia methods are fatal at precompile), and every vtk type the shim references must be registered by the generated code |
@@ -73,7 +73,7 @@ orthogonal by design.
 ## Extending the wrapped surface
 
 1. Add the class's header — and any missing intermediate base-class headers
-   — to `input` in `wrapit.toml.template`.
+   — to `input` in `VTK.wit.in`.
 2. Run `build.jl`; the generator builds wrapit from our fork on first use
    (git + CMake + libclang + OpenSSL headers needed). Shim clashes are
    vetoed mechanically ("added N shim-clash vetoes; REGENERATE" — just run

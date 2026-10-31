@@ -255,7 +255,7 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 - [x] Cell type registry via VTKBase (`VTKCellTypes`, a zero-dep hard dep:
       names ↔ VTK ids, singletons per id)
 - [x] More readers/writers: `.vti/.vtr/.vts` XML (2026-10-26; `.vtu/.vtp`
-      already existed) — mostly `wrapit.toml.template` + Julian plumbing
+      already existed) — mostly `VTK.wit.in` + Julian plumbing
 - [x] Multiblock `.vtm` (2026-10-27): `read_vtm`/`write_vtm`/`block`/
       `set_block!`/`nblocks`; WriteVTK.jl oracle both directions
 - [x] CFD readers (2026-10-28): EnSight Gold (`read_ensight`), CGNS

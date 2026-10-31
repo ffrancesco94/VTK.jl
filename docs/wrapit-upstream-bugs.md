@@ -172,7 +172,7 @@ would preserve the methods; simply not exporting them is enough for a
 first fix.)
 
 **Workaround in VTK.jl.** `export_blacklist = ["begin", "end", "assign",
-"copy", "empty", "iterator", "collect"]` in `wrapit.toml.template`.
+"copy", "empty", "iterator", "collect"]` in `VTK.wit.in`.
 
 ---
 
