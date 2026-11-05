@@ -6,8 +6,10 @@ workflow changes.
 
 ## Project shape
 
-- Julia bindings for a subset of VTK 9.x, via CxxWrap. The C++ wrapper is
-  WrapIt-generated + merged shim, built by `julia --project=. gen/build_wrapper.jl`
+- Julia bindings for a subset of VTK 9.x, via CxxWrap. By default the C++
+  wrapper comes from `VTK_julia_jll`; `VTKJL_LIB` overrides it with a local
+  build. The wrapper sources are WrapIt-generated + merged shim, rebuilt by
+  `julia --project=. gen/build_wrapper.jl`
   (driver: `gen/wrapit/build.jl`). It registers generic base-class methods
   (e.g. `GetOutput` on `vtkAlgorithm`) via the hand shim (`shim_vtkjl.cpp`)
   plus a generated auto-shim (`build/cxx/shim_auto.cpp`, produced by
@@ -22,12 +24,13 @@ workflow changes.
 
 ## Gotchas (learned the hard way)
 
-- **CI (ubuntu-latest): Ubuntu splits LLVM into versioned dirs.** `libclang.so`
-  lives in `/usr/lib/llvm-*/lib` (outside CMake's default `find_library` path)
-  and the debs ship only *versioned* `libclang-cpp`/`libLLVM` — wrapit's CMake
-  wants unversioned names. The CI workflow derives `VTKJL_CLANG_PREFIX` from
-  `clang -print-resource-dir` and symlinks the versioned libs. Validated on
-  ubuntu-latest with clang 21.
+- **Local WrapIt builds on Ubuntu: Ubuntu splits LLVM into versioned dirs.**
+  `libclang.so` lives in `/usr/lib/llvm-*/lib` (outside CMake's default
+  `find_library` path) and the debs ship only *versioned*
+  `libclang-cpp`/`libLLVM` — wrapit's CMake wants unversioned names. Derive
+  `VTKJL_CLANG_PREFIX` from `clang -print-resource-dir` and symlink the
+  versioned libs. Validated on ubuntu-latest with clang 21. Normal CI and
+  documentation builds use `VTK_julia_jll` and do not need this toolchain.
 
 - **Precompile cache does not track `VTKJL_LIB` or the .so content.** Always
   `rm -rf ~/.julia/compiled/v1.12/VTK` when switching libraries, or Julia may

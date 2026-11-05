@@ -25,10 +25,7 @@ jobs:
         version:
           - '1.11'
           - '1.12'
-    # VTK.jl does not track VTKJL_LIB in its precompile cache, so pin the
-    # library for the whole job (before buildpkg precompiles VTK).
-    env:
-      VTKJL_LIB: ${{ github.workspace }}/gen/wrapit/build/shipped/libvtk_julia.so
+          - '1.13'
     steps:
       - uses: actions/checkout@v7
       - uses: julia-actions/setup-julia@v3
@@ -36,33 +33,5 @@ jobs:
           version: ${{ matrix.version }}
           arch: x64
       - uses: julia-actions/cache@v3
-      # The generated wrapper builds wrapit from source (ffrancesco94/wrapit),
-      # which needs libclang + OpenSSL headers (cmake/git/g++ are preinstalled).
-      # Ubuntu keeps libclang.so under /usr/lib/llvm-*/lib, outside CMake's
-      # default find_library path, so derive CLANG_PREFIX from the installed
-      # clang's resource dir and hand it to the wrapit build (wrapit_src.jl
-      # forwards VTKJL_CLANG_PREFIX as -DCLANG_PREFIX).
-      - name: Install libclang + OpenSSL headers
-        run: sudo apt-get update && sudo apt-get install -y libclang-dev clang libssl-dev
-      - name: Prepare libclang for wrapit
-        run: |
-          res="$(clang -print-resource-dir)"   # e.g. /usr/lib/llvm-21/lib/clang/21
-          prefix="${res%/lib/clang/*}"
-          # Ubuntu ships only versioned libclang-cpp/libLLVM; wrapit's CMake
-          # looks for unversioned names. Provide symlinks.
-          llvm_lib="$prefix/lib"
-          for lib in libclang-cpp libLLVM; do
-            if [ ! -e "$llvm_lib/$lib.so" ]; then
-              sudo ln -s "$(ls "$llvm_lib/$lib".so.* | head -n1)" "$llvm_lib/$lib.so"
-            fi
-          done
-          echo "VTKJL_CLANG_PREFIX=$prefix" >> "$GITHUB_ENV"
-      # The C++ wrapper must exist before julia-buildpkg precompiles VTK.jl
-      # (@wrapmodule dlopens the library at module definition time).
-      - name: Build C++ wrapper
-        run: |
-          julia --project=. -e 'using Pkg; Pkg.instantiate()'
-          julia --project=gen/wrapit -e 'using Pkg; Pkg.instantiate()'
-          julia --project=. gen/build_wrapper.jl
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1

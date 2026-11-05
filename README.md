@@ -9,7 +9,7 @@ Status: early development. Built on `VTK_jll` (binaries) + `CxxWrap.jl`
 (bindings). The C++ wrapper is WrapIt-generated + some manual shims,
 distributed as `VTK_julia_jll`. The wrapping pipeline follows the same
 approach as [Geant4.jl](https://github.com/JuliaHEP/Geant4.jl) and
-[ROOT.jl](https://github.com/JuliaHEP/ROOT.jl). CI tests on Julia 1.11 and 1.12.
+[ROOT.jl](https://github.com/JuliaHEP/ROOT.jl). CI tests on Julia 1.11–1.13.
 
 ## Installation
 

@@ -3,12 +3,8 @@
 #
 # This drives the WrapIt-based generator in gen/wrapit (generate CxxWrap
 # bindings from the VTK 9.7 headers, merge the hand shim, compile) and
-# installs the merged library at wrapper/build/libvtk_julia.so — the default
-# location loaded by src/VTK.jl.
-#
-# Fallback: the legacy hand-written CMake wrapper remains available via
-# `julia --project=. gen/build_wrapper_cmake.jl`; ENV["VTKJL_LIB"] overrides
-# which library VTK.jl loads (see README).
+# installs the merged library at wrapper/build/libvtk_julia.so. Set
+# ENV["VTKJL_LIB"] to that path to use it instead of VTK_julia_jll (see README).
 const ROOT = dirname(@__DIR__)
 const DRIVER = joinpath(ROOT, "gen", "wrapit")
 

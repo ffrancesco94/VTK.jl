@@ -33,37 +33,7 @@ jobs:
         with:
           node-version: 22
 
-      # The WrapIt-driven generator builds wrapit from source and needs
-      # libclang + OpenSSL headers (cmake/git/g++ are preinstalled).
-      - name: Install libclang + OpenSSL headers (wrapit build)
-        run: sudo apt-get update && sudo apt-get install -y libclang-dev clang libssl-dev
-
-      # Ubuntu keeps libclang.so under /usr/lib/llvm-*/lib, outside CMake's
-      # default find_library path; derive CLANG_PREFIX from the installed
-      # clang's resource dir (wrapit_src.jl forwards it as -DCLANG_PREFIX).
-      - name: Prepare libclang for wrapit
-        run: |
-          res="$(clang -print-resource-dir)"   # e.g. /usr/lib/llvm-21/lib/clang/21
-          prefix="${res%/lib/clang/*}"
-          # Ubuntu ships only versioned libclang-cpp/libLLVM; wrapit's CMake
-          # looks for unversioned names. Provide symlinks.
-          llvm_lib="$prefix/lib"
-          for lib in libclang-cpp libLLVM; do
-            if [ ! -e "$llvm_lib/$lib.so" ]; then
-              sudo ln -s "$(ls "$llvm_lib/$lib".so.* | head -n1)" "$llvm_lib/$lib.so"
-            fi
-          done
-          echo "VTKJL_CLANG_PREFIX=$prefix" >> "$GITHUB_ENV"
-
-      # VTK.jl's docs do `using VTK`, which needs the compiled C++ wrapper.
-      # ubuntu-latest ships g++; VTK itself comes from VTK_jll. The default
-      # build is the WrapIt-driven generator (gen/build_wrapper.jl).
-      - name: Instantiate project and build C++ wrapper
-        run: |
-          julia --project=. -e 'using Pkg; Pkg.instantiate()'
-          julia --project=gen/wrapit -e 'using Pkg; Pkg.instantiate()'
-          julia --project=. gen/build_wrapper.jl
-
+      # VTK.jl's docs do `using VTK`; the C++ wrapper comes from VTK_julia_jll.
       - name: Instantiate docs environment
         run: julia --project=docs -e 'using Pkg; Pkg.instantiate()'
 

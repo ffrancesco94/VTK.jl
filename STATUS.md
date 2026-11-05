@@ -1,12 +1,11 @@
 # VTK.jl — Status & Implementation Plan
 
-Last updated: 2026-10-29. WrapIt migration **complete** and the legacy
-hand-written CMake wrapper **removed** (2026-10-29): the shipped
-`libvtk_julia.so` is the WrapIt-generated + shim-merged library built by
-`gen/build_wrapper.jl`. CI exercises it on Julia 1.11/1.12. Two
-Ubuntu-specific wrapit build fixes landed in CI (`CLANG_PREFIX` derivation
-+ versioned-libclang symlinks); validated on ubuntu-latest's clang 21.
-Durable gotchas live in `AGENTS.md`.
+Last updated: 2026-11-05. WrapIt migration **complete** and the legacy
+hand-written CMake wrapper **removed** (2026-10-29). The WrapIt-generated +
+shim-merged `libvtk_julia` now loads from `VTK_julia_jll` by default;
+`VTKJL_LIB` remains available for local development builds. CI exercises the
+JLL on Julia 1.11–1.13 without requiring a C++ toolchain. Durable gotchas live
+in `AGENTS.md`.
 
 ## 1. Goal
 
@@ -208,9 +207,9 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
    manual registry edit when adding a grid type (add the type + shim
    binding, rebuild; only extend `DOWNCAST_SOURCES` for a genuinely new
    kind of type). Unregistered classes raise `KeyError`.
-7. **Distribution**: wrapper builds locally via system CMake; no
-   `VTK_julia_jll` BinaryBuilder recipe yet — every user needs a C++17
-   toolchain.
+7. **Distribution**: `VTK_julia_jll` provides the wrapper on supported
+   64-bit non-Windows platforms. Other platforms require a local C++17
+   toolchain and the `VTKJL_LIB` override.
 8. **WrapIt upstream**: Bug 1 fixed only in our fork, with an upstream issue
    opened; Bugs 2–4 worked around in the driver (AOS post-processor,
    `export_blacklist`, ostream vetoes).
@@ -223,9 +222,10 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
   finalizers) empirically corrupts concurrent VTK work (see §4.1). Until the
   wrapper-owns-everything redesign, avoid patterns that defer C++ object
   death into GC.
-- WrapIt is pinned to our fork until the Bug-1 patch lands upstream; the
-  driver builds it from source, so CI depends on network (clone +
-  FetchContent) and a working libclang toolchain.
+- WrapIt is pinned to our fork until the Bug-1 patch lands upstream; local
+  regeneration builds it from source and therefore needs network access
+  (clone + FetchContent) and a working libclang toolchain. Normal package CI
+  uses the prebuilt JLL instead.
 - VTK_jll has no Windows build; Windows support requires our own VTK build.
 - VTK_jll's MPI flavor complicates end-user installs; escape hatch is a
   custom non-MPI VTK build (defer until requested).
@@ -247,11 +247,10 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 
 - [x] WrapIt spike on the conformance subset — **done 2026-10-24: WrapIt+shim
       viable, `vtkWrapJulia` rejected**
-- [x] WrapIt migration: the generated+shim-merged library is the **shipped
-      default** (`gen/build_wrapper.jl` installs it at `wrapper/build/`);
-      the CMake wrapper is the fallback and CI runs the full suite against
-      both (A/B via `VTKJL_LIB`). Flipped 2026-10-26; CI green on all four
-      matrix jobs + docs deploy — see `gen/wrapit/MIGRATION_STATUS.md`
+- [x] WrapIt migration: the generated+shim-merged library is shipped through
+      `VTK_julia_jll`; `gen/build_wrapper.jl` installs a development build at
+      `wrapper/build/` for use through `VTKJL_LIB`. The legacy CMake wrapper
+      was removed on 2026-10-29.
 - [x] Cell type registry via VTKBase (`VTKCellTypes`, a zero-dep hard dep:
       names ↔ VTK ids, singletons per id)
 - [x] More readers/writers: `.vti/.vtr/.vts` XML (2026-10-26; `.vtu/.vtp`
@@ -312,8 +311,9 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 
 ### Phase 4 — packaging
 
-- [ ] `VTK_julia_jll` via BinaryBuilder (Geant4.jl pattern), CI binary cache
-- [ ] Registration in General
+- [x] `VTK_julia_jll` via BinaryBuilder (Geant4.jl pattern), used by default
+      in VTK.jl and in CI
+- [ ] Registration of VTK.jl in General
 
 ## 7. Next sprint: candidate task list
 
@@ -326,5 +326,3 @@ The generator migration is done and CI-green, so the next sprint is about
    and 2 (deletes the AOS post-processor).
 2. **Meshes.jl/GeometryBasics bridges** (Phase 3): needs a target-representation
    decision for mixed-cell grids.
-3. **`VTK_julia_jll` BinaryBuilder recipe** (Phase 4): removes the local
-   C++17 toolchain requirement for end users.

@@ -1,6 +1,6 @@
 name = "VTK"
 uuid = "edae8264-62cc-4a28-b386-35547e921c71"
-version = "1.0.0-DEV"
+version = "0.1.0"
 authors = ["Francesco"]
 
 [deps]
@@ -8,10 +8,12 @@ CxxWrap = "1f15a43c-97ca-5a2a-ae31-89f07a497df4"
 Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 VTKBase = "4004b06d-e244-455f-a6ce-a5f9919cc534"
 VTK_jll = "74d5c060-2aa8-5f16-b7f5-964146ffbc58"
+VTK_julia_jll = "e6de34d9-af95-50c5-84a2-340162b313bf"
 
 [compat]
 CxxWrap = "0.17.5"
 Libdl = "1"
 VTKBase = "1"
 VTK_jll = "9.7.1"
+VTK_julia_jll = "0.1.0"
 julia = "1.11"

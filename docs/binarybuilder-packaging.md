@@ -177,13 +177,13 @@ regenerate with pinned VTK/WrapIt versions and fail if the published source
 bundle is stale. Record the VTK, WrapIt, generator, and source revisions in
 `VTK_cxxwrap`.
 
-### 5. Integrate the JLL into VTK.jl
+### 5. Integrate the JLL into VTK.jl — completed 2026-11-05
 
-- Make `VTK_julia_jll` the default source of `libvtk_julia` once registered.
-- Retain local generated builds for development.
-- Retain `VTKJL_LIB` as an explicit custom-library override.
-- Update installation documentation: end users should no longer need a local
-  C++17/libclang toolchain on supported platforms.
+- `VTK_julia_jll` is the default source of `libvtk_julia`.
+- Local generated builds remain available for development through `VTKJL_LIB`.
+- CI and documentation builds use the JLL without a local C++ toolchain.
+- The full 180-test suite passes with the published JLL artifacts on Julia
+  1.11.9, 1.12.7, and 1.13.2.
 
 ### 6. Expand and submit
 

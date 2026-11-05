@@ -3,10 +3,11 @@ module VTK
 using Libdl
 using CxxWrap
 using VTK_jll
+using VTK_julia_jll
 
-# Location of the compiled C++ binding module. Override with ENV["VTKJL_LIB"].
-const libvtk_julia = get(ENV, "VTKJL_LIB",
-    joinpath(dirname(@__DIR__), "gen", "wrapit", "build", "shipped", "libvtk_julia.so"))
+# Location of the compiled C++ binding module. Override with ENV["VTKJL_LIB"]
+# to use a local development build instead of the JLL artifact.
+const libvtk_julia = get(ENV, "VTKJL_LIB", VTK_julia_jll.libvtk_julia)
 
 function load_vtk_libraries()
     # VTK_jll is built against MPI; load its flavor's shared library first.

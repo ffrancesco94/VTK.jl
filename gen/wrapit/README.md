@@ -5,9 +5,9 @@ Generates the `VTKGen` CxxWrap module from VTK 9.7 headers using
 [`ffrancesco94/wrapit`](https://github.com/ffrancesco94/wrapit)** (our fork
 with the macro-truncation fix, PR #1) — merged with a hand-written shim for
 everything a generator cannot infer. **This is the generator behind the
-shipped `VTK.jl` module**: `gen/build_wrapper.jl` runs this driver and
-installs the merged library at `wrapper/build/libvtk_julia.so` (the default
-location `src/VTK.jl` loads). Migration notes:
+library shipped in `VTK_julia_jll`**: `gen/build_wrapper.jl` runs this driver
+and installs a development build at `wrapper/build/libvtk_julia.so`; select it
+with `VTKJL_LIB` instead of the default JLL artifact. Migration notes:
 [`MIGRATION_STATUS.md`](MIGRATION_STATUS.md).
 
 Requirements: git, CMake, a C++17 compiler, libclang dev headers + resource
