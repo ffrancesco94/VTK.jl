@@ -23,9 +23,9 @@ Pkg.add(url="https://github.com/ffrancesco94/VTK.jl")
 The C++ binding module (`libvtk_julia`) comes pre-built via `VTK_julia_jll`
 for supported platforms.
 
-### Local development
+### C++ wrapper development
 
-For development, build the wrapper from source (requires C++17, CMake,
+To modify the C++ wrapper, build it from source (requires C++17, CMake,
 libclang, OpenSSL):
 
 ```sh
@@ -36,7 +36,7 @@ This drives the WrapIt-based generator ([`gen/wrapit`](gen/wrapit)): clones and
 builds [our wrapit fork](https://github.com/ffrancesco94/wrapit) from source
 (needs `git` + network), generates CxxWrap bindings from VTK headers plus a
 mechanical shim, merges the hand-written parts, compiles, and installs to
-`gen/wrapit/build/shipped/libvtk_julia.so`.
+`wrapper/build/libvtk_julia.so`.
 
 There is plumbing to inject a local build of `libvtk_julia.so` by using the
 `VTKJL_LIB` env variable. The precompile cache does not track this variable, so
