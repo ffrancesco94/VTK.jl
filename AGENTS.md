@@ -61,6 +61,6 @@ julia --project=. gen/build_wrapper.jl
 rm -rf ~/.julia/compiled/v1.12/VTK
 julia --project=test test/runtests.jl
 
-# Conformance smoke test for the generated module
-julia --project=gen/wrapit gen/wrapit/conformance.jl
+# Low-level integration test for the generated module
+julia --project=gen/wrapit gen/wrapit/generated_library_integration.jl
 ```

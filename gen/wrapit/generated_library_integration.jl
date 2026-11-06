@@ -1,10 +1,10 @@
-# Conformance slice for the WrapIt-generated + shim-merged library.
-# Run after gen/wrapit/build.jl.  This is the migration CI gate: it replays
-# VTK.jl's analytic oracle (clip of a unit hex against x+y+z=1 yields the
-# tetrahedron) through the SAME merged library that ships as libvtk_julia.so,
-# loaded directly via @wrapmodule (no VTKGen.jl package needed).
+# Low-level integration test for the WrapIt-generated + shim-merged library.
+# Run after gen/wrapit/build.jl. It replays VTK.jl's analytic oracle (clip of
+# a unit hex against x+y+z=1 yields the tetrahedron) through the SAME merged
+# library that ships as libvtk_julia.so, loaded directly via @wrapmodule
+# (no VTKGen.jl package needed).
 #
-#   julia --project=gen/wrapit gen/wrapit/conformance.jl
+#   julia --project=gen/wrapit gen/wrapit/generated_library_integration.jl
 using VTK_jll, Libdl
 Libdl.dlopen(VTK_jll.MPICH_jll.libmpi)  # MPI must precede libvtk dlopens
 using CxxWrap
@@ -93,4 +93,4 @@ vals = unsafe_wrap(Vector{Float64},
 @assert vals == [0.0, 1.0, 1.0, 1.0]
 println("reader round-trip: npts=", Conf.GetNumberOfPoints(cp(Conf.vtkPointSet, ug2)),
         " ncells=", Conf.GetNumberOfCells(cp(Conf.vtkDataSet, ug2)), " T[1:4]=", vals)
-println("CONFORMANCE SLICE PASSED")
+println("GENERATED LIBRARY INTEGRATION TEST PASSED")

@@ -330,5 +330,5 @@ compile!()
 println("""
 Done. Smoke-test the generated module with:
 
-    julia --project=gen/wrapit gen/wrapit/conformance.jl
+    julia --project=gen/wrapit gen/wrapit/generated_library_integration.jl
 """)

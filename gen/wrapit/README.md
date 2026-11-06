@@ -25,7 +25,7 @@ julia --project=gen/wrapit -e 'using Pkg; Pkg.instantiate'   # once
 julia --project=gen/wrapit gen/wrapit/build.jl
 
 # smoke-test the merged library against the analytic oracle
-julia --project=gen/wrapit gen/wrapit/conformance.jl
+julia --project=gen/wrapit gen/wrapit/generated_library_integration.jl
 ```
 
 ## Files
@@ -39,7 +39,7 @@ julia --project=gen/wrapit gen/wrapit/conformance.jl
 | `auto_shim.jl` | generates the mechanical shim (`build/cxx/shim_auto.cpp`) from the headers: owning `X_new` factories (from `static vtkX* New();`) and macro accessors. Only public members of non-template classes, whitelisted scalar types; dedups against hand shim and WrapIt's own output |
 | `smartptr_wrappers.jl` | generates `src/generated_methods.jl`: Julia overloads that accept CxxWrap smart pointers and forward through `_cp` to the raw-pointer bindings. It reads the actual WrapIt/hand-shim/auto-shim registrations, so new methods get forwarding overloads automatically |
 | `shim_vtkjl.{h,cpp}` | the decisions a generator can't make: smart-pointer traits, ownership (`take_ref`), error window, zero-copy workers, **generic `SetInputData`/`GetOutput`/`Update` on `vtkAlgorithm`** (no per-filter plumbing), downcasts, `upcast_dataarray` |
-| `conformance.jl` | CI gate: unit-hex → temperature → clip (tetrahedron oracle) → write/read `.vtu`, through the merged library via `@wrapmodule` |
+| `generated_library_integration.jl` | Low-level integration test: unit-hex → temperature → clip (tetrahedron oracle) → write/read `.vtu`, through the merged library via `@wrapmodule` |
 | `build/` (gitignored) | generated C++/Julia code and the merged `libvtk_julia.so` |
 
 ## Extending the wrapped surface

@@ -17,7 +17,7 @@ binary package [here](https://github.com/JuliaBinaryWrappers/VTK_julia_jll.jl).
 ```shell
 julia --project=. gen/build_wrapper.jl        # generate + merge + compile + install
 julia --project=gen/wrapit gen/wrapit/build.jl    # same, without the install step
-julia --project=gen/wrapit gen/wrapit/conformance.jl  # analytic-oracle gate
+julia --project=gen/wrapit gen/wrapit/generated_library_integration.jl  # analytic-oracle gate
 ```
 
 `build.jl` renders the WrapIt config with runtime artifact paths, **builds
@@ -60,7 +60,7 @@ intentionally override the generated `const char*` versions with
 | `shim_vtkjl.{h,cpp}` | everything that needs a human decision: smart-pointer traits + `add_smart_pointer`, `take_ref`'d getters/outputs, the error window, zero-copy views, **generic `SetInputData`/`GetOutput`/`Update` on `vtkAlgorithm`** (no per-filter plumbing), downcasts, explicit AOS-leaf up-casts (`upcast_dataarray`) |
 | `auto_shim.jl` | generates the mechanical shim from the headers: `X_new` factories and macro accessors. Only public members, non-template classes, whitelisted scalar types; dedups against the hand shim and against WrapIt's own output |
 | `smartptr_wrappers.jl` | generates `src/generated_methods.jl` from actual raw-pointer registrations. These Julia overloads accept smart pointers and forward through `_cp`, eliminating explicit conversions at ordinary call sites while retaining the low-level raw-pointer API |
-| `conformance.jl` | CI gate: loads the merged library directly (`@wrapmodule`, no package needed) and replays the unit-hex → clip (tetrahedron oracle) → write/read `.vtu` pipeline |
+| `generated_library_integration.jl` | Low-level integration test: loads the merged library directly (`@wrapmodule`, no package needed) and replays the unit-hex → clip (tetrahedron oracle) → write/read `.vtu` pipeline |
 
 Ownership of factory/getter returns stays in the shim layer (`take_ref` +
 smart-pointer traits).
@@ -77,7 +77,7 @@ smart-pointer traits).
    filters/readers/writers need no shim edits at all.
 3. Only if you need ownership policy, a downcast, or a convenience the
    generator cannot infer, add it to `shim_vtkjl.cpp`.
-4. Verify with `conformance.jl`, then with the main test suite.
+4. Verify with `generated_library_integration.jl`, then with the main test suite.
 
 ## Upstream bugs
 
