@@ -1,8 +1,8 @@
 # Tutorial: reading & writing files
 
-VTK.jl speaks the VTK XML formats — unstructured (`.vtu`), poly data
-(`.vtp`), image data (`.vti`), rectilinear (`.vtr`), and structured
-(`.vts`) grids — and interops cleanly with the pure-Julia ecosystem.
+VTK.jl speaks the VTK XML formats: unstructured (`.vtu`), poly data (`.vtp`),
+image data (`.vti`), rectilinear (`.vtr`), and structured (`.vts`) grids. At
+the same time, it interops cleanly with the pure-Julia ecosystem.
 
 ## Reading VTK files
 
@@ -40,11 +40,11 @@ VTK.write_vtm(mb, "case.vtm")                     # multiblock container
 VTK.write_legacy_vtk(ug, "hex.vtk")               # legacy VTK format
 ```
 
-The default mode writes zlib-compressed appended data — ideal for ParaView.
-The `raw_appended` mode is byte-compatible with what
+The default mode writes zlib-compressed appended data. The `raw_appended` mode
+is byte-compatible with what
 [ReadVTK.jl](https://github.com/JuliaVTK/ReadVTK.jl) parses; the test suite
-cross-validates in both directions, so a file written by VTK.jl is verified
-by an independent pure-Julia reader (and vice versa).
+cross-validates in both directions, so a file written by VTK.jl is verified by
+an independent pure-Julia reader (and vice versa).
 
 ## Multiblock files (.vtm)
 
@@ -63,17 +63,16 @@ VTK.set_block!(mb2, 2, surface)
 VTK.write_vtm(mb2, "out.vtm")
 ```
 
-Blocks are borrowed views owned by the multiblock dataset — keep `mb`
-alive while using them. Note that files written by other tools may nest
-blocks one level deeper than expected (e.g. WriteVTK puts each named group
-in its own sub-block); `nblocks`/`block` compose, so just descend until
-you reach a data grid.
+Blocks are borrowed views owned by the multiblock dataset, so you need to keep
+`mb` alive while using them. Note that files written by other tools may nest
+blocks one level deeper than expected (e.g. WriteVTK puts each named group in
+its own sub-block); `nblocks`/`block` compose, so just descend until you reach
+a data grid.
 
 ## Interop with WriteVTK.jl
 
-The cell/ point accessors return VTKBase's `MeshCell` — the same
-vocabulary WriteVTK speaks — so a VTK.jl grid can be re-emitted by
-WriteVTK without any translation layer:
+The cell/ point accessors return VTKBase's `MeshCell`, which can be reused
+seamlessly by WriteVTK.
 
 ```julia
 using VTK, WriteVTK
@@ -99,7 +98,7 @@ zero-copy `VTKDataArray` view) and a vector of `MeshCell`s; connectivity is
 ## Cell type registry
 
 Cell types are [VTKBase](https://github.com/JuliaVTK/VTKBase.jl)'s
-`VTKCellTypes` singletons — the shared registry of ReadVTK/WriteVTK:
+`VTKCellTypes` singletons:
 
 ```julia
 VTK.cell_type(grid, 1)                    # VTKCellType("VTK_HEXAHEDRON", 0x0c, 8)

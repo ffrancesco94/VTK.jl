@@ -3,7 +3,7 @@
 Julia bindings for a CFD-oriented subset of [VTK](https://vtk.org) 9.7. There is the data model, some common formats for I/O (VTK XML formats, CGNS, EnSight) and some manipulation filters.
 It is built on [`VTK_jll`](https://github.com/JuliaBinaryWrappers/VTK_jll.jl)
 (binaries) and [`CxxWrap.jl`](https://github.com/JuliaInterop/CxxWrap.jl)
-(bindings). At the moment there are is no visualisation pipeline, nor a MPI-aware pipeline.
+(bindings) via [`VTK_julia_jll`](https://github.com/JuliaBinaryWrappers/VTK_julia_jll.jl). At the moment there are is no visualisation pipeline, nor a MPI-aware pipeline.
 
 ```julia
 using VTK
