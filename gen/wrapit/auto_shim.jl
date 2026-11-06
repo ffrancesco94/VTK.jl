@@ -38,6 +38,27 @@ const NORM_INT_TYPES = Dict(
     "char" => "int8_t", "signed char" => "int8_t", "unsigned char" => "uint8_t",
     "vtkIdType" => "int64_t", "vtkTypeBool" => "int32_t", "size_t" => "uint64_t")
 
+"""
+    norm_cpp_type(p) -> String
+
+Normalize a C++ parameter type so signatures from WrapIt and the shim can be
+compared. Top-level `const`, pointers, and references do not affect dispatch,
+so they are removed. Integer typedefs are replaced by the fixed-width types
+seen by CxxWrap on the supported LP64 platforms. VTK typedefs are also
+normalized inside template arguments, without changing names such as
+`vtkIdTypeArray`.
+
+This function compares *types*, not complete parameter declarations; use
+[`norm_shim_args`](@ref) when the declaration also contains parameter names.
+
+# Examples
+
+```julia
+norm_cpp_type("const vtkIdType&")          # "int64_t"
+norm_cpp_type("std::vector<vtkIdType>")    # "std::vector<int64_t>"
+norm_cpp_type("vtkIdTypeArray*")           # "vtkIdTypeArray"
+```
+"""
 function norm_cpp_type(p)
     p = strip(replace(p, r"^const\s+" => "", "&" => "", "*" => ""))
     haskey(NORM_INT_TYPES, p) && return NORM_INT_TYPES[p]
@@ -48,10 +69,29 @@ function norm_cpp_type(p)
                       r"\bsize_t\b" => "uint64_t")
 end
 
-# Normalize a comma-separated C++ argument list into normalized types.
-# `strip_names`: shim lambda parameters are always named (drop the trailing
-# name token); WrapIt's veto-comment signatures carry types only, so no
-# stripping there (otherwise "unsigned int" becomes "unsigned").
+"""
+    norm_shim_args(a; strip_names=false) -> Vector{String}
+
+Convert a comma-separated C++ argument list to normalized type names. Whitespace
+is canonicalized before each argument is passed to [`norm_cpp_type`](@ref).
+
+Set `strip_names=true` for shim lambda parameters, which include a variable
+name after each type. Leave it false for WrapIt's veto comments, which contain
+only types: dropping the last token there would incorrectly turn
+`unsigned int` into `unsigned`.
+
+An empty argument list returns `String[]`.
+
+# Examples
+
+```julia
+norm_shim_args("vtkPlane* o, const double v"; strip_names=true)
+# ["vtkPlane", "double"]
+
+norm_shim_args("unsigned int, vtkIdType")
+# ["uint32_t", "int64_t"]
+```
+"""
 function norm_shim_args(a; strip_names = false)
     a == "" && return String[]
     args = String[]
@@ -66,16 +106,49 @@ function norm_shim_args(a; strip_names = false)
     return args
 end
 
-# Parse the `// signature to use in the veto list:` comments WrapIt emits for
-# every generated method; used both to veto clashes and to avoid emitting
-# auto-shim methods that already exist.
+"""
+    parse_generated_sigs(gen_text) -> Vector{NamedTuple}
+
+Extract method signatures from the `// signature to use in the veto list:`
+comments in WrapIt's generated C++. Each result has `ret`, `cls`, `name`, and
+`args` fields. Argument types remain unnormalized here; normalization happens
+when the signatures are indexed or compared.
+
+The auto-shim uses this information to avoid registering a method that WrapIt
+already provides. `build.jl` also uses it when auditing clashes with the hand
+shim.
+
+# Example
+
+```julia
+text = "// signature to use in the veto list: void vtkPlane::SetNormal(double,double,double)"
+parse_generated_sigs(text)
+# [(ret = "void", cls = "vtkPlane", name = "SetNormal",
+#   args = "double,double,double")]
+```
+"""
 parse_generated_sigs(gen_text) =
     [(ret = m.captures[1], cls = m.captures[2], name = m.captures[3],
       args = m.captures[4])
      for m in eachmatch(r"// signature to use in the veto list: (.+?) ([\w:]+)::(\w+)\((.*?)\)\s*$"m,
                         gen_text)]
 
-# Index generated methods by name → normalized (class, argtypes...) tuples.
+"""
+    generated_sig_index(gen_text) -> Dict{String,Vector{Tuple}}
+
+Index WrapIt's generated methods by method name. Each value contains tuples of
+the form `(class, argument_type...)`, with argument types normalized by
+[`norm_shim_args`](@ref). Grouping by name lets the emitter cheaply find only
+those generated signatures that could clash with a candidate method.
+
+# Example
+
+```julia
+text = "// signature to use in the veto list: void vtkPlane::SetNormal(double,double,double)"
+generated_sig_index(text)
+# Dict("SetNormal" => [("vtkPlane", "double", "double", "double")])
+```
+"""
 function generated_sig_index(gen_text)
     idx = Dict{String,Vector{Tuple}}()
     for s in parse_generated_sigs(gen_text)
@@ -91,8 +164,32 @@ const AUTO_NEW_RE = r"^\s*static\s+(vtk[A-Za-z0-9_]+)\s*\*\s*New\s*\(\s*\)\s*;"
 const AUTO_MACRO_RE =
     r"^\s*(vtkSetClampMacro|vtkSetVector3Macro|vtkSetVectorMacro|vtkSetFilePathMacro|vtkGetFilePathMacro|vtkSetStringMacro|vtkGetStringMacro|vtkBooleanMacro|vtkSetMacro|vtkGetMacro)\s*\(([^;]+)\)\s*;"
 
-# (class, method-name) pairs provided by the hand-written shim; names with
-# no vtk-typed first argument are treated as global (factories, helpers).
+"""
+    hand_shim_methods(hand_shim_path) -> Set{Tuple{String,String}}
+
+Read `shim_vtkjl.cpp` and return the `(class, method_name)` pairs it registers.
+The class is inferred from the first VTK type in each lambda's argument list.
+A registration without a VTK-typed first argument is treated as global and
+stored under the empty class name, `""`; this covers factories and helpers.
+
+The emitter skips these registrations so that the automatically generated C++
+does not redefine methods owned by the hand shim.
+
+# Example
+
+Given a hand shim containing:
+
+```cpp
+mod.method("InsideOutOn", [](vtkPlane* o) { o->InsideOutOn(); });
+mod.method("helper", []() { return 42; });
+```
+
+`hand_shim_methods(path)` returns a set equivalent to:
+
+```julia
+Set([("vtkPlane", "InsideOutOn"), ("", "helper")])
+```
+"""
 function hand_shim_methods(hand_shim_path)
     handled = Set{Tuple{String,String}}()
     for m in eachmatch(r"mod\.method\(\"(\w+)\",\s*\[\]\((.*?)\)", read(hand_shim_path, String))
@@ -104,10 +201,41 @@ function hand_shim_methods(hand_shim_path)
     return handled
 end
 
-# Scan one VTK header; returns a vector of class records
-# (name, template, has_new, macros) where macros are (macro, argstring).
-# Only public members are captured (libclang-based generators skip
-# protected/private methods too).
+"""
+    scan_vtk_header(path) -> Vector{NamedTuple}
+
+Scan one VTK header for classes and the declarations that the auto-shim knows
+how to reproduce. Each class record contains:
+
+- `name`: the C++ class name, such as `"vtkPlane"`;
+- `template`: whether a `template` declaration precedes the class;
+- `has_new`: whether the class publicly declares `static vtkX* New();`;
+- `macros`: `(macro_name, argument_string)` pairs in source order.
+
+Only public members are collected, matching the protected/private filtering of
+libclang-based generators. Template classes are recorded but skipped later,
+because this simple textual emitter does not attempt C++ template binding.
+
+# Example
+
+For a header containing:
+
+```cpp
+class VTK_EXPORT vtkPlane : public vtkImplicitFunction
+{
+public:
+  static vtkPlane* New();
+  vtkSetMacro(InsideOut, int);
+};
+```
+
+the result is equivalent to:
+
+```julia
+[(name = "vtkPlane", template = false, has_new = true,
+  macros = [("vtkSetMacro", "InsideOut, int")])]
+```
+"""
 function scan_vtk_header(path)
     classes = NamedTuple[]
     name, template, has_new = "", false, false
@@ -145,14 +273,70 @@ function scan_vtk_header(path)
     return classes
 end
 
-# Split macro arguments on top-level commas (args are simple: Name, Type[, N]).
+"""
+    split_macro_args(s) -> Vector{String}
+
+Split a VTK accessor macro's arguments and remove surrounding whitespace. The
+supported macros have simple comma-separated arguments of the form
+`Name, Type` or `Name, Type, N`, so no C++ parser is needed here.
+
+# Examples
+
+```julia
+split_macro_args("InsideOut, int")       # ["InsideOut", "int"]
+split_macro_args("Origin, double, 3")    # ["Origin", "double", "3"]
+```
+"""
 split_macro_args(s) = strip.(split(s, ','))
 
-# Emit one-line C++ `mod.method(...)` statements for one class record.
-# `handled` filters hand-shim duplicates; `emitted` dedups within the auto
-# shim; `gen_sigs` skips methods WrapIt already generated (except string
-# getters, where our std::string version intentionally wins via the clash
-# audit); skipped (unsupported) types are collected into `skipped`.
+"""
+    auto_shim_class_methods!(out, cls, handled, emitted, skipped,
+                             gen_sigs, n_skipped_gen) -> Int
+
+Append C++ `mod.method(...)` registrations for one scanned class to `out` and
+return the number appended. Template classes are ignored. Depending on the
+macros found by [`scan_vtk_header`](@ref), this emits:
+
+- an owning `X_new` factory returning `vtkSmartPointer<vtkX>`;
+- scalar setters/getters, including casts for VTK integer typedefs;
+- null-safe string setters/getters using `std::string` at the Julia boundary;
+- `On`/`Off` methods for `vtkBooleanMacro`;
+- fixed-size vector setters with one scalar argument per component.
+
+The mutable arguments coordinate generation across all classes:
+
+- `handled` contains hand-shim `(class, method)` pairs to leave alone;
+- `emitted` prevents duplicate auto-shim registrations by class and name;
+- `gen_sigs` is the WrapIt index from [`generated_sig_index`](@ref), used to
+  skip registrations that WrapIt already provides;
+- `skipped` accumulates counts for unsupported `(class, macro, type)` triples;
+- `n_skipped_gen` is a `Ref{Int}` counting methods omitted because WrapIt
+  already generated them.
+
+String getters deliberately bypass the WrapIt duplicate check. Their
+`std::string` version replaces WrapIt's `const char*` version through the clash
+audit in `build.jl`, giving Julia safe string ownership and handling null C
+strings.
+
+# Example
+
+```julia
+cls = (name = "vtkPlane", template = false, has_new = true,
+       macros = [("vtkSetMacro", "InsideOut, int")])
+out = String[]
+handled = Set{Tuple{String,String}}()
+emitted = Set{Tuple{String,String}}()
+skipped = Dict{Tuple{String,String,String},Int}()
+gen_sigs = Dict{String,Vector{Tuple}}()
+n_skipped_gen = Ref(0)
+
+auto_shim_class_methods!(out, cls, handled, emitted, skipped,
+                         gen_sigs, n_skipped_gen)  # 2
+```
+
+`out` now contains registrations for `Plane_new` and `SetInsideOut`. The
+function only emits C++ source; `generate_auto_shim!` writes the complete file.
+"""
 function auto_shim_class_methods!(out, cls, handled, emitted, skipped, gen_sigs, n_skipped_gen)
     cls.template && return 0
     n = 0
@@ -235,8 +419,41 @@ function auto_shim_class_methods!(out, cls, handled, emitted, skipped, gen_sigs,
     return n
 end
 
-# Generate build/cxx/shim_auto.cpp from the driver's input headers.
-# `registered` filters classes WrapIt actually emitted add_type<> for.
+"""
+    generate_auto_shim!(driver_dir, build_dir, include_dir) -> nothing
+
+Generate `build_dir/cxx/shim_auto.cpp` from the headers listed in
+`driver_dir/VTK.wit.in`. This is the top-level auto-shim entry point called by
+`build.jl` after WrapIt has generated its C++ and before the merged library is
+compiled.
+
+The generation pipeline is:
+
+1. Read the input header list from `VTK.wit.in`.
+2. Read `build_dir/cxx/JlClasses.cxx` to discover which VTK classes WrapIt
+   actually registered and which method signatures it generated.
+3. Read `driver_dir/shim_vtkjl.cpp` to avoid duplicating hand-written methods.
+4. Scan each available header under `include_dir` and emit mechanical bindings
+   for registered classes only.
+5. Write the includes and `register_auto_shim_methods` function to
+   `shim_auto.cpp`, then report emitted and skipped method counts.
+
+Missing header files and classes not registered by WrapIt are ignored.
+Unsupported macro argument types are reported rather than emitted as invalid
+C++. The generated file is replaced on every build and should not be edited.
+
+# Example
+
+Called from the WrapIt driver as:
+
+```julia
+generate_auto_shim!(driver_dir, build_dir, vtk_include_dir())
+```
+
+From a repository checkout, the directories are typically `gen/wrapit` and
+`gen/wrapit/build`; `vtk_include_dir()` supplies the include path from the VTK
+artifact. `JlClasses.cxx` must already exist in `build_dir/cxx`.
+"""
 function generate_auto_shim!(driver_dir, build_dir, include_dir)
     template = read(joinpath(driver_dir, "VTK.wit.in"), String)
     m = match(r"input\s*=\s*\[(.*?)\]"s, template)
