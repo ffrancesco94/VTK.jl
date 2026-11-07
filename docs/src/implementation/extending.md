@@ -156,7 +156,7 @@ Expect the full suite green (count grows by your new tests). Also verify the
 hand-written fallback still builds and passes — it lags the merged lib, so
 new generated-only tests must self-skip:
 
-```julia
+```text
 @testset "my new feature" begin
     if !isdefined(VTK, :GradientFilter_new)
         @info "not present (hand-written wrapper) — skipping"

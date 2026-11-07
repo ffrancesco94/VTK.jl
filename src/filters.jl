@@ -248,7 +248,7 @@ scalars). The result is stored as a new point-data array named `result`.
 # Example
 
 ```julia
-grid = calculator(grid; scalars="temperature", expression="temperature * 2", result="T2")
+grid2 = VTK.calculator(grid; scalars="temperature", expression="temperature * 2", result="T2")
 ```
 """
 @vtk_filter calculator(grid, ArrayCalculator → pass_through;
@@ -269,7 +269,7 @@ point-data array named `result` (3-component vectors).
 # Example
 
 ```julia
-grid2 = gradient(grid; scalars="temperature", result="grad_T")
+grid2 = VTK.gradient(grid; scalars="temperature", result="grad_T")
 ```
 """
 @vtk_filter gradient(grid, GradientFilter → vtkUnstructuredGrid;
@@ -289,7 +289,7 @@ to extract cells *outside* the range.
 # Example
 
 ```julia
-hot = threshold(grid; scalars="temperature", lower=1.5, upper=3.0)
+hot = VTK.threshold(grid; scalars="temperature", lower=1.5, upper=3.0)
 ```
 """
 @vtk_filter threshold(grid, Threshold → vtkUnstructuredGrid;
@@ -310,13 +310,13 @@ by name (default: active vectors).
 # Example
 
 ```julia
-seeds = line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution=10)
-lines = stream_tracer(grid, seeds; vectors="velocity")
+seeds = VTK.line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution=10)
+lines = VTK.stream_tracer(grid, seeds; vectors="velocity")
 ```
 """
 @vtk_filter stream_tracer(grid, seeds, StreamTracer → vtkPolyData;
                          vectors=nothing, integration_direction="forward") begin
-    vectors === nothing || activate_point_data!(grid, vectors)
+    vectors === nothing || SetActiveVectors(point_data(grid), String(vectors))
     SetSourceData(f, seeds)
     if integration_direction == "backward"
         SetIntegrationDirection(f, 0)
@@ -328,35 +328,29 @@ lines = stream_tracer(grid, seeds; vectors="velocity")
 end
 
 """
-    particle_tracer(grid, seeds; vectors) -> vtkPolyData
+    particle_tracer(grid, seed_source; vectors) -> vtkPolyData
 
-Trace particles through a vector field (advection). `seeds` is a vtkDataSet
-with seed points. Pass `vectors` to select the vector array by name.
-
-# Example
-
-```julia
-seeds = line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution=10)
-particles = particle_tracer(grid, seeds; vectors="velocity")
-```
+Experimental particle-tracer wrapper. `seed_source` must be a VTK algorithm
+(for example, `LineSource_new()`), not the `PolyData` returned by
+`line_source`. There is currently no validated execution example; use
+`stream_tracer` for static vector fields.
 """
-@vtk_filter particle_tracer(grid, seeds, ParticleTracer → vtkPolyData;
+@vtk_filter particle_tracer(grid, seed_source, ParticleTracer → vtkPolyData;
                            vectors=nothing) begin
-    vectors === nothing || activate_point_data!(grid, vectors)
-    AddSourceConnection(f, GetOutputPort(seeds))
+    vectors === nothing || SetActiveVectors(point_data(grid), String(vectors))
+    AddSourceConnection(_cp(vtkParticleTracerBase, f), GetOutputPort(seed_source))
 end
 
 """
     line_source(p1, p2; resolution=100) -> vtkPolyData
 
-Generate a line of points from `p1` to `p2` with `resolution` points. Useful
-as seed points for `stream_tracer` or `particle_tracer`, or as a probe line
-for `sample_over_line`.
+Generate a line of points from `p1` to `p2` with `resolution` segments. Useful
+as seed points for `stream_tracer` or as a probe line for `sample_over_line`.
 
 # Example
 
 ```julia
-line = line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution=50)
+line = VTK.line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution=50)
 ```
 """
 function line_source(p1, p2; resolution=100)
@@ -378,7 +372,7 @@ ParaView's "Plot Over Line".
 # Example
 
 ```julia
-profile = sample_over_line(grid, (0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution=50)
+profile = VTK.sample_over_line(grid, (0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution=50)
 ```
 """
 function sample_over_line(grid, p1, p2; resolution=100, scalars=nothing)

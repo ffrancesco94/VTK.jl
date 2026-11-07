@@ -6,7 +6,7 @@ VTK.jl is not registered in General yet, so we need to get it from GitHub:
 
 ```julia
 using Pkg
-Pkg.add("git+https://github.com/ffrancesco94/VTK.jl")
+Pkg.add(url="https://github.com/ffrancesco94/VTK.jl")
 ```
 
 The package itself is pure Julia; the heavy dependencies (`VTK_jll`, `CxxWrap`,
@@ -36,13 +36,13 @@ is needed to build it (22 was breaking some things for me). After that:
 julia --project=. gen/build_wrapper.jl
 ```
 
-This produces `gen/wrapit/build/shipped/libvtk_julia.so`. Override the
-location with the `VTKJL_LIB` environment variable, and after switching
-libraries, clear the precompile cache (`rm -rf ~/.julia/compiled/v1.*/VTK`),
-which does not track `VTKJL_LIB`:
+This produces `wrapper/build/libvtk_julia.so`. Override the location with the
+`VTKJL_LIB` environment variable, and after switching libraries, clear the
+precompile cache (`rm -rf ~/.julia/compiled/v1.*/VTK`), which does not track
+`VTKJL_LIB`. From the repository root:
 
 ```julia
-ENV["VTKJL_LIB"] = "/path/to/libvtk_julia.so"
+ENV["VTKJL_LIB"] = joinpath(pwd(), "wrapper", "build", "libvtk_julia.so")
 using VTK
 ```
 
@@ -57,7 +57,7 @@ using VTK
 julia -e 'using Pkg; Pkg.test()'
 ```
 
-The suite (180 tests) includes analytic validations (e.g. clipping a unit hex
+The suite (181 tests) includes analytic validations (e.g. clipping a unit hex
 against the plane x+y+z=1 yields exactly the tetrahedron) and cross-validation
 against the independent pure-Julia packages ReadVTK.jl and WriteVTK.jl.
 

@@ -135,6 +135,18 @@ end
     parr = VTK.field_array(VTK.point_data(profile), "temperature")
     @test parr !== nothing
 
+    # stream_tracer: vectors= must activate VTK's vectors, not its scalars
+    velocity = VTK.data_array(Float64, 3)
+    VTK.resize!(velocity, 8)
+    for i in 1:8
+        velocity[:, i] = [1.0, 0.0, 0.0]
+    end
+    VTK.name!(velocity, "velocity")
+    VTK.add_array!(VTK.point_data(ug), velocity)
+    seeds = VTK.line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution = 10)
+    stream = VTK.stream_tracer(ug, seeds; vectors = "velocity")
+    @test VTK.npoints(stream) == 11
+
     # GC stress across the full pipeline
     for _ in 1:50
         g = hex_mesh_with_temperature()

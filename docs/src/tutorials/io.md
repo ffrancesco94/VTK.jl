@@ -30,6 +30,13 @@ you hold it.
 ## Writing VTK files
 
 ```julia
+poly = VTK.extract_surface(ug)
+img = VTK.read_vti("input.vti")  # existing structured-grid inputs
+rg = VTK.read_vtr("input.vtr")
+sg = VTK.read_vts("input.vts")
+mb = VTK.MultiBlockDataSet(1)
+VTK.set_block!(mb, 1, ug)
+
 VTK.write_vtu(ug, "out.vtu")                      # zlib-compressed appended
 VTK.write_vtu(ug, "out_raw.vtu"; raw_appended = true)  # uncompressed appended
 VTK.write_vtp(poly, "surf.vtp")
@@ -58,8 +65,8 @@ g1 = VTK.block(mb, 1)            # block 1, downcast to its concrete type
 VTK.npoints(g1)
 
 mb2 = VTK.MultiBlockDataSet(2)   # assemble: 2 empty slots
-VTK.set_block!(mb2, 1, grid)     # fill them (1-based)
-VTK.set_block!(mb2, 2, surface)
+VTK.set_block!(mb2, 1, ug)       # fill them (1-based)
+VTK.set_block!(mb2, 2, poly)
 VTK.write_vtm(mb2, "out.vtm")
 ```
 
@@ -109,7 +116,7 @@ VTK.VTKCellTypes.VTKCellType(12)          # reverse lookup by id
 Custom cell insertion uses the same vocabulary:
 
 ```julia
-VTK.insert_cell!(grid, VTK.VTKCellTypes.VTK_TETRA, [0, 1, 2, 3])
+VTK.insert_cell!(grid, VTK.VTKCellTypes.VTK_TETRA, [0, 1, 3, 4])
 ```
 
 ## What is *not* covered (yet)

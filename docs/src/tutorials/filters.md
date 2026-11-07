@@ -34,6 +34,13 @@ function hex_mesh()
     T[1, :] = Float64.(sum.(corners))
     VTK.name!(T, "temperature")
     VTK.add_array!(VTK.point_data(grid), T)
+    velocity = VTK.data_array(Float64, 3)
+    VTK.resize!(velocity, 8)
+    for i in 1:8
+        velocity[:, i] = [1.0, 0.0, 0.0]
+    end
+    VTK.name!(velocity, "velocity")
+    VTK.add_array!(VTK.point_data(grid), velocity)
     return grid
 end
 
@@ -148,12 +155,9 @@ lines = VTK.stream_tracer(grid, seeds; vectors = "velocity")
 
 ## Particle tracer
 
-Trace particles through a vector field (advection):
-
-```julia
-seeds = VTK.line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution = 10)
-particles = VTK.particle_tracer(grid, seeds; vectors = "velocity")
-```
+`vtkParticleTracer` is registered and the `particle_tracer` wrapper is
+experimental, but there is not yet a validated execution example for it. Use
+`stream_tracer` for static vector fields like the one in this tutorial.
 
 ## Line source & sampling
 
@@ -185,7 +189,7 @@ something for `.vtp`/ParaView.
 
 The `@vtk_filter` macro generates filter wrappers declaratively:
 
-```julia
+```text
 @vtk_filter name(grid, arg2, ..., FactoryClass → output; kwargs...) begin
     # config block: has access to `f` (filter), positional args, and kwargs
 end

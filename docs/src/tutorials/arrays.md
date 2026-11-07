@@ -30,7 +30,7 @@ Field data hangs off the dataset in three buckets — point data, cell data,
 and the underlying field-data container:
 
 ```julia
-grid = <the hex mesh from the mesh tutorial>
+grid = VTK.read_vtu("hex.vtu")  # written by the mesh tutorial
 
 pd = VTK.point_data(grid)          # vtkPointData smart pointer
 VTK.field_array_names(pd)          # ["temperature"]
