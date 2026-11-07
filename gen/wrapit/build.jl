@@ -5,8 +5,8 @@
 #
 # Pipeline:
 #   1. render wrapit.toml from the template with runtime artifact paths
-#   2. build wrapit from source (wrapit_src.jl, our fork with the macro
-#      truncation fix) and run it on the input headers
+#   2. build upstream wrapit from source (wrapit_src.jl) and run it on the
+#      input headers
 #   3. generate the mechanical shim from the headers (auto_shim.jl)
 #   4. generate Julia smart-pointer forwarding overloads
 #   5. post-process the generated C++ (AOS leaf-array fake superclasses,
@@ -53,7 +53,7 @@ function render_config!()
     write(joinpath(BUILD_DIR, "wrapit.toml"), s)
 end
 
-# ---- step 2: generate (wrapit built from our fork, Bug 1 fixed) ----------
+# ---- step 2: generate (upstream wrapit, Bug 1 fixed) ---------------------
 
 function run_wrapit()
     exe = ensure_wrapit!()

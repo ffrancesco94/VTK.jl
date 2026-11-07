@@ -33,8 +33,8 @@ julia --project=. gen/build_wrapper.jl
 ```
 
 This drives the WrapIt-based generator ([`gen/wrapit`](gen/wrapit)): clones and
-builds [our wrapit fork](https://github.com/ffrancesco94/wrapit) from source
-(needs `git` + network), generates CxxWrap bindings from VTK headers plus a
+builds [upstream WrapIt](https://github.com/grasph/wrapit) from source (needs
+`git` + network), generates CxxWrap bindings from VTK headers plus a
 mechanical shim, merges the hand-written parts, compiles, and installs to
 `wrapper/build/libvtk_julia.so`.
 

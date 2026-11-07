@@ -12,10 +12,10 @@ a CFD-useful filter we have not bound yet.
 VTK headers (VTK_jll)                what you edit
         │                            ┌──────────────────────────────┐
         ▼                            │ 1. gen/wrapit/VTK.wit.in │
-   ┌─────────┐  generates  ┌──────────────┐  merges  ┌────────────────┐
-   │ WrapIt  │ ──────────► │ JlClasses.cxx│ ◄─────── │ shim_vtkjl.cpp │
-   │ (fork)  │   ~95%      │  (generated) │          │  (hand-written)│
-   └─────────┘             └──────────────┘          └────────────────┘
+   ┌──────────┐  generates  ┌──────────────┐  merges  ┌────────────────┐
+   │  WrapIt  │ ──────────► │ JlClasses.cxx│ ◄─────── │ shim_vtkjl.cpp │
+   │ upstream │   ~95%      │  (generated) │          │  (hand-written)│
+   └──────────┘             └──────────────┘          └────────────────┘
         │                            │                      auto_shim.jl
         ▼                            ▼                    (generated shim)
    one libvtk_julia.so  ◄── 2. gen/build_wrapper.jl

@@ -25,12 +25,9 @@ For development or unsupported platforms, the wrapper can still be built
 locally from the VTK.jl source tree. Requirements: a C++17 toolchain (`g++` or
 `clang`, `git`, `CMake`, libclang development headers, and OpenSSL development
 headers (`sudo apt-get install g++ cmake git libclang-dev clang libssl-dev` on
-Debian/Ubuntu). At the time of writing (October 2026), a
-[bug](https://github.com/grasph/wrapit/issues/76) is present in WrapIt which
-makes it much harder to wrap VTK. Because of that, I am using a fork under
-[https://github.com/ffrancesco94/wrapit](https://github.com/ffrancesco94/wrapit). As per their
-[instructions](https://github.com/grasph/wrapit#build-from-source), `clang` 19
-is needed to build it (22 was breaking some things for me). After that:
+Debian/Ubuntu). The build clones and compiles
+[upstream WrapIt](https://github.com/grasph/wrapit), which includes the
+macro-generation and libclang-22 fixes needed by VTK.jl. Then run:
 
 ```shell
 julia --project=. gen/build_wrapper.jl

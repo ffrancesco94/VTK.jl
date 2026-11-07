@@ -1,6 +1,6 @@
 # VTK.jl — Status & Implementation Plan
 
-Last updated: 2026-11-05. WrapIt migration **complete** and the legacy
+Last updated: 2026-11-07. WrapIt migration **complete** and the legacy
 hand-written CMake wrapper **removed** (2026-10-29). The WrapIt-generated +
 shim-merged `libvtk_julia` now loads from `VTK_julia_jll` by default;
 `VTKJL_LIB` remains available for local development builds. CI exercises the
@@ -23,10 +23,10 @@ Binary/runtime foundations:
   `vtkWrap*` tools; we build our binding module against it. No local VTK
   build needed.
 - Binding generation: the **default build is the WrapIt driver**
-  (`gen/build_wrapper.jl` → `gen/wrapit/build.jl`): it builds **wrapit from
-  source** ([`ffrancesco94/wrapit`](https://github.com/ffrancesco94/wrapit),
-  containing the validated Bug-1 macro-truncation fix, PR #1 — no
-  `WrapIt_jll`, no veto loop), generates the CxxWrap bindings from VTK
+  (`gen/build_wrapper.jl` → `gen/wrapit/build.jl`): it builds **WrapIt from
+  upstream source** ([`grasph/wrapit`](https://github.com/grasph/wrapit),
+  including the macro-truncation and libclang-22 fixes — no `WrapIt_jll`),
+  generates the CxxWrap bindings from VTK
   headers, merges the hand shim + auto-shim, and installs the result at
   `wrapper/build/libvtk_julia.so`. Requires git, CMake, a C++17 compiler,
   libclang + OpenSSL dev headers. Gotcha: the precompile cache does not
@@ -47,8 +47,9 @@ Binary/runtime foundations:
   method, `veto_shim_clashes!()` mechanically adds the generated overload to
   `veto.txt` (11 hand-maintained lines + ~65 auto-derived) and regenerates
   until converged.
-- Upstream engagement: WrapIt bug reports + validated patches (Bug-1 merged
-  as `ffrancesco94/wrapit#1`); local patches live in `docs/patches/`.
+- Upstream engagement: WrapIt bug reports and validated fixes are now merged
+  upstream, including Bug 1 ([issue #76](https://github.com/grasph/wrapit/issues/76))
+  and libclang-22 support; the build uses upstream WrapIt directly.
 - MPI: VTK_jll is an MPI-enabled build; `libmpi` (MPICH/OpenMPI/MPIABI
   flavor) is pre-loaded in `VTK.jl` before the wrapper library is dlopened.
 - Ownership: all factories/outputs return `vtkSmartPointer{T}` registered via
@@ -211,9 +212,9 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 7. **Distribution**: `VTK_julia_jll` provides the wrapper on supported
    64-bit non-Windows platforms. Other platforms require a local C++17
    toolchain and the `VTKJL_LIB` override.
-8. **WrapIt upstream**: Bug 1 fixed only in our fork, with an upstream issue
-   opened; Bugs 2–4 worked around in the driver (AOS post-processor,
-   `export_blacklist`, ostream vetoes).
+8. **WrapIt upstream**: Bug 1 and the libclang-22 macro-generation issues are
+   fixed upstream. Bugs 2–4 remain worked around in the driver (AOS
+   post-processor, `export_blacklist`, ostream vetoes).
 9. **Particle tracer**: `particle_tracer` is experimental and its seed input is
    a VTK algorithm, not the `PolyData` returned by `line_source`. A static-grid
    smoke test crashed inside `vtkParticleTracerBase::Execute`; no execution
@@ -227,10 +228,10 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
   finalizers) empirically corrupts concurrent VTK work (see §4.1). Until the
   wrapper-owns-everything redesign, avoid patterns that defer C++ object
   death into GC.
-- WrapIt is pinned to our fork until the Bug-1 patch lands upstream; local
-  regeneration builds it from source and therefore needs network access
-  (clone + FetchContent) and a working libclang toolchain. Normal package CI
-  uses the prebuilt JLL instead.
+- Local regeneration builds upstream WrapIt from source and therefore needs
+  network access and a working libclang toolchain. `VTKJL_WRAPIT_REF` can select
+  a release tag for reproducibility; `VTKJL_WRAPIT_UPDATE=1` advances an existing
+  checkout. Normal package CI uses the prebuilt JLL instead.
 - VTK_jll has no Windows build; Windows support requires our own VTK build.
 - VTK_jll's MPI flavor complicates end-user installs; escape hatch is a
   custom non-MPI VTK build (defer until requested).
@@ -322,12 +323,12 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 
 ## 7. Next sprint: candidate task list
 
-The generator migration is done and CI-green, so the next sprint is about
-**breadth** (more VTK surface through the now-working pipeline) and
-**upstream** (reducing our fork delta). Roughly in priority order:
-1. **Upstream WrapIt Bug 1** (Phase 2/4 hygiene): the issue is open; submit
-   `docs/patches/wrapit-bug1-null-cstring.patch` to `grasph/wrapit` after
-   maintainer feedback. This unblocks dropping the fork. Then Bugs 3 (easy)
-   and 2 (deletes the AOS post-processor).
+The generator migration is done and CI-green, and the WrapIt Bug-1 and
+libclang-22 fixes are now upstream. The next sprint is about **breadth** (more
+VTK surface through the now-working pipeline) and remaining **upstream** work.
+Roughly in priority order:
+1. **Remaining WrapIt upstream work** (Phase 2/4 hygiene): Bugs 3 (easy) and 2
+   (deletes the AOS post-processor) remain candidates; Bug 1 needs no local
+   patch.
 2. **Meshes.jl/GeometryBasics bridges** (Phase 3): needs a target-representation
    decision for mixed-cell grids.

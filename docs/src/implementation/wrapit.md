@@ -21,10 +21,9 @@ julia --project=gen/wrapit gen/wrapit/generated_library_integration.jl  # analyt
 ```
 
 `build.jl` renders the WrapIt config with runtime artifact paths, **builds
-wrapit from source** (`wrapit_src.jl`, from
-[`ffrancesco94/wrapit`](https://github.com/ffrancesco94/wrapit) — our fork
-with the macro-truncation fix, hopefully upstreamed soon), runs it, generates the mechanical
-shim (`auto_shim.jl`), generates smart-pointer forwarding overloads
+[upstream WrapIt](https://github.com/grasph/wrapit) from source**
+(`wrapit_src.jl`), runs it, generates the mechanical shim (`auto_shim.jl`),
+and produces smart-pointer forwarding overloads
 (`smartptr_wrappers.jl` -> `src/generated_methods.jl`), post-processes the
 generated C++, and compiles **one merged library**
 (`gen/wrapit/build/shipped/libvtk_julia.so`, gitignored)
@@ -43,6 +42,11 @@ from:
    `vtkAlgorithm::SetInputDataObject`/`GetOutputDataObject`, with downcasts
    in the Julian layer).
 
+The source defaults to upstream `main`. Set `VTKJL_WRAPIT_UPDATE=1` to advance
+an existing checkout, or use `VTKJL_WRAPIT_REPO` and `VTKJL_WRAPIT_REF` to select
+another repository or a release tag. Changing the configured repository or ref
+also triggers a rebuild.
+
 The auto-shim skips methods the hand shim already provides (dedup by
 class+name) and methods WrapIt already generated (normalized-signature
 match), so there are no duplicate registrations; string getters
@@ -54,7 +58,7 @@ intentionally override the generated `const char*` versions with
 | piece | why |
 |---|---|
 | `VTK.wit.in` | input headers — **every link of every inheritance chain** must be listed or Julia-side upcasts break (`MethodError` on inherited calls) |
-| `veto.txt` | small hand-maintained list: ostream wrappers and the getters whose ownership the shim overrides. The macro-accessor vetoes are **gone** (Wrapit does not truncate anymore in our  fork); clash vetoes are still re-derived mechanically by `veto_shim_clashes!()` when needed |
+| `veto.txt` | small hand-maintained list: ostream wrappers and the getters whose ownership the shim overrides. The macro-accessor vetoes are **gone** (upstream WrapIt no longer truncates macro-generated methods); clash vetoes are still re-derived mechanically by `veto_shim_clashes!()` when needed |
 | post-processor in `build.jl` | AOS leaf arrays and other public classes whose direct parent is unmapped are re-pointed at their nearest registered VTK ancestor with `jlcxx::SuperType`. This covers structured data, multiblock datasets/readers/writers, and `vtkIdTypeArray`. Also strips WrapIt's parametric `vtkSmartPointer` wrapper (the shim registers the real one) and injects the shim into the module init |
 | `veto_shim_clashes!()` / `check_shim_types_registered!()` in `build.jl` | mechanical audits, re-run on every build: generated methods colliding with the shim are vetoed (duplicate Julia methods are fatal at precompile), and every vtk type the shim references must be registered by the generated code |
 | `shim_vtkjl.{h,cpp}` | everything that needs a human decision: smart-pointer traits + `add_smart_pointer`, `take_ref`'d getters/outputs, the error window, zero-copy views, **generic `SetInputData`/`GetOutput`/`Update` on `vtkAlgorithm`** (no per-filter plumbing), downcasts, explicit AOS-leaf up-casts (`upcast_dataarray`) |
@@ -69,8 +73,8 @@ smart-pointer traits).
 
 1. Add the class's header (and any missing intermediate base-class headers) to
    `input` in `VTK.wit.in`.
-2. Run `build.jl`; the generator builds wrapit from our fork on first use
-   (git + CMake + libclang + OpenSSL headers needed). Shim clashes are
+2. Run `build.jl`; the generator builds upstream WrapIt from source on first
+   use (git + CMake + libclang + OpenSSL headers needed). Shim clashes are
    vetoed mechanically ("added N shim-clash vetoes; REGENERATE" —> just run
    it again). **Factories and macro accessors come for free; the generic
    `SetInputData`/`GetOutput` covers every algorithm**, so most new
@@ -85,9 +89,10 @@ Four WrapIt issues were identified while developing the driver:
 (1) silent truncation on macro-generated methods; (2) `inheritances`
 ignored for template parents; (3) Julia keywords exported; (4)
 `std::basic_ostream` wrapped into uncompilable code.
-**Bug 1 is fixed and validated**: the 3-line null guard in
-`operator<<(CXString)` was merged as
-[`ffrancesco94/wrapit#1`](https://github.com/ffrancesco94/wrapit/pull/1),
-and the driver now builds wrapit from that fork — the veto loop and the
-~200 macro-accessor vetoes are gone. Bugs 2–4 remain (workarounds:
-AOS post-processor, `export_blacklist`, ostream vetoes in `veto.txt`).
+**Bug 1 is fixed and validated upstream**: [issue
+#76](https://github.com/grasph/wrapit/issues/76) was closed by commit
+[`408e3c1`](https://github.com/grasph/wrapit/commit/408e3c1d6b4c012cc7ac7ec51c0a15d791a29822),
+which also added a macro-generation regression test. The driver builds upstream
+WrapIt, so the ~200 macro-accessor vetoes are gone. Bugs 2–4 remain
+(workarounds: AOS post-processor, `export_blacklist`, ostream vetoes in
+`veto.txt`).
