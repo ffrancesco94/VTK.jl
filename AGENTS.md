@@ -49,6 +49,12 @@ workflow changes.
   of type.
 - The wrapit generation was validated with clang 13 (jll) and clang 22
   (system); other libclang versions may behave differently.
+- **Release builds pin WrapIt**: `gen/wrapit/wrapit.pin` holds the full commit
+  SHA, exported as `VTKJL_WRAPIT_REF` by the PublishWrapper workflow.
+  `wrapit_src.jl` fetches SHAs directly (`git clone -b` only accepts
+  branches/tags). The publish workflow also drops the not-yet-registered
+  `VTK_julia_jll` compat bound for the `VTKJL_LIB` test run only (restored
+  via trap), since the resolver cannot satisfy it before the JLL registers.
 - Kaimon MCP Julia sessions are optional for this repo, but should be used
   when possible; plain `julia --project=...` works for builds/tests.
 
@@ -64,4 +70,15 @@ julia --project=test test/runtests.jl
 
 # Low-level integration test for the generated module
 julia --project=gen/wrapit gen/wrapit/generated_library_integration.jl
+
+# Release the wrapper: (1) on main, commit the release prep — bump `version`
+# and [compat] VTK_julia_jll in Project.toml to the new version (and update
+# gen/wrapit/wrapit.pin if advancing wrapit); (2) tag that commit and push
+# only the tag. The PublishWrapper workflow builds from the tag with wrapit
+# pinned, requires a clean tracked tree after generation, tests against the
+# fresh library (VTKJL_LIB), and pushes the generated sources to VTK_cxxwrap
+# under the same tag via gen/publish_wrapper.jl (needs VTK_CXXWRAP_TOKEN);
+# (3) point Yggdrasil's V/VTK_julia at the new commit and open the PR.
+# Users: release tags get the prebuilt JLL; on main, build locally + VTKJL_LIB.
+git tag v0.2.0 && git push origin v0.2.0
 ```

@@ -13,15 +13,41 @@ approach as [Geant4.jl](https://github.com/JuliaHEP/Geant4.jl) and
 
 ## Installation
 
-The package is not registered in General yet. Install directly from GitHub:
+The package is not registered in General yet. Install a release tag
+directly from GitHub — each tag pairs with a matching pre-built
+`VTK_julia_jll`:
 
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/ffrancesco94/VTK.jl")
+Pkg.add(url="https://github.com/ffrancesco94/VTK.jl", rev="v0.1.0")  # latest tag
 ```
 
-The C++ binding module (`libvtk_julia`) comes pre-built via `VTK_julia_jll`
-for supported platforms.
+The C++ binding module (`libvtk_julia`) then comes pre-built via
+`VTK_julia_jll` for supported platforms; no local C++ toolchain is required.
+
+Installing `main` instead is meant for development: the Julia code on `main`
+may expect wrapper bindings newer than the newest published `VTK_julia_jll`,
+so on `main` build the wrapper locally (below) and select it with `VTKJL_LIB`.
+
+### Releasing the wrapper (maintainers)
+
+1. On `main`, commit the release prep: bump `version` in `Project.toml` to the
+   release version (the tag name, e.g. `0.2.0`) and `[compat] VTK_julia_jll`
+   to the wrapper version you are about to publish (declaring compatibility
+   with a not-yet-registered JLL is fine), and update
+   `gen/wrapit/wrapit.pin` if advancing WrapIt.
+2. Tag that commit and push only that tag: `git tag v0.2.0 && git push origin v0.2.0`.
+   The `PublishWrapper` workflow builds the wrapper from the tagged commit
+   (WrapIt pinned to `wrapit.pin`), requires a clean tracked tree after
+   generation, runs the integration test plus the full test suite against
+   the freshly built library (`VTKJL_LIB`), and pushes the generated sources
+   (exactly the `MANIFEST` in `gen/publish_wrapper.jl`) to
+   [VTK_cxxwrap](https://github.com/ffrancesco94/VTK_cxxwrap) under the same
+   tag.
+3. Point Yggdrasil's `V/VTK_julia/build_tarballs.jl` `GitSource` at the new
+   VTK_cxxwrap commit with the same version and open the PR. Once the JLL
+   registers, the tag becomes installable; until then, runs on the tag
+   cannot resolve its declared compat, which is expected.
 
 ### C++ wrapper development
 

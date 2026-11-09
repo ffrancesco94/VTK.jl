@@ -2,7 +2,8 @@
 # using WrapIt_jll. Upstream includes the macro-truncation and libclang-22 fixes.
 #
 #   repo: ENV["VTKJL_WRAPIT_REPO"] (default grasph/wrapit)
-#   ref:  ENV["VTKJL_WRAPIT_REF"]  (default "main"; branch or tag)
+#   ref:  ENV["VTKJL_WRAPIT_REF"]  (default "main"; branch, tag, or full
+#         commit SHA — release builds pin a SHA via gen/wrapit/wrapit.pin)
 #   VTKJL_WRAPIT_UPDATE=1          fetch + reset + rebuild on next run
 #   VTKJL_CLANG_PREFIX             passed to CMake as CLANG_PREFIX if set
 #
@@ -16,6 +17,20 @@ const WRAPIT_REF = get(ENV, "VTKJL_WRAPIT_REF", "main")
 
 wrapit_exe() = joinpath(BUILD_DIR, "wrapit-build", "wrapit")
 
+# `git clone -b` only accepts branches/tags, not commit SHAs, so for a pinned
+# SHA we init + fetch the commit directly (GitHub allows fetching reachable
+# SHAs) and check out FETCH_HEAD.
+function clone_wrapit!(src)
+    if occursin(r"^[0-9a-f]{40}$", WRAPIT_REF)
+        run(`git init -q $src`)
+        run(`git -C $src remote add origin $WRAPIT_REPO`)
+        run(`git -C $src fetch --depth 1 origin $WRAPIT_REF`)
+        run(`git -C $src checkout -q FETCH_HEAD`)
+    else
+        run(`git clone --depth 1 -b $WRAPIT_REF $WRAPIT_REPO $src`)
+    end
+end
+
 function ensure_wrapit!()
     src = joinpath(BUILD_DIR, "wrapit-src")
     stamp = joinpath(BUILD_DIR, "wrapit-source")
@@ -26,7 +41,7 @@ function ensure_wrapit!()
              !isfile(stamp) || read(stamp, String) != source
     if !isdir(src)
         mkpath(BUILD_DIR)
-        run(`git clone --depth 1 -b $WRAPIT_REF $WRAPIT_REPO $src`)
+        clone_wrapit!(src)
     elseif update
         run(`git -C $src remote set-url origin $WRAPIT_REPO`)
         run(`git -C $src fetch --depth 1 origin $WRAPIT_REF`)

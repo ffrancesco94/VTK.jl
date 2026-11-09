@@ -1,0 +1,104 @@
+name: PublishWrapper
+
+# Pushing a v* tag releases the wrapper: build it from the tagged commit with
+# WrapIt pinned (gen/wrapit/wrapit.pin), verify that generation leaves the
+# tracked tree clean, test both the generated module and VTK.jl itself
+# against the fresh library, then push the generated sources to VTK_cxxwrap
+# under the same tag (gen/publish_wrapper.jl). Afterwards, point Yggdrasil's
+# V/VTK_julia/build_tarballs.jl at the new commit and open the PR by hand.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-wrapper-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish wrapper ${{ github.ref_name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Build the wrapper from the tagged commit, so the VTK_cxxwrap tag
+          # always corresponds to an exact VTK.jl tag.
+          ref: ${{ github.ref }}
+      - uses: julia-actions/setup-julia@v3
+        with:
+          version: '1.12'
+          arch: x64
+      - uses: julia-actions/cache@v3
+      - name: Pin WrapIt to the recorded commit
+        run: echo "VTKJL_WRAPIT_REF=$(cat gen/wrapit/wrapit.pin | tail -n1)" >> "$GITHUB_ENV"
+      - name: Install C++ toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ cmake git clang libclang-dev libssl-dev
+      - name: Unversioned libclang symlinks for WrapIt
+        # AGENTS.md gotcha: Ubuntu ships only versioned libclang-cpp/libLLVM,
+        # but wrapit's CMake wants unversioned names under CLANG_PREFIX/lib.
+        # Derive the LLVM lib dir from clang's own resource dir so the
+        # symlinks always match the installed clang, even on multi-toolchain
+        # runners.
+        run: |
+          prefix="$RUNNER_TEMP/clang-prefix"
+          mkdir -p "$prefix/lib"
+          res="$(clang -print-resource-dir)"           # .../llvm-XX/lib/clang/YY
+          llvm_lib="$(dirname "$(dirname "$res")")"    # .../llvm-XX/lib
+          ln -sf "$(clang -print-file-name=libclang.so)" "$prefix/lib/libclang.so"
+          for lib in libclang-cpp libLLVM; do
+            src="$(ls "$llvm_lib/$lib".so.* 2>/dev/null | head -n1)"
+            [ -n "$src" ] && ln -sf "$src" "$prefix/lib/$lib.so"
+          done
+          echo "VTKJL_CLANG_PREFIX=$prefix" >> "$GITHUB_ENV"
+      - name: Build wrapper from the tagged commit
+        run: julia --project=. gen/build_wrapper.jl
+      - name: Require a clean tracked tree after generation
+        # Generation may rewrite tracked files (src/generated_methods.jl,
+        # gen/wrapit/veto.txt). Those must be committed in the tag, otherwise
+        # the published C++ would not match the tracked Julia side.
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::generation modified tracked files — commit them, then create a new release tag"
+            git status --porcelain
+            git diff --stat
+            exit 1
+          fi
+      - name: Integration-test the built library
+        run: julia --project=gen/wrapit gen/wrapit/generated_library_integration.jl
+      - name: Test VTK.jl against the freshly built library
+        env:
+          VTKJL_LIB: ${{ github.workspace }}/wrapper/build/libvtk_julia.so
+        run: |
+          # The tagged Project.toml declares [compat] VTK_julia_jll = the
+          # not-yet-registered release version, which the resolver cannot
+          # satisfy yet. VTKJL_LIB overrides which library is *loaded*, but
+          # not dependency *resolution*, so for this test only, drop the
+          # bound (the resolver then picks the last registered JLL) and
+          # restore the tagged file afterwards. The clean-tree check above
+          # has already verified the actual tagged sources.
+          trap 'git checkout -- Project.toml' EXIT
+          julia --project=. -e '
+            using TOML
+            p = TOML.parsefile("Project.toml")
+            delete!(p["compat"], "VTK_julia_jll")
+            open("Project.toml", "w") do io; TOML.print(io, p) end'
+          rm -rf $HOME/.julia/compiled/v1.*/VTK
+          julia --project=test -e 'using Pkg; Pkg.instantiate()'
+          julia --project=test test/runtests.jl
+      - name: Publish generated sources to VTK_cxxwrap
+        env:
+          VTKJL_WRAPPER_VERSION: ${{ github.ref_name }}
+          VTK_CXXWRAP_TOKEN: ${{ secrets.VTK_CXXWRAP_TOKEN }}
+        run: julia --project=. gen/publish_wrapper.jl
+      - name: Upload development library
+        uses: actions/upload-artifact@v4
+        with:
+          name: libvtk_julia-${{ github.ref_name }}
+          path: wrapper/build/libvtk_julia.so
+          if-no-files-found: warn

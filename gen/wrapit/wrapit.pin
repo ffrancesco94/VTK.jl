@@ -1,0 +1,6 @@
+# Full commit SHA of grasph/wrapit used for release builds.
+# The PublishWrapper workflow exports this as VTKJL_WRAPIT_REF so that a
+# given VTK.jl tag always generates the same sources. Update it when
+# advancing WrapIt (e.g. after a local VTKJL_WRAPIT_UPDATE=1 build), by:
+#   git ls-remote https://github.com/grasph/wrapit.git refs/heads/main
+7e6751c97eccdf49ff37cecf339e1089a53cedeb

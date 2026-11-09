@@ -2,22 +2,30 @@
 
 ## Installation
 
-VTK.jl is not registered in General yet, so we need to get it from GitHub:
+VTK.jl is not registered in General yet, so we need to get it from GitHub.
+For a stable install, pin a release tag — each VTK.jl tag pairs with a
+matching pre-built `VTK_julia_jll`:
 
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/ffrancesco94/VTK.jl")
+Pkg.add(url="https://github.com/ffrancesco94/VTK.jl", rev="v0.1.0")  # latest tag
 ```
+
+Installing `main` instead gives the latest development state, but the Julia
+code on `main` may expect wrapper bindings newer than the newest published
+`VTK_julia_jll` — on `main`, build the wrapper locally (below) and select it
+with `VTKJL_LIB`.
 
 The package itself is pure Julia; the heavy dependencies (`VTK_jll`, `CxxWrap`,
 and the pre-built `libvtk_julia` wrapper via `VTK_julia_jll`) come from the
-Julia binary repository automatically. No local C++ toolchain is required.
+Julia binary repository automatically. No local C++ toolchain is required
+when installing a release tag.
 
 ## The C++ wrapper
 
-The C++ binding module (`libvtk_julia`) is available as a pre-built binary
-through `VTK_julia_jll` on Yggdrasil for supported platforms. This should just
-work:tm:.
+When installed from a release tag, the C++ binding module (`libvtk_julia`)
+is available as a pre-built binary through `VTK_julia_jll` on Yggdrasil for
+supported platforms. This should just work:tm:.
 
 ### Local development
 

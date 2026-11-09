@@ -44,8 +44,10 @@ from:
 
 The source defaults to upstream `main`. Set `VTKJL_WRAPIT_UPDATE=1` to advance
 an existing checkout, or use `VTKJL_WRAPIT_REPO` and `VTKJL_WRAPIT_REF` to select
-another repository or a release tag. Changing the configured repository or ref
-also triggers a rebuild.
+another repository, a release tag, or a pinned full commit SHA (release builds
+use `gen/wrapit/wrapit.pin`; a SHA is fetched directly since `git clone -b`
+only accepts branches/tags). Changing the configured repository or ref also
+triggers a rebuild.
 
 The auto-shim skips methods the hand shim already provides (dedup by
 class+name) and methods WrapIt already generated (normalized-signature
@@ -82,6 +84,54 @@ smart-pointer traits).
 3. Only if you need ownership policy, a downcast, or a convenience the
    generator cannot infer, add it to `shim_vtkjl.cpp`.
 4. Verify with `generated_library_integration.jl`, then with the main test suite.
+
+## Publishing a wrapper release
+
+Development on `main` never touches the published wrapper. To release:
+
+1. On `main`, commit the release prep: bump `version` in `Project.toml` to the
+   release version (the tag name, e.g. `0.2.0`) and `[compat] VTK_julia_jll`
+   to the wrapper version you are about to publish (declaring compat with a
+   not-yet-registered JLL is fine), and update `gen/wrapit/wrapit.pin` if
+   advancing WrapIt:
+   `git ls-remote https://github.com/grasph/wrapit.git refs/heads/main`
+2. Tag that commit and push only that tag:
+
+   ```shell
+   git tag v0.2.0 && git push origin v0.2.0
+   ```
+
+   The `PublishWrapper` workflow (`.github/workflows/PublishWrapper.yml`) then
+   checks out the tag, exports `VTKJL_WRAPIT_REF` from `wrapit.pin` so the
+   same tag always generates the same sources, builds the wrapper, and
+   requires a clean tracked tree afterwards (generation may rewrite
+   `src/generated_methods.jl` and `gen/wrapit/veto.txt` — those must be
+   committed in the tag). It gates on `generated_library_integration.jl`
+   and on the full test suite run against the freshly built library via
+   `VTKJL_LIB`, then runs `gen/publish_wrapper.jl`. That script copies exactly
+   the `MANIFEST`-listed files (generated `build/cxx/*` + `build/jl/VTKGen.jl`
+   + the hand shim) into a fresh clone of
+   [VTK_cxxwrap](https://github.com/ffrancesco94/VTK_cxxwrap), records the
+   VTK.jl and WrapIt commit SHAs in the commit message, tags with the same
+   version, and pushes (via the `VTK_CXXWRAP_TOKEN` secret). It refuses to
+   overwrite an existing remote tag and errors if the generator produced a
+   source file that is not in the manifest.
+
+   The same script works locally after `gen/build_wrapper.jl`:
+
+   ```shell
+   VTKJL_WRAPPER_VERSION=0.2.0 VTKJL_CXXWRAP_DIR=../packaging/VTK_cxxwrap \
+     julia --project=. gen/publish_wrapper.jl
+   ```
+
+3. Update Yggdrasil's `V/VTK_julia/build_tarballs.jl` (the `GitSource` commit
+   of VTK_cxxwrap and the `version`) and open the PR. Once `VTK_julia_jll` is
+   registered, the VTK.jl tag becomes installable; until then, runs on the
+   tag cannot resolve its declared compat, which is expected.
+
+Users install release tags (`Pkg.add(url=..., rev="v0.2.0")`) to get the
+matching prebuilt JLL; on `main` they build the wrapper locally and use
+`VTKJL_LIB`.
 
 ## Upstream bugs
 
