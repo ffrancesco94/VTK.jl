@@ -319,6 +319,14 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 
 - [x] `VTK_julia_jll` via BinaryBuilder (Geant4.jl pattern), used by default
       in VTK.jl and in CI
+- [x] Release automation (2026-11): pushing a `v*` tag runs the
+      `PublishWrapper` workflow, which builds the wrapper from the tagged
+      commit (WrapIt pinned via `gen/wrapit/wrapit.pin`), gates on a clean
+      tree + integration test + full suite via `VTKJL_LIB`, and pushes the
+      generated sources to VTK_cxxwrap under the same tag
+      (`gen/publish_wrapper.jl`); the Yggdrasil PR is then opened by hand.
+      Users install release tags for the prebuilt JLL; on `main` they build
+      locally (`gen/build_wrapper.jl` + `VTKJL_LIB`)
 - [ ] Registration of VTK.jl in General
 
 ## 7. Next sprint: candidate task list
