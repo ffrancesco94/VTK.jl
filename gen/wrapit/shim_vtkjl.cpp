@@ -86,6 +86,8 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <vtkInformation.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
 
 #include "shim_vtkjl.h"
 
@@ -512,6 +514,26 @@ void register_shim_methods(jlcxx::Module& mod)
     return vtkSmartPointer<vtkRectilinearGridWriter>::New();
   });
   mod.method("Write", [](vtkDataWriter* w) { return w->Write(); });
+
+  // ---- Temporal readers ----
+  mod.method("GetTimeSteps", [](vtkAlgorithm* a) {
+      auto* info = a->GetOutputInformation(0);
+      auto* key = vtkStreamingDemandDrivenPipeline::TIME_STEPS();
+
+      std::vector<double> times; 
+
+      if (info != nullptr && info->Has(key)) {
+        const int n = info->Length(key);
+
+        if (n > 0) {
+          const double* values = info->Get(key);
+          times.assign(values, values + n);
+        }
+      }
+
+      return times;
+    }
+  );
 
   // ---- XML writers ----
   mod.method("XMLUnstructuredGridWriter_new", []() {
