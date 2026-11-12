@@ -6052,6 +6052,11 @@ if isdefined(@__MODULE__, Symbol("GetTimeStepRange")) && isdefined(@__MODULE__, 
         GetTimeStepRange(_cp(vtkXMLReader, a1), a2, a3)
 end
 
+if isdefined(@__MODULE__, Symbol("GetTimeSteps")) && isdefined(@__MODULE__, :vtkAlgorithm)
+    GetTimeSteps(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}) =
+        GetTimeSteps(_cp(vtkAlgorithm, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetTimeValue")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
     GetTimeValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
         GetTimeValue(_cp(vtkGenericEnSightReader, a1))
@@ -11985,6 +11990,9 @@ GetPointData(a1::CxxWrap.CxxWrapCore.SmartPointer) =
 
 GetPoints(a1::CxxWrap.CxxWrapCore.SmartPointer) =
     GetPoints(_cp(vtkPointSet, a1))
+
+GetTimeSteps(a1::CxxWrap.CxxWrapCore.SmartPointer) =
+    GetTimeSteps(_cp(vtkAlgorithm, a1))
 
 HasArray(a1::CxxWrap.CxxWrapCore.SmartPointer, a2) =
     HasArray(_cp(vtkFieldData, a1), a2)
