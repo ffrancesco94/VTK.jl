@@ -97,7 +97,7 @@ jobs:
           VTK_CXXWRAP_TOKEN: ${{ secrets.VTK_CXXWRAP_TOKEN }}
         run: julia --project=. gen/publish_wrapper.jl
       - name: Upload development library
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: libvtk_julia-${{ github.ref_name }}
           path: wrapper/build/libvtk_julia.so
