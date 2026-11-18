@@ -451,6 +451,9 @@ void register_shim_methods(jlcxx::Module& mod)
   mod.method("EnSightGoldReader_new", []() {
     return vtkSmartPointer<vtkEnSightGoldReader>::New();
   });
+  mod.method("GenericEnSightReader_new", []() {
+    return vtkSmartPointer<vtkGenericEnSightReader>::New();
+  });
   mod.method("SetCaseFileName",
     [](vtkGenericEnSightReader* r, const std::string& name) {
       r->SetCaseFileName(name.c_str());

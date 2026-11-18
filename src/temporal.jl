@@ -50,7 +50,7 @@ end
 Read an EnSight Gold file. 
 """
 function EnSightReader(path)
-    algo = EnSightGoldReader_new()
+    algo = GenericEnSightReader_new()
     SetCaseFileName(algo, String(path))
     return VTKTEmporalReader(algo)
 end
