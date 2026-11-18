@@ -65,3 +65,52 @@ function CGNSReader(path)
     SetFileName(algo, String(path))
     return VTKTemporalReader(algo)
 end
+
+function _current_output(algo; copy = false)
+    output = GetOutput(algo)
+    copy && error("copy=true not implemented yet")
+    return downcast(output)
+end
+
+function read_timestep(r::VTKTemporalReader, i::Integer; copy = false)
+    checkbounds(r.times, i)
+    update_time!(r.algorithm, r.times[i])
+    return _current_output(r.algorithm; copy = copy)
+end
+
+"""
+    read_at(r::AbstractTemporalReader, time::Real; kwargs...)
+
+Reads the first approximately matching time from the reader, or throw if none exists. 
+"""
+function read_at(
+        r::AbstractTemporalReader,
+        time::Real;
+        atol::Real = 0,
+        rtol::Real = 0,
+        copy::Bool = false,
+    )
+    t = Float64(time)
+    matches = findall(
+        x -> isapprox(x, t; atol = atol, rtol = rtol),
+        timesteps(r),
+    )
+
+    isempty(matches) && throw(
+        ArgumentError(
+            "time $t is unavailable; available times: $(timesteps(r))"
+        )
+    )
+
+    length(matches) > 1 && throw(
+        ArgumentError(
+            "time $t matches multiple timesteps at indices $matches; " *
+                "use read_timestep(reader, i) or reduce the tolerance"
+        )
+    )
+
+    return read_timestep(r, only(matches); copy = copy)
+
+end
+
+eachstep(r::AbstractTemporalReader; copy = false) = (read_timestep(r, i; copy = copy) for i in eachindex(timesteps(r)))
