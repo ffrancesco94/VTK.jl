@@ -10,7 +10,7 @@ using VTK.VTKBase: VTKPolyData, PolyData
 
 # ---- minimal EnSight Gold case ----
 # One part, one hexahedron, ASCII geometry.
-function write_ensight_case(dir)
+function write_ensight_case(dir; transient=false)
     geo = joinpath(dir, "hex.geo")
     open(geo, "w") do io
         println(io, "EnSight Gold Geometry File")
