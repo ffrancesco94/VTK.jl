@@ -1,7 +1,7 @@
 using VTK
 using Test
 using WriteVTK
-using VTK.VTKBase: VTKPolyData, PolyData
+using VTK.VTKBase: PolyData, VTKPolyData
 
 # CFD-format readers: EnSight Gold (.case), CGNS (.cgns), parallel PVTK
 # (.pvtp).  EnSight and PVTP get analytic oracles; CGNS is smoke-tested
@@ -53,9 +53,47 @@ function write_ensight_case(dir; transient=false)
         println(io)
         println(io, "GEOMETRY")
         println(io, "model: hex.geo")
+        if transient 
+            println(io)
+            println(io, "VARIABLE")
+            println(io, "scalar per node: 1 s s.****")
+            println(io)
+            println(io, "TIME")
+            println(io, "time set: 1")
+            println(io, "number of steps: 2")
+            println(io, "filename numbers: 0 1")
+            println(io, "time values: 0.0 0.5")
+        end
+    end
+
+    if transient
+        scalar_files = (
+            ("s.0000", collect(0.0:7.0)),
+            ("s.0001", collect(10.0:17.0))
+    )
+
+        for (filename, values) in scalar_files
+            open(joinpath(dir, filename), "w") do io
+                println(io, "s per node")
+                println(io, "part")
+                println(io, 1)
+                println(io, "coordinates")
+                for value in values
+                    println(io, value)
+                end
+            end
+        end
     end
     return case
 end
+
+function scalar_values(mb, name)
+    part = VTK.block(mb, 1)
+    array = VTK.field_array(VTK.point_data(part), name)
+    array === nothing && error("Missing test array $name")
+    return copy(vec(VTK.data(array)))
+end
+
 
 @testset "CFD readers (EnSight Gold / CGNS / PVT)" begin
     mktempdir() do dir
@@ -73,6 +111,39 @@ end
         @test xy[1, 2] ≈ 1.0   # node 2 x-coordinate
         @test xy[2, 3] ≈ 1.0   # node 3 y-coordinate
         @test xy[3, 5] ≈ 1.0   # node 5 z-coordinate
+        # ---- Transient EnSight Gold ---- 
+        transient_dir = joinpath(dir, "transient")
+        mkdir(transient_dir)
+
+        transient_path =
+            write_ensight_case(transient_dir; transient=true)
+
+        reader = VTK.EnSightReader(transient_path)
+
+        @test VTK.timesteps(reader) == [0.0, 0.5]
+        @test length(reader) == 2
+
+        # Read out of order to ensure selection is not just "advance once".
+        mb1 = VTK.read_timestep(reader, 2)
+        @test scalar_values(mb1, "s") == collect(10.0:17.0)
+        @test VTK.npoints(VTK.block(mb1, 1)) == 8
+        @test VTK.ncells(VTK.block(mb1, 1)) == 1
+
+        mb0 = VTK.read_timestep(reader, 1)
+        @test scalar_values(mb0, "s") == collect(0.0:7.0)
+
+        # Time-based lookup.
+        mb_at = VTK.read_at(reader, 0.5)
+        @test scalar_values(mb_at, "s") == collect(10.0:17.0)
+
+        @test_throws ArgumentError VTK.read_at(reader, 0.25)
+        @test_throws BoundsError VTK.read_timestep(reader, 0)
+        @test_throws BoundsError VTK.read_timestep(reader, 3)
+
+        # A deep-copied result must survive subsequent reader updates.
+        snapshot = VTK.read_timestep(reader, 1; copy=true)
+        VTK.read_timestep(reader, 2)
+        @test scalar_values(snapshot, "s") == collect(0.0:7.0)
 
         # ---- CGNS: smoke test (reader exists, runs, produces output) ----
         # No Julia CGNS writer available; just verify the reader object
