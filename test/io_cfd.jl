@@ -111,6 +111,12 @@ end
         @test xy[1, 2] ≈ 1.0   # node 2 x-coordinate
         @test xy[2, 3] ≈ 1.0   # node 3 y-coordinate
         @test xy[3, 5] ≈ 1.0   # node 5 z-coordinate
+        # Check that steady cases still work 
+        r = VTK.EnSightReader(case_path)
+        @test isempty(VTK.timesteps(r))
+        @test length(r) == 0
+
+
         # ---- Transient EnSight Gold ---- 
         transient_dir = joinpath(dir, "transient")
         mkdir(transient_dir)
