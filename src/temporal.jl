@@ -68,7 +68,7 @@ end
 
 function _current_output(algo; copy = false)
     output = GetOutput(algo)
-    copy && error("copy=true not implemented yet")
+    copy && (output = DeepCopyDataObject(output))
     return downcast(output)
 end
 
