@@ -72,6 +72,15 @@ function _current_output(algo; copy = false)
     return downcast(output)
 end
 
+"""
+    read_timestep(reader, i; copy=false)
+
+Load timestep `i` using 1-based indexing. 
+
+With `copy=false`, the result refers to mutable pipeline output and must be
+consumed before another timestep is read. With `copy=true`, an independet
+deepcopy is returned that is detached from the original reader. 
+"""
 function read_timestep(r::VTKTemporalReader, i::Integer; copy = false)
     checkbounds(r.times, i)
     update_time!(r.algorithm, r.times[i])
@@ -114,3 +123,24 @@ function read_at(
 end
 
 eachstep(r::AbstractTemporalReader; copy = false) = (read_timestep(r, i; copy = copy) for i in eachindex(timesteps(r)))
+
+# Shim to get whatever timestep is the default 
+function _read_current(r::VTKTemporalReader, copy=false)
+    update!(r.algorithm) 
+    return _current_output(r.algorithm, copy=copy)
+end
+
+"""
+    read_ensight(path)
+
+Read an EnSight Gold file at the prescribed `path`
+"""
+read_ensight(path) = _read_current(EnSightReader(path))
+
+
+"""
+    read_cgns(path)
+
+Read a CGNS file at the prescribed `path`
+"""
+read_cgns(path) = _read_current(CGNSReader(path))
