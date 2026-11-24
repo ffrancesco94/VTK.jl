@@ -147,9 +147,9 @@ end
         @test_throws BoundsError VTK.read_timestep(reader, 3)
 
         # A deep-copied result must survive subsequent reader updates.
-        #snapshot = VTK.read_timestep(reader, 1; copy=true)
-        #VTK.read_timestep(reader, 2)
-        #@test scalar_values(snapshot, "s") == collect(0.0:7.0)
+        snapshot = VTK.read_timestep(reader, 1; copy = true)
+        VTK.read_timestep(reader, 2)
+        @test scalar_values(snapshot, "s") == collect(0.0:7.0)
 
         # ---- CGNS: smoke test (reader exists, runs, produces output) ----
         # No Julia CGNS writer available; just verify the reader object
