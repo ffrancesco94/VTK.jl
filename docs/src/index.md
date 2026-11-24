@@ -37,6 +37,7 @@ straight into `WriteVTK.vtk_grid`.
 | I want to… | Go to |
 |---|---|
 | Install and build | [Getting started](getting_started.md) |
+| Check raw/high-level/tested/documented feature coverage | [Capability matrix](capability_matrix.md) |
 | Build a grid from Julia data | [Tutorial: building a mesh](tutorials/mesh.md) |
 | Work with fields and arrays | [Tutorial: data arrays](tutorials/arrays.md) |
 | Exchange files with the outside world | [Tutorial: I/O](tutorials/io.md) |
@@ -48,6 +49,7 @@ straight into `WriteVTK.vtk_grid`.
 
 Early development. The living roadmap is
 [`STATUS.md`](https://github.com/ffrancesco94/VTK.jl/blob/main/STATUS.md) in
-the repository; the long-term goal is a maintained binding-generation
-pipeline ([WrapIt driver](implementation/wrapit.md)) under an idiomatic
-Julian layer.
+the repository; the [capability matrix](capability_matrix.md) separates raw
+bindings, high-level APIs, tests, and documentation. The long-term goal is a
+maintained binding-generation pipeline ([WrapIt driver](implementation/wrapit.md))
+under an idiomatic Julian layer, with native Julia plotting through Makie.

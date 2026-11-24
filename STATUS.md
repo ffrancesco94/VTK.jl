@@ -6,7 +6,9 @@ shim-merged `libvtk_julia` now loads from `VTK_julia_jll` by default;
 `VTKJL_LIB` remains available for local development builds. CI exercises the
 JLL on Julia 1.11–1.13 without requiring a C++ toolchain. Time-dependent
 (transient) EnSight/CGNS readers were added on 2026-11-24 (`src/temporal.jl`).
-Durable gotchas live in `AGENTS.md`.
+The Julian-PyVista gap audit, follow-up sequence (§7), and raw/high-level
+capability matrix (`docs/src/capability_matrix.md`) were also added on
+2026-11-24. Durable gotchas live in `AGENTS.md`.
 
 ## 1. Goal
 
@@ -363,14 +365,234 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
       locally (`gen/build_wrapper.jl` + `VTKJL_LIB`)
 - [ ] Registration of VTK.jl in General
 
-## 7. Next sprint: candidate task list
+## 7. What to do
 
-The generator migration is done and CI-green, and the WrapIt Bug-1 and
-libclang-22 fixes are now upstream. The next sprint is about **breadth** (more
-VTK surface through the now-working pipeline) and remaining **upstream** work.
-Roughly in priority order:
-1. **Remaining WrapIt upstream work** (Phase 2/4 hygiene): Bugs 3 (easy) and 2
-   (deletes the AOS post-processor) remain candidates; Bug 1 needs no local
-   patch.
-2. **Meshes.jl/GeometryBasics bridges** (Phase 3): needs a target-representation
-   decision for mixed-cell grids.
+The detailed, manually maintained coverage snapshot is
+[`docs/src/capability_matrix.md`](docs/src/capability_matrix.md): update its
+**raw binding / high-level API / tested / documented** columns whenever a
+feature changes state.
+
+### Stage 0 — correctness, diagnostics, and ownership contracts
+
+**Goal:** make the current advertised surface reliable before exposing more of
+VTK. This stage is a prerequisite for concurrent pipelines and plotting.
+
+- [ ] **Replace global diagnostics with scoped diagnostics.** At present the
+      C++ output window appends normal text, debug output, warnings, and errors
+      to one process-global `static std::string`; `update!` throws whenever the
+      buffer is nonempty. This can turn warnings into failures, leak messages
+      between calls, and race between concurrent pipelines. Scoped diagnostics
+      means collecting VTK messages for a particular algorithm operation
+      (`Update`, `UpdateInformation`, `UpdateTimeStep`, or `Write`), for the
+      duration of that operation, and returning them with severity and
+      algorithm/file context. Define synchronization or thread-local behavior,
+      nested/concurrent operation semantics, raw-call behavior, and when a
+      collector is cleared. Check VTK return statuses consistently, throw a
+      typed VTK exception for actual failures, and report warnings separately
+      rather than treating every message as an error. Readers, filters, and
+      writers must all follow the same policy.
+- [ ] Add tests for concurrent pipelines, warnings versus errors, stale/raw
+      messages, writer failures, and diagnostic context. Include algorithm and
+      filename information where available.
+- [ ] **Fix the known facade defects:** `sample_over_line` accepts but ignores
+      `scalars`; `remove_array!(...; point=true, cell=true)` returns after the
+      point-data match and therefore cannot remove from both associations;
+      `contour`, `threshold`, `stream_tracer`, and `particle_tracer` mutate
+      active attributes on their non-`!` inputs; `gradient` hard-codes an
+      unstructured-grid output; the `clip` documentation overpromises output
+      type preservation; and invalid stream-tracer direction strings silently
+      select forward integration.
+- [ ] Constrain the unannotated `Base.size`, `Base.length`, and
+      `Base.setindex!` fallback methods to their intended VTK handle types.
+      Validate point connectivity, cell arity, point bounds, sizes, component
+      counts, and resolutions before passing values into C++.
+- [ ] Define null/empty-output and unsupported-type behavior. Replace raw
+      `KeyError`/null downcast failures with deliberate VTK-specific errors or
+      safe generic fallbacks; handle derived VTK classes and nonnumeric field
+      arrays explicitly.
+- [ ] Keep `particle_tracer` behind an explicit experimental boundary until a
+      validated temporal-pipeline execution path exists and the static-grid
+      crash is understood.
+- [ ] **Write down ownership rules per accessor/output kind.** Distinguish
+      owning factories, reference-counted `take_ref` getters, truly borrowed
+      raw pointers, pipeline-backed output, shallow copies, and deep copies.
+      Do not infer safety merely because a method was generated. In particular,
+      reconcile the multiblock documentation's "borrowed" wording with the
+      shim's reference-counted `GetBlockByIndex`, and verify the corresponding
+      `set_block!` child-lifetime contract.
+- [ ] Define mutation/reallocation invalidation for cached `VTKDataArray`
+      views, including resizing through another wrapper or directly through
+      VTK. Make temporal borrowed results visibly different from detached
+      snapshots or choose safer defaults; test `eachstep` retention and avoid
+      exposing mutable internal timestep metadata unintentionally.
+- [ ] Stress C++ destruction on GC finalizer threads while VTK work runs on
+      other threads/tasks. Add native-memory sanitizer or equivalent testing
+      where practical before broadening in-place mutation and pipeline reuse.
+
+**Exit criterion:** current wrapper bugs are fixed, diagnostics and ownership
+contracts are documented, and concurrent/GC/error-path tests cover them.
+
+### Stage 1 — coherent Julian facade over existing raw functionality
+
+**Goal:** obtain the largest usability improvement without major new C++
+surface. Raw factories and methods already exist for much of this work.
+
+- [ ] Establish a clear stable high-level API versus raw generated API. Use
+      Julian functions, multiple dispatch, array/dictionary/iteration
+      interfaces, and selective public names rather than copying Python's
+      method-heavy API verbatim.
+- [ ] Add dictionary-like point/cell/general field access, array association
+      lookup, active scalars/vectors/tensors/normals/texture coordinates,
+      informative `show` summaries, and common metadata (`bounds`, `center`,
+      dimensions, extents, origin, spacing, and array ranges).
+- [ ] Build ergonomic constructors on top of the existing raw factories:
+      PolyData points + verts/lines/polys/strips; ImageData dimensions/origin/
+      spacing/direction; `RectilinearGrid(x, y, z)`; StructuredGrid coordinates
+      + dimensions. Add bulk, precision-preserving UnstructuredGrid construction
+      and safe buffer-adoption/copy constructors with explicit ownership.
+- [ ] Add extension-dispatching read/save and configurable reader/writer
+      objects. Expose the raw XML ASCII/binary/appended/compression controls
+      uniformly and add a high-level legacy-binary option. Let other packages
+      register formats without modifying VTK.jl.
+- [ ] Systematically expose options already present on calculator, gradient,
+      contour, threshold, cutter, and tracers: association/component selection,
+      vector and coordinate variables, divergence/vorticity/Q-criterion,
+      pass-through controls, integration parameters, and output naming.
+- [ ] Add a safe persistent algorithm/pipeline abstraction over existing input
+      connections and output ports: multiple inputs/outputs, parameter changes,
+      re-execution, mixed dataset/algorithm inputs, progress, and cancellation.
+      Keep eager one-shot filters as conveniences over this layer.
+- [ ] Add named/recursive multiblock access and safe common temporal iteration.
+      Establish a tested raw/high-level capability matrix and make examples
+      executable so the supported API is distinguishable from generated surface.
+
+**Exit criterion:** read → inspect → construct → attach fields → filter → save
+workflows need no raw `_cp` calls, and ownership/copy behavior is predictable.
+
+### Stage 2 — native Julia plotting with Makie
+
+**Goal:** provide plotting through the Julia ecosystem rather than making
+native VTK rendering the first implementation path. Plotting should be an
+optional package extension so the core package does not acquire a graphics
+backend or display-server requirement.
+
+- [ ] **Build GeometryBasics interoperability first.** This is the practical
+      prerequisite for the initial Makie recipes, not full Meshes.jl support.
+      Define conversions for points, lines, and polygon/triangle faces plus
+      point/cell field arrays. Document copy versus zero-copy behavior and keep
+      VTK owners alive for any borrowed representation.
+- [ ] Define geometry normalization before plotting: PolyData can map directly
+      to points/lines/faces; volumetric unstructured grids need surface
+      extraction and, where necessary, triangulation/tessellation; ImageData
+      should map to image/volume plots with origin/spacing preserved; composite
+      data needs recursive traversal. Do not silently discard cells that the
+      initial GeometryBasics representation cannot express.
+- [ ] Add Makie recipes/extensions for scalar-colored surfaces and wireframes,
+      points/lines, vector/glyph display, ImageData volumes, and multiblock
+      scenes. Support point/cell association, active-array selection, color
+      maps and limits, opacity, colorbars, axes, labels, and camera controls.
+- [ ] Use appropriate optional backends for static output, interactive windows,
+      and notebooks. Add off-screen/headless CI and screenshot/regression tests
+      from the beginning. Add simple profile plots for line-probe results.
+- [ ] **Add Meshes.jl interoperability as a complementary bridge**, with an
+      explicit target-representation policy for mixed-cell grids. It is useful
+      for geometry operations and ecosystem exchange, but is not a strict
+      prerequisite for a first Makie recipe if GeometryBasics conversion exists.
+- [ ] Keep Tables.jl and StaticArrays adapters lightweight and optional where
+      possible. Native VTK rendering wrappers remain deferred; reconsider them
+      only for required features that Makie cannot provide, such as specific
+      VTK picking/interactor or volume-rendering workflows.
+
+**Exit criterion:** a user can plot the supported dataset types with fields,
+save a screenshot in headless CI, and opt into interactive/notebook backends
+without loading Makie in non-plotting workflows.
+
+### Stage 3 — core sources and filter vocabulary
+
+**Goal:** cover common PyVista-style workflows with individually tested,
+Julian operations rather than pursuing class-count parity.
+
+- [ ] Sources: sphere, box/cube, plane, cylinder, cone, arrow, point cloud, and
+      structured/image sources.
+- [ ] Geometry: transforms, outline, feature/all edges, triangulate,
+      clean/merge coincident points, append/merge, connectivity/largest region,
+      and point/cell subset extraction.
+- [ ] Surface processing: normals, smoothing, decimation, subdivision, shrink,
+      extrusion, tubes/glyphs, and hole cleanup according to user demand.
+- [ ] Analysis: cell centers, cell sizes/quality, area/volume/length,
+      integration, elevation, warp, interpolation, nearest-point/cell queries,
+      and additional derivative quantities.
+- [ ] CFD: complete tracer configuration and validated temporal particle paths.
+- [ ] Every addition needs a high-level wrapper, ownership/error tests, an
+      analytic or independent numerical oracle, relevant composite behavior,
+      user documentation, and a capability-matrix update.
+
+### Stage 4 — I/O, temporal/composite, tabular, and ecosystem breadth
+
+**Goal:** complete workflow families and interchange with the wider Julia and
+scientific-data ecosystems.
+
+- [ ] Complete parallel XML readers/writers (`.pvtu`, `.pvti`, `.pvtr`,
+      `.pvts`) and add `.pvd`/file-series collections. Distinguish serial piece
+      merging from actual distributed MPI execution.
+- [ ] Add STL/PLY/OBJ for surface interchange; prioritize XDMF/VTKHDF, Exodus,
+      OpenFOAM, Fluent, Gmsh, and CFD writers according to demonstrated demand.
+- [ ] Generalize temporal readers/writers and filters beyond EnSight/CGNS, with
+      lazy field selection and safe snapshot semantics.
+- [ ] Add named/metadata-rich composite trees, partitioned datasets,
+      PartitionedDataSetCollection, and DataAssembly; defer AMR/hyper-tree grids
+      until there is a concrete use case.
+- [ ] **Wrap tabular data: `vtkTable` and `vtkTableAlgorithm`.** This records
+      the requested "`vtkTableData`" work under the actual VTK 9.7 class name;
+      the installed VTK headers contain `vtkTable` but no `vtkTableData`. Add
+      the supporting array classes needed by real tables (notably string/
+      variant arrays) and high-level Julia column construction/access. This is
+      needed for native VTK table datasets, tabular I/O/filters, probe/chart
+      workflows, and complete Tables.jl round trips. A Tables.jl adapter for
+      existing point/cell fields can still land earlier without `vtkTable`.
+- [ ] Finish GeometryBasics/Meshes.jl round trips, Tables.jl, StaticArrays,
+      FileIO, and structured-axis/image integrations as package extensions.
+      Preserve field data and metadata where the target representation permits.
+
+### Stage 5 — distributed parallelism, advanced robustness, and platforms
+
+**Goal:** address capabilities beyond the initial single-process Julian
+PyVista core.
+
+- [ ] Add MPI.jl communicator/controller integration, rank-aware piece/extent
+      requests, ghost exchange, distributed filters, partitioning, and parallel
+      writers. Test multiple ranks and more than one MPI flavor.
+- [ ] Expand artifact/source-build CI beyond Ubuntu x64 to supported macOS and
+      Linux-aarch64 targets; make local wrapper discovery use platform-specific
+      library names and remove hard-coded MPI assumptions from integration tests.
+- [ ] Define a deliberate Windows/VTK binary strategy. Add runtime wrapper
+      capability/version checks and a reproducible local-library selection
+      mechanism so stale precompile caches cannot silently select an
+      incompatible generated method table.
+- [ ] Add sanitizer lanes, large-data/64-bit/invalid-input tests, allocation and
+      memory benchmarks, and unexpected-auto-veto/capability checks so generated
+      coverage does not silently erode. Explore device arrays only after the
+      host ownership model is settled.
+
+### Ongoing documentation, testing, and release work (every stage)
+
+- [ ] Maintain `docs/src/capability_matrix.md` alongside each feature change.
+      Mark raw-only features explicitly and do not equate class registration
+      with a supported high-level capability.
+- [ ] Enable executable doctests for supported examples, repair stale extending
+      and zero-copy guidance, strengthen structured/PolyData/keyword/error-path
+      tests, and add end-to-end examples and a plotting gallery.
+- [ ] Keep General registration and ordinary tagged installation as release
+      goals once the Stage 0/1 public API baseline is coherent. Keep the
+      wrapper/JLL compatibility checks and release CI green at every stage.
+
+## 8. Parallel WrapIt/generator maintenance
+
+These maintenance items can proceed independently of the staged public-API
+work above:
+
+- [ ] Upstream WrapIt Bug 3 and Bug 2 (which would delete the local AOS
+      post-processor). Bug 1 and the libclang-22 fixes are already upstream and
+      need no local patch.
+- [ ] Review newly auto-vetoed methods as supporting types are added, and keep
+      the generated-sources/clean-tree release checks authoritative.
