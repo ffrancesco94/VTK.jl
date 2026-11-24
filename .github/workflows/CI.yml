@@ -15,7 +15,7 @@ jobs:
   test:
     name: Julia ${{ matrix.version }}
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     permissions: # needed to allow julia-actions/cache to proactively delete old caches that it has created
       actions: write
       contents: read
@@ -33,5 +33,53 @@ jobs:
           version: ${{ matrix.version }}
           arch: x64
       - uses: julia-actions/cache@v3
+
+      # Branches and PRs test the wrapper from the same checkout. Tags use the
+      # published JLL; PublishWrapper separately tests tags before the new JLL
+      # has been built and registered.
+      - name: Pin WrapIt to the recorded commit
+        if: github.ref_type != 'tag'
+        run: echo "VTKJL_WRAPIT_REF=$(cat gen/wrapit/wrapit.pin | tail -n1)" >> "$GITHUB_ENV"
+      - name: Install C++ toolchain
+        if: github.ref_type != 'tag'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ cmake git clang libclang-dev libssl-dev
+      - name: Unversioned libclang symlinks for WrapIt
+        if: github.ref_type != 'tag'
+        # Ubuntu ships only versioned libclang-cpp/libLLVM, but WrapIt's CMake
+        # wants unversioned names under CLANG_PREFIX/lib.
+        run: |
+          prefix="$RUNNER_TEMP/clang-prefix"
+          mkdir -p "$prefix/lib"
+          res="$(clang -print-resource-dir)"           # .../llvm-XX/lib/clang/YY
+          llvm_lib="$(dirname "$(dirname "$res")")"    # .../llvm-XX/lib
+          ln -sf "$(clang -print-file-name=libclang.so)" "$prefix/lib/libclang.so"
+          for lib in libclang-cpp libLLVM; do
+            src="$(ls "$llvm_lib/$lib".so.* 2>/dev/null | head -n1)"
+            [ -n "$src" ] && ln -sf "$src" "$prefix/lib/$lib.so"
+          done
+          echo "VTKJL_CLANG_PREFIX=$prefix" >> "$GITHUB_ENV"
+      - name: Build wrapper from this commit
+        if: github.ref_type != 'tag'
+        run: julia --project=. gen/build_wrapper.jl
+      - name: Require a clean tracked tree after generation
+        if: github.ref_type != 'tag'
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::generation modified tracked files — commit the regenerated sources"
+            git status --porcelain
+            git diff --stat
+            exit 1
+          fi
+      - name: Integration-test the built library
+        if: github.ref_type != 'tag'
+        run: julia --project=gen/wrapit gen/wrapit/generated_library_integration.jl
+      - name: Select the locally built wrapper
+        if: github.ref_type != 'tag'
+        run: |
+          echo "VTKJL_LIB=$GITHUB_WORKSPACE/wrapper/build/libvtk_julia.so" >> "$GITHUB_ENV"
+          rm -rf $HOME/.julia/compiled/v1.*/VTK
+
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1

@@ -3,8 +3,9 @@
 Last updated: 2026-11-24. WrapIt migration **complete** and the legacy
 hand-written CMake wrapper **removed** (2026-10-29). The WrapIt-generated +
 shim-merged `libvtk_julia` now loads from `VTK_julia_jll` by default;
-`VTKJL_LIB` remains available for local development builds. CI exercises the
-JLL on Julia 1.11–1.13 without requiring a C++ toolchain. Time-dependent
+`VTKJL_LIB` remains available for local development builds. Branch/PR CI builds
+the wrapper from each checkout on Julia 1.11–1.13; tag CI exercises the
+published JLL. Time-dependent
 (transient) EnSight/CGNS readers were added on 2026-11-24 (`src/temporal.jl`).
 The Julian-PyVista gap audit, follow-up sequence (§7), and raw/high-level
 capability matrix (`docs/src/capability_matrix.md`) were also added on
@@ -255,7 +256,8 @@ Julian layer (`src/dataarray.jl`, `src/typedarray.jl`, `src/dataset.jl`,
 - Local regeneration builds upstream WrapIt from source and therefore needs
   network access and a working libclang toolchain. `VTKJL_WRAPIT_REF` can select
   a release tag for reproducibility; `VTKJL_WRAPIT_UPDATE=1` advances an existing
-  checkout. Normal package CI uses the prebuilt JLL instead.
+  checkout. Branch/PR CI therefore installs the native toolchain and builds the
+  wrapper; tag CI uses the prebuilt JLL instead.
 - VTK_jll has no Windows build; Windows support requires our own VTK build.
 - VTK_jll's MPI flavor complicates end-user installs; escape hatch is a
   custom non-MPI VTK build (defer until requested).
