@@ -30,8 +30,8 @@ workflow changes.
   `find_library` path) and the debs ship only *versioned*
   `libclang-cpp`/`libLLVM` — wrapit's CMake wants unversioned names. Derive
   `VTKJL_CLANG_PREFIX` from `clang -print-resource-dir`, symlink the versioned
-  libs, and link `lib/clang` so WrapIt can find `*/include/stddef.h`. Validated
-  on ubuntu-latest with clang 21. Branch/PR CI builds
+  libs, and link both `include` (for `clang-c/Index.h`) and `lib/clang` (for
+  `*/include/stddef.h`). Validated on ubuntu-latest with clang 21. Branch/PR CI builds
   the wrapper and needs this toolchain; tag CI and documentation builds use
   `VTK_julia_jll` instead.
 
