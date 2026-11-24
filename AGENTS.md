@@ -18,7 +18,7 @@ workflow changes.
   `src/generated_methods.jl`, smart-pointer overloads that forward to the
   raw-pointer bindings through `_cp`; regenerate it after binding changes.
   The legacy hand-written CMake wrapper was removed 2026-10-29.
-- Test counts: **181/181**.
+- Test counts: **217/217**.
 - WrapIt is built **from source** from upstream `grasph/wrapit` (main), not
   from WrapIt_jll; see `gen/wrapit/wrapit_src.jl`. `VTKJL_WRAPIT_REPO` and
   `VTKJL_WRAPIT_REF` override the source; changing either triggers a rebuild.

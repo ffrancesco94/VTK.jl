@@ -24,7 +24,9 @@ inheritance mirrored on the Julia side (`vtkUnstructuredGrid <: vtkPointSet <:
 vtkDataSet`).
 - **Zero-copy arrays**: typed `VTKDataArray{T}` views of VTK's C++ objects
 - **I/O**: `.vtu`/`.vtp` readers and writers, as well as `.vtm`, CGNS and
-EnSight; interop with ReadVTK.jl and WriteVTK.jl in both directions.
+EnSight — including time-dependent (transient) cases, stepped through with
+`EnSightReader`/`CGNSReader` + `read_timestep`/`read_at`; interop with
+ReadVTK.jl and WriteVTK.jl in both directions.
 - **Filters**: clip, slice, cell↔point data conversion, contour, surface
 extraction, line probes, plus the plane implicit function.
 - **Cells**: VTKBase cell-type registry, iterators, and `MeshCell` conversion

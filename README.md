@@ -1,7 +1,9 @@
 # VTK.jl
 
 Julia bindings for a CFD-data-oriented subset of [VTK](https://vtk.org) 9.7:
-data model, XML I/O, I/O for stuff like EnSight and CGNS and manipulation
+data model, XML I/O, I/O for CFD formats like EnSight and CGNS (including
+time-dependent cases, stepped through with `EnSightReader`/`CGNSReader` and
+`read_timestep`/`read_at`) and manipulation
 filters (clip, slice, cell↔point data conversion, contour, surface extraction).
 There is no rendering and no MPI-aware API as of now.
 
@@ -79,8 +81,9 @@ julia -e 'using Pkg; Pkg.test("VTK")'
 ```
 
 Tests include analytic checks (clip of a unit hex against a plane yields the
-tetrahedron x+y+z ≤ 1) and cross-validation against ReadVTK.jl/WriteVTK.jl,
-independent pure-Julia VTK readers/writers.
+tetrahedron x+y+z ≤ 1), cross-validation against ReadVTK.jl/WriteVTK.jl,
+independent pure-Julia VTK readers/writers, and transient EnSight/CGNS cases
+(out-of-order timestep reads, time-based lookup, deep-copy snapshots).
 
 ## Documentation
 
