@@ -39,17 +39,18 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y g++ cmake git clang libclang-dev libssl-dev
-      - name: Unversioned libclang symlinks for WrapIt
+      - name: Clang library and resource symlinks for WrapIt
         # AGENTS.md gotcha: Ubuntu ships only versioned libclang-cpp/libLLVM,
         # but wrapit's CMake wants unversioned names under CLANG_PREFIX/lib.
         # Derive the LLVM lib dir from clang's own resource dir so the
         # symlinks always match the installed clang, even on multi-toolchain
-        # runners.
+        # runners. WrapIt also finds compiler headers through lib/clang.
         run: |
           prefix="$RUNNER_TEMP/clang-prefix"
           mkdir -p "$prefix/lib"
           res="$(clang -print-resource-dir)"           # .../llvm-XX/lib/clang/YY
           llvm_lib="$(dirname "$(dirname "$res")")"    # .../llvm-XX/lib
+          ln -sfn "$(dirname "$res")" "$prefix/lib/clang"
           ln -sf "$(clang -print-file-name=libclang.so)" "$prefix/lib/libclang.so"
           for lib in libclang-cpp libLLVM; do
             src="$(ls "$llvm_lib/$lib".so.* 2>/dev/null | head -n1)"
