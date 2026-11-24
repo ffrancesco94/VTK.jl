@@ -63,7 +63,16 @@ Reads a CGNS file at path `path`.
 function CGNSReader(path)
     algo = CGNSReader_new()
     SetFileName(algo, String(path))
-    return VTKTemporalReader(algo)
+
+    # Populate bases, time metadata, array selections
+    update_information!(algo)
+
+    # Metadata now contains the vailable arrays
+    EnableAllPointArrays(algo)
+    EnableAllCellArrays(algo)
+    EnableAllFaceArrays(algo)
+
+    return VTKTemporalReader(algo, Float64.(GetTimeSteps(algo)))
 end
 
 function _current_output(algo; copy = false)
@@ -124,10 +133,10 @@ end
 
 eachstep(r::AbstractTemporalReader; copy = false) = (read_timestep(r, i; copy = copy) for i in eachindex(timesteps(r)))
 
-# Shim to get whatever timestep is the default 
-function _read_current(r::VTKTemporalReader, copy=false)
-    update!(r.algorithm) 
-    return _current_output(r.algorithm, copy=copy)
+# Shim to get whatever timestep is the default
+function _read_current(r::VTKTemporalReader, copy = false)
+    update!(r.algorithm)
+    return _current_output(r.algorithm, copy = copy)
 end
 
 """

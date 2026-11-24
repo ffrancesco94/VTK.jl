@@ -2,6 +2,8 @@ using VTK
 using Test
 using WriteVTK
 using VTK.VTKBase: PolyData, VTKPolyData
+include(joinpath(@__DIR__, "cgns_test_utils.jl"))
+
 
 # CFD-format readers: EnSight Gold (.case), CGNS (.cgns), parallel PVTK
 # (.pvtp).  EnSight and PVTP get analytic oracles; CGNS is smoke-tested
@@ -96,109 +98,190 @@ end
 
 
 @testset "CFD readers (EnSight Gold / CGNS / PVT)" begin
-    mktempdir() do dir
-        # ---- EnSight Gold: analytic oracle (unit hex) ----
-        case_path = write_ensight_case(dir)
-        mb = VTK.read_ensight(case_path)
-        @test mb isa VTK.vtkSmartPointerAllocated{VTK.vtkMultiBlockDataSet}
-        @test VTK.nblocks(mb) == 1
-        part = VTK.block(mb, 1)
-        @test VTK.npoints(part) == 8
-        @test VTK.ncells(part) == 1
-        @test VTK.cell_type(part, 1).vtk_id == 12  # VTK_HEXAHEDRON
-        xy = VTK.coordinates(part)
-        @test size(xy) == (3, 8)
-        @test xy[1, 2] ≈ 1.0   # node 2 x-coordinate
-        @test xy[2, 3] ≈ 1.0   # node 3 y-coordinate
-        @test xy[3, 5] ≈ 1.0   # node 5 z-coordinate
-        # Check that steady cases still work
-        r = VTK.EnSightReader(case_path)
-        @test isempty(VTK.timesteps(r))
-        @test length(r) == 0
+    @testset "EnSight Gold" begin
+        mktempdir() do dir
+            # ---- EnSight Gold: analytic oracle (unit hex) ----
+            case_path = write_ensight_case(dir)
+            mb = VTK.read_ensight(case_path)
+            @test mb isa VTK.vtkSmartPointerAllocated{VTK.vtkMultiBlockDataSet}
+            @test VTK.nblocks(mb) == 1
+            part = VTK.block(mb, 1)
+            @test VTK.npoints(part) == 8
+            @test VTK.ncells(part) == 1
+            @test VTK.cell_type(part, 1).vtk_id == 12  # VTK_HEXAHEDRON
+            xy = VTK.coordinates(part)
+            @test size(xy) == (3, 8)
+            @test xy[1, 2] ≈ 1.0   # node 2 x-coordinate
+            @test xy[2, 3] ≈ 1.0   # node 3 y-coordinate
+            @test xy[3, 5] ≈ 1.0   # node 5 z-coordinate
+            # Check that steady cases still work
+            r = VTK.EnSightReader(case_path)
+            @test isempty(VTK.timesteps(r))
+            @test length(r) == 0
 
 
-        # ---- Transient EnSight Gold ----
-        transient_dir = joinpath(dir, "transient")
-        mkdir(transient_dir)
+            # ---- Transient EnSight Gold ----
+            transient_dir = joinpath(dir, "transient")
+            mkdir(transient_dir)
 
-        transient_path =
-            write_ensight_case(transient_dir; transient = true)
+            transient_path =
+                write_ensight_case(transient_dir; transient = true)
 
-        reader = VTK.EnSightReader(transient_path)
+            reader = VTK.EnSightReader(transient_path)
 
-        @test VTK.timesteps(reader) == [0.0, 0.5]
-        @test length(reader) == 2
+            @test VTK.timesteps(reader) == [0.0, 0.5]
+            @test length(reader) == 2
 
-        # Read out of order to ensure selection is not just "advance once".
-        mb1 = VTK.read_timestep(reader, 2)
-        @test scalar_values(mb1, "s") == collect(10.0:17.0)
-        @test VTK.npoints(VTK.block(mb1, 1)) == 8
-        @test VTK.ncells(VTK.block(mb1, 1)) == 1
+            # Read out of order to ensure selection is not just "advance once".
+            mb1 = VTK.read_timestep(reader, 2)
+            @test scalar_values(mb1, "s") == collect(10.0:17.0)
+            @test VTK.npoints(VTK.block(mb1, 1)) == 8
+            @test VTK.ncells(VTK.block(mb1, 1)) == 1
 
-        mb0 = VTK.read_timestep(reader, 1)
-        @test scalar_values(mb0, "s") == collect(0.0:7.0)
+            mb0 = VTK.read_timestep(reader, 1)
+            @test scalar_values(mb0, "s") == collect(0.0:7.0)
 
-        # Time-based lookup.
-        mb_at = VTK.read_at(reader, 0.5)
-        @test scalar_values(mb_at, "s") == collect(10.0:17.0)
+            # Time-based lookup.
+            mb_at = VTK.read_at(reader, 0.5)
+            @test scalar_values(mb_at, "s") == collect(10.0:17.0)
 
-        @test_throws ArgumentError VTK.read_at(reader, 0.25)
-        @test_throws BoundsError VTK.read_timestep(reader, 0)
-        @test_throws BoundsError VTK.read_timestep(reader, 3)
+            @test_throws ArgumentError VTK.read_at(reader, 0.25)
+            @test_throws BoundsError VTK.read_timestep(reader, 0)
+            @test_throws BoundsError VTK.read_timestep(reader, 3)
 
-        # A deep-copied result must survive subsequent reader updates.
-        snapshot = VTK.read_timestep(reader, 1; copy = true)
-        VTK.read_timestep(reader, 2)
-        @test scalar_values(snapshot, "s") == collect(0.0:7.0)
-
-        # ---- CGNS: smoke test (reader exists, runs, produces output) ----
-        # No Julia CGNS writer available; just verify the reader object
-        # constructs and reports a sensible error for a missing file.
-        @test_throws Exception VTK.read_cgns(joinpath(dir, "nonexistent.cgns"))
-
-        # ---- PVT: write two .vtp pieces + a .pvtp summary, read back ----
-        coords2d = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]
-        points2d = reduce(hcat, [[Float64.(c)...] for c in coords2d])
-        polys = [MeshCell(PolyData.Polys(), 1:4)]
-
-        for piece in 1:2
-            vtk_grid(VTKPolyData(), joinpath(dir, "piece_$(piece)"), points2d, polys) do vtk
-                vtk["p", VTKPointData()] = fill(Float64(piece), 4)
-            end
+            # A deep-copied result must survive subsequent reader updates.
+            snapshot = VTK.read_timestep(reader, 1; copy = true)
+            VTK.read_timestep(reader, 2)
+            @test scalar_values(snapshot, "s") == collect(0.0:7.0)
         end
+    end
 
-        pvtp = joinpath(dir, "case.pvtp")
-        open(pvtp, "w") do io
-            println(
-                io, """<?xml version="1.0"?>
-                <VTKFile type="PPolyData" version="1.0" byte_order="LittleEndian">
-                  <PPolyData GhostLevel="0">
-                    <PPoints>
-                      <PDataArray type="Float64" NumberOfComponents="3"/>
-                    </PPoints>
-                    <PCells>
-                      <PCellData>
-                        <PDataArray type="Int64" Name="connectivity"/>
-                        <PDataArray type="Int64" Name="offsets"/>
-                        <PDataArray type="UInt8" Name="types"/>
-                      </PCellData>
-                    </PCells>
-                    <PPointData>
-                      <PDataArray type="Float64" Name="p"/>
-                    </PPointData>
-                    <Piece Source="piece_1.vtp"/>
-                    <Piece Source="piece_2.vtp"/>
-                  </PPolyData>
-                </VTKFile>"""
+    # ---- CGNS: static geometry and field values ----
+    @testset "CGNS static" begin
+        mktempdir() do dir
+            path = write_cgns_case(joinpath(dir, "static.cgns"))
+
+            mb = VTK.read_cgns(path)
+            zone = cgns_zone(mb)
+
+            @test VTK.nblocks(mb) == 1
+
+            base = VTK.block(mb, 1)
+            @test VTK.nblocks(base) == 1
+
+            @test VTK.npoints(zone) == 8
+            @test VTK.ncells(zone) == 1
+            @test VTK.cell_type(zone, 1).vtk_id == 12  # VTK_HEXAHEDRON
+
+            coordinates = VTK.coordinates(zone)
+
+            @test size(coordinates) == (3, 8)
+            @test coordinates[:, 1] == [0.0, 0.0, 0.0]
+            @test coordinates[:, 2] == [1.0, 0.0, 0.0]
+            @test coordinates[:, 8] == [1.0, 1.0, 1.0]
+
+            @test density_values(mb) == collect(0.0:7.0)
+
+            # Steady files are valid temporal-reader inputs with no steps.
+            reader = VTK.CGNSReader(path)
+            @test VTK.timesteps(reader) == [0.0]
+            @test length(reader) == 1
+
+            step = VTK.read_timestep(reader, 1)
+            @test density_values(step) == collect(0.0:7.0)
+        end
+    end
+
+    # ---- CGNS: transient field selection ----
+    @testset "CGNS transient" begin
+        mktempdir() do dir
+            path = write_cgns_case(
+                joinpath(dir, "transient.cgns");
+                times = [0.0, 0.5],
             )
-        end
 
-        pd = VTK.read_pvtp(pvtp)
-        @test pd isa VTK.vtkSmartPointerAllocated{VTK.vtkPolyData}
-        @test VTK.npoints(pd) == 8    # 2 pieces × 4 points
-        @test VTK.ncells(pd) == 2     # 2 pieces × 1 quad
-        p = VTK.field_array(VTK.point_data(pd), "p")
-        @test p !== nothing
-        @test vec(VTK.data(p)) ≈ vcat(fill(1.0, 4), fill(2.0, 4))
+            reader = VTK.CGNSReader(path)
+
+            @test VTK.timesteps(reader) == [0.0, 0.5]
+            @test length(reader) == 2
+
+            # Read out of order: second step first.
+            mb1 = VTK.read_timestep(reader, 2)
+            zone1 = cgns_zone(mb1)
+
+            @test density_values(mb1) == collect(10.0:17.0)
+            @test VTK.npoints(zone1) == 8
+            @test VTK.ncells(zone1) == 1
+
+            # Then return to the first step.
+            mb0 = VTK.read_timestep(reader, 1)
+            @test density_values(mb0) == collect(0.0:7.0)
+
+            # Exercise the common time-based interface.
+            mb_at = VTK.read_at(reader, 0.5)
+            @test density_values(mb_at) == collect(10.0:17.0)
+
+            @test_throws ArgumentError VTK.read_at(reader, 0.25)
+            @test_throws BoundsError VTK.read_timestep(reader, 0)
+            @test_throws BoundsError VTK.read_timestep(reader, 3)
+        end
+    end
+
+    # ---- CGNS: preserve the file-error check ----
+    @testset "CGNS missing file" begin
+        mktempdir() do dir
+            path = joinpath(dir, "nonexistent.cgns")
+            @test_throws Exception VTK.read_cgns(path)
+        end
+    end
+
+
+    # ---- PVT: write two .vtp pieces + a .pvtp summary, read back ----
+    @testset "PVT" begin
+        mktempdir() do dir
+            coords2d = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0)]
+            points2d = reduce(hcat, [[Float64.(c)...] for c in coords2d])
+            polys = [MeshCell(PolyData.Polys(), 1:4)]
+
+            for piece in 1:2
+                vtk_grid(VTKPolyData(), joinpath(dir, "piece_$(piece)"), points2d, polys) do vtk
+                    vtk["p", VTKPointData()] = fill(Float64(piece), 4)
+                end
+            end
+
+            pvtp = joinpath(dir, "case.pvtp")
+            open(pvtp, "w") do io
+                println(
+                    io, """<?xml version="1.0"?>
+                        <VTKFile type="PPolyData" version="1.0" byte_order="LittleEndian">
+                            <PPolyData GhostLevel="0">
+                            <PPoints>
+                                <PDataArray type="Float64" NumberOfComponents="3"/>
+                            </PPoints>
+                            <PCells>
+                                <PCellData>
+                                <PDataArray type="Int64" Name="connectivity"/>
+                                <PDataArray type="Int64" Name="offsets"/>
+                                <PDataArray type="UInt8" Name="types"/>
+                                </PCellData>
+                            </PCells>
+                            <PPointData>
+                                <PDataArray type="Float64" Name="p"/>
+                            </PPointData>
+                            <Piece Source="piece_1.vtp"/>
+                            <Piece Source="piece_2.vtp"/>
+                        </PPolyData>
+                    </VTKFile>"""
+                )
+            end
+
+            pd = VTK.read_pvtp(pvtp)
+            @test pd isa VTK.vtkSmartPointerAllocated{VTK.vtkPolyData}
+            @test VTK.npoints(pd) == 8    # 2 pieces × 4 points
+            @test VTK.ncells(pd) == 2     # 2 pieces × 1 quad
+            p = VTK.field_array(VTK.point_data(pd), "p")
+            @test p !== nothing
+            @test vec(VTK.data(p)) ≈ vcat(fill(1.0, 4), fill(2.0, 4))
+        end
     end
 end
