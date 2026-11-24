@@ -24,8 +24,16 @@ function smartptr_registrations(cxx)
         types = String[]
         vtk_positions = Int[]
         for (i, arg) in enumerate(args)
-            # Registration lambdas name their parameters. Remove the name,
-            # then recognize only plain (possibly const) VTK pointers.
+            # Registration lambdas name their parameters. Recognize plain
+            # (possibly const) VTK pointers with the '*' in either position
+            # ("vtkFoo* a" as well as clang-format's "vtkFoo *a").
+            vm = match(r"^(?:const\s+)?(vtk[A-Za-z0-9_]+)\s*(\*+)\s*\**\s*[A-Za-z_]\w*$",
+                       strip(arg))
+            if vm !== nothing
+                push!(types, vm.captures[1])
+                push!(vtk_positions, i)
+                continue
+            end
             tokens = split(strip(arg), ' ')
             length(tokens) > 1 && pop!(tokens)
             argtype = replace(join(tokens, ' '), r"\s+" => " ")

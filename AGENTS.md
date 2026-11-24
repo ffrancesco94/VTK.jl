@@ -18,7 +18,7 @@ workflow changes.
   `src/generated_methods.jl`, smart-pointer overloads that forward to the
   raw-pointer bindings through `_cp`; regenerate it after binding changes.
   The legacy hand-written CMake wrapper was removed 2026-10-29.
-- Test counts: **181/181**.
+- Test counts: **217/217**.
 - WrapIt is built **from source** from upstream `grasph/wrapit` (main), not
   from WrapIt_jll; see `gen/wrapit/wrapit_src.jl`. `VTKJL_WRAPIT_REPO` and
   `VTKJL_WRAPIT_REF` override the source; changing either triggers a rebuild.
@@ -29,9 +29,11 @@ workflow changes.
   `libclang.so` lives in `/usr/lib/llvm-*/lib` (outside CMake's default
   `find_library` path) and the debs ship only *versioned*
   `libclang-cpp`/`libLLVM` — wrapit's CMake wants unversioned names. Derive
-  `VTKJL_CLANG_PREFIX` from `clang -print-resource-dir` and symlink the
-  versioned libs. Validated on ubuntu-latest with clang 21. Normal CI and
-  documentation builds use `VTK_julia_jll` and do not need this toolchain.
+  `VTKJL_CLANG_PREFIX` from `clang -print-resource-dir`, symlink the versioned
+  libs, and link both `include` (for `clang-c/Index.h`) and `lib/clang` (for
+  `*/include/stddef.h`). Validated on ubuntu-latest with clang 21. Branch/PR CI builds
+  the wrapper and needs this toolchain; tag CI and documentation builds use
+  `VTK_julia_jll` instead.
 
 - **Precompile cache does not track `VTKJL_LIB` or the .so content.** Always
   `rm -rf ~/.julia/compiled/v1.12/VTK` when switching libraries, or Julia may
@@ -49,8 +51,8 @@ workflow changes.
   of type.
 - The wrapit generation was validated with clang 13 (jll) and clang 22
   (system); other libclang versions may behave differently.
-- **Release builds pin WrapIt**: `gen/wrapit/wrapit.pin` holds the full commit
-  SHA, exported as `VTKJL_WRAPIT_REF` by the PublishWrapper workflow.
+- **CI and release builds pin WrapIt**: `gen/wrapit/wrapit.pin` holds the full
+  commit SHA, exported as `VTKJL_WRAPIT_REF` by the CI and PublishWrapper workflows.
   `wrapit_src.jl` fetches SHAs directly (`git clone -b` only accepts
   branches/tags). The publish workflow also drops the not-yet-registered
   `VTK_julia_jll` compat bound for the `VTKJL_LIB` test run only (restored

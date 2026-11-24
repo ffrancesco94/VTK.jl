@@ -118,7 +118,7 @@ point_data(grid) = GetPointData(grid)
 cell_data(grid) = GetCellData(grid)
 
 field_array_names(fd) =
-    [GetArrayNameOf(fd, i) for i in 0:GetNumberOfArrays(fd)-1]
+    [GetArrayNameOf(fd, i) for i in 0:(GetNumberOfArrays(fd) - 1)]
 
 """
     field_array(fd, name) -> VTKDataArray{T} or nothing
@@ -151,7 +151,7 @@ end
 Remove the named array from point data, cell data, or both. Searches point
 data first, then cell data. Throws an error if the array is not found.
 """
-function remove_array!(grid, name; point=true, cell=true)
+function remove_array!(grid, name; point = true, cell = true)
     name = String(name)
     if point && HasArray(point_data(grid), name)
         RemoveArray(point_data(grid), name)
@@ -161,8 +161,10 @@ function remove_array!(grid, name; point=true, cell=true)
         RemoveArray(cell_data(grid), name)
         return grid
     end
-    error("array '$name' not found in " *
-          (point && cell ? "point or cell data" : point ? "point data" : "cell data"))
+    error(
+        "array '$name' not found in " *
+            (point && cell ? "point or cell data" : point ? "point data" : "cell data")
+    )
 end
 
 """
@@ -295,34 +297,6 @@ function read_vtm(path)
     return MultiBlockDataSet(GetOutput(reader))
 end
 
-# ---- CFD readers: EnSight Gold + CGNS ----
-
-"""
-    read_ensight(path) -> vtkMultiBlockDataSet
-
-Read an EnSight Gold case file (`.case`). The output is a multiblock
-dataset with one block per part; variables are stored in field data.
-"""
-function read_ensight(path)
-    reader = EnSightGoldReader_new()
-    SetCaseFileName(reader, String(path))
-    update!(reader)
-    return MultiBlockDataSet(GetOutput(reader))
-end
-
-"""
-    read_cgns(path) -> vtkMultiBlockDataSet
-
-Read a CGNS (CFD General Notation System) file. The output is a multiblock
-dataset with one block per zone; data arrays may live at nodes, cells, or
-faces depending on the file.
-"""
-function read_cgns(path)
-    reader = CGNSReader_new()
-    SetFileName(reader, String(path))
-    update!(reader)
-    return MultiBlockDataSet(GetOutput(reader))
-end
 
 # ---- parallel XML readers ----
 
@@ -418,3 +392,4 @@ MultiBlockDataSet(n::Integer) = let mb = MultiBlockDataSet_new()
     SetNumberOfBlocks(mb, n)
     mb
 end
+

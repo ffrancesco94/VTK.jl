@@ -44,8 +44,8 @@ from:
 
 The source defaults to upstream `main`. Set `VTKJL_WRAPIT_UPDATE=1` to advance
 an existing checkout, or use `VTKJL_WRAPIT_REPO` and `VTKJL_WRAPIT_REF` to select
-another repository, a release tag, or a pinned full commit SHA (release builds
-use `gen/wrapit/wrapit.pin`; a SHA is fetched directly since `git clone -b`
+another repository, a release tag, or a pinned full commit SHA (CI and release
+builds use `gen/wrapit/wrapit.pin`; a SHA is fetched directly since `git clone -b`
 only accepts branches/tags). Changing the configured repository or ref also
 triggers a rebuild.
 

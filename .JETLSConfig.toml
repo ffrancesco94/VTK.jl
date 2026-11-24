@@ -1,0 +1,9 @@
+[full_analysis]
+auto_instantiate = "always"      # was "prompt" — in nvim the prompt is easy to miss
+concretization_timeout = 120.0    # VTK.jl is heavy; default is 10 s
+
+[inlay_hint.types]
+enabled = true                    # default, but be explicit
+
+[diagnostic]
+all_files = true                  # default: analyze every file in the workspace

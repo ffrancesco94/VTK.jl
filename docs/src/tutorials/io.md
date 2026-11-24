@@ -25,7 +25,8 @@ files, and `read_pvtp` reads parallel PVTK poly-data summaries — all
 returning `vtkMultiBlockDataSet` (or `vtkPolyData` for `read_pvtp`).
 `read_legacy_vtk` reads legacy VTK files (`.vtk`) of any dataset type.
 Readers return owning smart pointers, so the grid stays alive as long as
-you hold it.
+you hold it. Files with a time series (transient EnSight/CGNS) can also
+be stepped through explicitly — see *Time-dependent CFD data* below.
 
 ## Writing VTK files
 
@@ -75,6 +76,47 @@ Blocks are borrowed views owned by the multiblock dataset, so you need to keep
 blocks one level deeper than expected (e.g. WriteVTK puts each named group in
 its own sub-block); `nblocks`/`block` compose, so just descend until you reach
 a data grid.
+
+## Time-dependent CFD data (transient cases)
+
+EnSight Gold and CGNS files can carry a time series. The one-shot
+`read_ensight`/`read_cgns` above return the reader's current output; to step
+through time explicitly, open the file as a *temporal reader*:
+
+```julia
+reader = VTK.EnSightReader("transient.case")   # or VTK.CGNSReader("case.cgns")
+
+VTK.timesteps(reader)        # time values stored in the file, e.g. [0.0, 0.5]
+length(reader)               # number of available timesteps
+
+mb2 = VTK.read_timestep(reader, 2)   # 1-based index; steps can be read in any order
+mb0 = VTK.read_timestep(reader, 1)
+
+mb = VTK.read_at(reader, 0.5)        # lookup by time value
+```
+
+Each call returns the reader's output downcast to its concrete type (a
+`vtkMultiBlockDataSet` for both formats), exactly like `read_ensight`/
+`read_cgns`. Two things to know:
+
+- The result is a *borrowed* view of the reader's pipeline output — reading
+  another timestep overwrites it. Pass `copy = true` for a detached deep copy
+  that survives later reads:
+
+  ```julia
+  snapshot = VTK.read_timestep(reader, 1; copy = true)
+  VTK.read_timestep(reader, 2)        # `snapshot` is unaffected
+  ```
+
+- `read_at(reader, t; atol=0, rtol=0)` matches `t` approximately and throws an
+  `ArgumentError` if it is missing or matches several timesteps — use
+  `read_timestep(reader, i)` in those cases. `read_timestep` throws a
+  `BoundsError` for an out-of-range index. Iterate over all steps with
+  `VTK.eachstep(reader; copy = true)`.
+
+Steady files work through the same interface: a steady EnSight case reports
+no timesteps (`isempty(VTK.timesteps(r))`), while a static CGNS file reports
+a single step (`VTK.timesteps(r) == [0.0]`).
 
 ## Interop with WriteVTK.jl
 

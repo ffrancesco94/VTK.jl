@@ -21,6 +21,7 @@ makedocs(;
     pages = [
         "Home" => "index.md",
         "Getting started" => "getting_started.md",
+        "Capability matrix" => "capability_matrix.md",
         "Tutorials" => [
             "Building a mesh" => "tutorials/mesh.md",
             "Data arrays & fields" => "tutorials/arrays.md",

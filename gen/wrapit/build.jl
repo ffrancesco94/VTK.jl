@@ -89,7 +89,7 @@ function check_shim_types_registered!()
                 "vtkJuliaOutputWindow", "vtkSmartPointer", "vtkArrayDispatch",
                 # macros / includes / comments, never boxed as class types
                 "vtkAOSDataArrayTemplate", "vtkArrayTypes", "vtkObjectFactory",
-                "vtkStandardNewMacro", "vtkTypeMacro", "vtkType")
+                "vtkStandardNewMacro", "vtkTypeMacro", "vtkType", "vtkInformation", "vtkStreamingDemandDrivenPipeline")
     missing = sort!(collect(t for t in used if
         !any(startswith(t, p) for p in internal) &&
         !occursin("add_type<$t>", classes)))

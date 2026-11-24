@@ -1292,6 +1292,11 @@ if isdefined(@__MODULE__, Symbol("DeepCopy")) && isdefined(@__MODULE__, :vtkUnst
         DeepCopy(_cp(vtkUnstructuredGridBase, a1), _cp(vtkDataObject, a2))
 end
 
+if isdefined(@__MODULE__, Symbol("DeepCopyDataObject")) && isdefined(@__MODULE__, :vtkDataObject)
+    DeepCopyDataObject(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
+        DeepCopyDataObject(_cp(vtkDataObject, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("DelegationOff")) && isdefined(@__MODULE__, :vtkDataSetSurfaceFilter)
     DelegationOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetSurfaceFilter}) =
         DelegationOff(_cp(vtkDataSetSurfaceFilter, a1))
@@ -6052,6 +6057,11 @@ if isdefined(@__MODULE__, Symbol("GetTimeStepRange")) && isdefined(@__MODULE__, 
         GetTimeStepRange(_cp(vtkXMLReader, a1), a2, a3)
 end
 
+if isdefined(@__MODULE__, Symbol("GetTimeSteps")) && isdefined(@__MODULE__, :vtkAlgorithm)
+    GetTimeSteps(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}) =
+        GetTimeSteps(_cp(vtkAlgorithm, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetTimeValue")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
     GetTimeValue(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkGenericEnSightReader}) =
         GetTimeValue(_cp(vtkGenericEnSightReader, a1))
@@ -7732,54 +7742,54 @@ if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :v
         ProcessRequest(_cp(vtkAlgorithm, a1), _cp(vtkInformation, a2), _cp(vtkCollection, a3), _cp(vtkInformationVector, a4))
 end
 
-if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector)
-    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
-        ProcessRequest(_cp(vtkAlgorithm, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
+if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector) && isdefined(@__MODULE__, :vtkInformationVector)
+    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
+        ProcessRequest(_cp(vtkAlgorithm, a1), _cp(vtkInformation, a2), _cp(vtkInformationVector, a3), _cp(vtkInformationVector, a4))
 end
 
-if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkDataObjectAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector)
-    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObjectAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
-        ProcessRequest(_cp(vtkDataObjectAlgorithm, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
+if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkDataObjectAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector) && isdefined(@__MODULE__, :vtkInformationVector)
+    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObjectAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
+        ProcessRequest(_cp(vtkDataObjectAlgorithm, a1), _cp(vtkInformation, a2), _cp(vtkInformationVector, a3), _cp(vtkInformationVector, a4))
 end
 
-if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkDataSetAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector)
-    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
-        ProcessRequest(_cp(vtkDataSetAlgorithm, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
+if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkDataSetAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector) && isdefined(@__MODULE__, :vtkInformationVector)
+    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
+        ProcessRequest(_cp(vtkDataSetAlgorithm, a1), _cp(vtkInformation, a2), _cp(vtkInformationVector, a3), _cp(vtkInformationVector, a4))
 end
 
-if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkMultiBlockDataSetAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector)
-    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMultiBlockDataSetAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
-        ProcessRequest(_cp(vtkMultiBlockDataSetAlgorithm, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
+if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkMultiBlockDataSetAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector) && isdefined(@__MODULE__, :vtkInformationVector)
+    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMultiBlockDataSetAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
+        ProcessRequest(_cp(vtkMultiBlockDataSetAlgorithm, a1), _cp(vtkInformation, a2), _cp(vtkInformationVector, a3), _cp(vtkInformationVector, a4))
 end
 
-if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector)
-    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPassInputTypeAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
-        ProcessRequest(_cp(vtkPassInputTypeAlgorithm, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
+if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkPassInputTypeAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector) && isdefined(@__MODULE__, :vtkInformationVector)
+    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPassInputTypeAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
+        ProcessRequest(_cp(vtkPassInputTypeAlgorithm, a1), _cp(vtkInformation, a2), _cp(vtkInformationVector, a3), _cp(vtkInformationVector, a4))
 end
 
-if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkPolyDataAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector)
-    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
-        ProcessRequest(_cp(vtkPolyDataAlgorithm, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
+if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkPolyDataAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector) && isdefined(@__MODULE__, :vtkInformationVector)
+    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyDataAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
+        ProcessRequest(_cp(vtkPolyDataAlgorithm, a1), _cp(vtkInformation, a2), _cp(vtkInformationVector, a3), _cp(vtkInformationVector, a4))
 end
 
-if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkUnstructuredGridAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector)
-    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
-        ProcessRequest(_cp(vtkUnstructuredGridAlgorithm, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
+if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkUnstructuredGridAlgorithm) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector) && isdefined(@__MODULE__, :vtkInformationVector)
+    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkUnstructuredGridAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
+        ProcessRequest(_cp(vtkUnstructuredGridAlgorithm, a1), _cp(vtkInformation, a2), _cp(vtkInformationVector, a3), _cp(vtkInformationVector, a4))
 end
 
-if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkXMLReader) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector)
-    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
-        ProcessRequest(_cp(vtkXMLReader, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
+if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkXMLReader) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector) && isdefined(@__MODULE__, :vtkInformationVector)
+    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLReader}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
+        ProcessRequest(_cp(vtkXMLReader, a1), _cp(vtkInformation, a2), _cp(vtkInformationVector, a3), _cp(vtkInformationVector, a4))
 end
 
-if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkXMLUnstructuredDataWriter) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector)
-    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLUnstructuredDataWriter}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
-        ProcessRequest(_cp(vtkXMLUnstructuredDataWriter, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
+if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkXMLUnstructuredDataWriter) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector) && isdefined(@__MODULE__, :vtkInformationVector)
+    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLUnstructuredDataWriter}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
+        ProcessRequest(_cp(vtkXMLUnstructuredDataWriter, a1), _cp(vtkInformation, a2), _cp(vtkInformationVector, a3), _cp(vtkInformationVector, a4))
 end
 
-if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkXMLWriter) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector)
-    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLWriter}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
-        ProcessRequest(_cp(vtkXMLWriter, a1), _cp(vtkInformation, a2), a3, _cp(vtkInformationVector, a4))
+if isdefined(@__MODULE__, Symbol("ProcessRequest")) && isdefined(@__MODULE__, :vtkXMLWriter) && isdefined(@__MODULE__, :vtkInformation) && isdefined(@__MODULE__, :vtkInformationVector) && isdefined(@__MODULE__, :vtkInformationVector)
+    ProcessRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLWriter}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}, a4::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformationVector}) =
+        ProcessRequest(_cp(vtkXMLWriter, a1), _cp(vtkInformation, a2), _cp(vtkInformationVector, a3), _cp(vtkInformationVector, a4))
 end
 
 if isdefined(@__MODULE__, Symbol("ProjectPoint")) && isdefined(@__MODULE__, :vtkPlane)
@@ -11932,6 +11942,9 @@ end
 AddArray(a1::CxxWrap.CxxWrapCore.SmartPointer, a2::CxxWrap.CxxWrapCore.SmartPointer) =
     AddArray(_cp(vtkFieldData, a1), _cp(vtkDataArray, a2))
 
+DeepCopyDataObject(a1::CxxWrap.CxxWrapCore.SmartPointer) =
+    DeepCopyDataObject(_cp(vtkDataObject, a1))
+
 GetArray(a1::CxxWrap.CxxWrapCore.SmartPointer, a2) =
     GetArray(_cp(vtkFieldData, a1), a2)
 
@@ -11985,6 +11998,9 @@ GetPointData(a1::CxxWrap.CxxWrapCore.SmartPointer) =
 
 GetPoints(a1::CxxWrap.CxxWrapCore.SmartPointer) =
     GetPoints(_cp(vtkPointSet, a1))
+
+GetTimeSteps(a1::CxxWrap.CxxWrapCore.SmartPointer) =
+    GetTimeSteps(_cp(vtkAlgorithm, a1))
 
 HasArray(a1::CxxWrap.CxxWrapCore.SmartPointer, a2) =
     HasArray(_cp(vtkFieldData, a1), a2)
