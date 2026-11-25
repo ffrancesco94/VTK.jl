@@ -18,7 +18,8 @@ workflow changes.
   `src/generated_methods.jl`, smart-pointer overloads that forward to the
   raw-pointer bindings through `_cp`; regenerate it after binding changes.
   The legacy hand-written CMake wrapper was removed 2026-10-29.
-- Test counts: **217/217**.
+- Test counts: **455/455 serial**, **457/457** with `JULIA_NUM_THREADS=4` and
+  `--gcthreads=2` (the two extra assertions exercise multithread-only drains).
 - WrapIt is built **from source** from upstream `grasph/wrapit` (main), not
   from WrapIt_jll; see `gen/wrapit/wrapit_src.jl`. `VTKJL_WRAPIT_REPO` and
   `VTKJL_WRAPIT_REF` override the source; changing either triggers a rebuild.
@@ -57,6 +58,18 @@ workflow changes.
   branches/tags). The publish workflow also drops the not-yet-registered
   `VTK_julia_jll` compat bound for the `VTKJL_LIB` test run only (restored
   via trap), since the resolver cannot satisfy it before the JLL registers.
+- **Never destroy VTK smart pointers directly in finalizers.** The specialized
+  CxxWrap finalizer queues them; serial high-level calls drain automatically,
+  while multithreaded/raw batches need `drain_vtk_deletions(force=true)` at a
+  verified quiescent point. Do not bypass the queue with `UnRegister`/`delete`.
+- **Diagnostics are scoped, not global.** High-level operations use
+  `ScopedUpdate`/`ScopedWrite` etc. and per-algorithm `vtkCommand` observers;
+  raw generated `Update`/`Write` calls intentionally remain unchecked. Do not
+  reintroduce a process-global output-window buffer.
+- **Native sanitizers:** `VTKJL_SANITIZE=address,undefined` forwards sanitizer
+  flags to the wrapper compile/link. See
+  `docs/src/implementation/sanitizers.md` for the required `LD_PRELOAD` test
+  invocation. Clear the VTK precompile cache when replacing that library.
 - Kaimon MCP Julia sessions are optional for this repo, but should be used
   when possible; plain `julia --project=...` works for builds/tests.
 

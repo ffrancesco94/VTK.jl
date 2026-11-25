@@ -13,8 +13,10 @@ const VTKCellType = VTKCellTypes.VTKCellType
 Type of the i-th cell (1-based) as a VTKBase `VTKCellType` (has `.vtk_id`
 and `VTKCellTypes.name`).
 """
-cell_type(grid, i::Integer) =
-    VTKCellTypes.VTKCellType(GetCellTypeId(grid, i - 1))
+function cell_type(grid, i::Integer)
+    1 <= i <= ncells(grid) || throw(BoundsError(grid, i))
+    return VTKCellTypes.VTKCellType(GetCellTypeId(grid, i - 1))
+end
 
 """
     cell_connectivity(grid, i) -> Vector{Int}
@@ -22,8 +24,10 @@ cell_type(grid, i::Integer) =
 1-based point indices of the i-th cell (1-based), following WriteVTK's
 connectivity convention.
 """
-cell_connectivity(grid, i::Integer) =
-    Int.(GetCellPointIds(grid, i - 1)) .+ 1
+function cell_connectivity(grid, i::Integer)
+    1 <= i <= ncells(grid) || throw(BoundsError(grid, i))
+    return Int.(GetCellPointIds(grid, i - 1)) .+ 1
+end
 
 """
     cell(grid, i) -> MeshCell

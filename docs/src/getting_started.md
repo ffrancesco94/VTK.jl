@@ -62,7 +62,7 @@ using VTK
 julia -e 'using Pkg; Pkg.test()'
 ```
 
-The suite (217 tests) includes analytic validations (e.g. clipping a unit hex
+The suite (455 serial tests, plus multithread/GC stress coverage) includes analytic validations (e.g. clipping a unit hex
 against the plane x+y+z=1 yields exactly the tetrahedron), cross-validation
 against the independent pure-Julia packages ReadVTK.jl and WriteVTK.jl, and
 transient EnSight/CGNS cases (timestep iteration, time-based lookup,

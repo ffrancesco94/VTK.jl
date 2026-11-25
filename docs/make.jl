@@ -32,6 +32,8 @@ makedocs(;
         "Implementation notes" => [
             "Architecture & layering" => "implementation/architecture.md",
             "Memory & ownership" => "implementation/ownership.md",
+            "Diagnostics & failures" => "implementation/diagnostics.md",
+            "Native sanitizer checks" => "implementation/sanitizers.md",
             "Zero-copy array views" => "implementation/zerocopy.md",
             "The WrapIt driver" => "implementation/wrapit.md",
             "Extending the bindings" => "implementation/extending.md",

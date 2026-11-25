@@ -132,6 +132,14 @@ end
             @test VTK.timesteps(reader) == [0.0, 0.5]
             @test length(reader) == 2
 
+            # Callers receive isolated timestep metadata, not the reader's
+            # mutable internal vector.
+            times = VTK.timesteps(reader)
+            times[1] = -1.0
+            push!(times, 2.0)
+            @test VTK.timesteps(reader) == [0.0, 0.5]
+            @test length(reader) == 2
+
             # Read out of order to ensure selection is not just "advance once".
             mb1 = VTK.read_timestep(reader, 2)
             @test scalar_values(mb1, "s") == collect(10.0:17.0)
@@ -149,8 +157,16 @@ end
             @test_throws BoundsError VTK.read_timestep(reader, 0)
             @test_throws BoundsError VTK.read_timestep(reader, 3)
 
-            # A deep-copied result must survive subsequent reader updates.
-            snapshot = VTK.read_timestep(reader, 1; copy = true)
+            # Collected steps use detached copies by default and must retain
+            # their own values after the reader advances again.
+            steps = collect(VTK.eachstep(reader))
+            VTK.read_timestep(reader, 1)
+            @test length(steps) == 2
+            @test scalar_values(steps[1], "s") == collect(0.0:7.0)
+            @test scalar_values(steps[2], "s") == collect(10.0:17.0)
+
+            # The default read_timestep result is also detached.
+            snapshot = VTK.read_timestep(reader, 1)
             VTK.read_timestep(reader, 2)
             @test scalar_values(snapshot, "s") == collect(0.0:7.0)
         end
