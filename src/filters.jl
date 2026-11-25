@@ -6,8 +6,11 @@ function _coordinates3(value, label)
     catch
         throw(ArgumentError("$label must contain exactly three real coordinates"))
     end
-    length(values) == 3 || throw(ArgumentError(
-        "$label must contain exactly three coordinates, got $(length(values))"))
+    length(values) == 3 || throw(
+        ArgumentError(
+            "$label must contain exactly three coordinates, got $(length(values))"
+        )
+    )
     all(x -> x isa Real, values) ||
         throw(ArgumentError("$label coordinates must be real numbers"))
     return Float64.(values)
@@ -111,7 +114,7 @@ macro vtk_filter(sig, config)
     isempty(pos_args) && push!(pos_args, :grid)  # default
 
     # Extract kwargs from parameters block
-    kwargs = Pair{Symbol,Any}[]
+    kwargs = Pair{Symbol, Any}[]
     if params_idx !== nothing
         for kw in sig.args[params_idx].args
             if isa(kw, Expr) && kw.head == :kw
@@ -165,8 +168,10 @@ Clip `grid` by an implicit function (see `plane`). Keeps the region where the
 function evaluates negative unless `insideout=true`. The output is always an
 unstructured grid, regardless of the input grid type.
 """
-@vtk_filter clip(grid, implicitfn, TableBasedClipDataSet → vtkUnstructuredGrid;
-                insideout=false) begin
+@vtk_filter clip(
+    grid, implicitfn, TableBasedClipDataSet → vtkUnstructuredGrid;
+    insideout = false
+) begin
     SetClipFunction(f, implicitfn)
     SetInsideOut(f, insideout)
 end
@@ -191,8 +196,10 @@ Keywords:
 - `pass_data`: pass the input field data through to the output (default false)
 - `arrays`: process only these arrays (default all). Disables `ProcessAllArrays`.
 """
-@vtk_filter cell_to_point(grid, CellDataToPointData → pass_through;
-                          pass_data=false, arrays=nothing) begin
+@vtk_filter cell_to_point(
+    grid, CellDataToPointData → pass_through;
+    pass_data = false, arrays = nothing
+) begin
     if pass_data
         PassCellDataOn(f)
     end
@@ -204,8 +211,10 @@ Keywords:
     end
 end
 
-@vtk_filter point_to_cell(grid, PointDataToCellData → pass_through;
-                          pass_data=false, arrays=nothing) begin
+@vtk_filter point_to_cell(
+    grid, PointDataToCellData → pass_through;
+    pass_data = false, arrays = nothing
+) begin
     if pass_data
         PassPointDataOn(f)
     end
@@ -223,10 +232,13 @@ end
 Isosurface(s) of the active scalar at the given value(s). Pass `scalars` to
 select the point-data array by name without changing the input's active scalar.
 """
-@vtk_filter contour(grid, values, ContourFilter → vtkPolyData;
-                   scalars=nothing) begin
+@vtk_filter contour(
+    grid, values, ContourFilter → vtkPolyData;
+    scalars = nothing
+) begin
     scalars === nothing || SetInputArrayToProcess(
-        _cp(vtkAlgorithm, f), 0, 0, 0, 0, String(scalars))
+        _cp(vtkAlgorithm, f), 0, 0, 0, 0, String(scalars)
+    )
     for (i, v) in enumerate(values)
         SetContourValue(f, i - 1, v)
     end
@@ -254,8 +266,10 @@ scalars). The result is stored as a new point-data array named `result`.
 grid2 = VTK.calculator(grid; scalars="temperature", expression="temperature * 2", result="T2")
 ```
 """
-@vtk_filter calculator(grid, ArrayCalculator → pass_through;
-                      scalars=nothing, expression="", result="result") begin
+@vtk_filter calculator(
+    grid, ArrayCalculator → pass_through;
+    scalars = nothing, expression = "", result = "result"
+) begin
     SetAttributeType(f, 0)  # POINT data
     scalars === nothing || AddScalarVariable(f, String(scalars), String(scalars))
     SetFunction(f, String(expression))
@@ -276,8 +290,10 @@ type is recovered with generic downcast.
 grid2 = VTK.gradient(grid; scalars="temperature", result="grad_T")
 ```
 """
-@vtk_filter gradient(grid, GradientFilter → pass_through;
-                    scalars=nothing, result="Gradients") begin
+@vtk_filter gradient(
+    grid, GradientFilter → pass_through;
+    scalars = nothing, result = "Gradients"
+) begin
     scalars === nothing || SetInputScalars(f, 0, String(scalars))
     SetResultArrayName(f, String(result))
     SetComputeGradient(f, 1)
@@ -296,10 +312,13 @@ to select the input array by name without changing the input's active scalar
 hot = VTK.threshold(grid; scalars="temperature", lower=1.5, upper=3.0)
 ```
 """
-@vtk_filter threshold(grid, Threshold → vtkUnstructuredGrid;
-                     scalars=nothing, lower=nothing, upper=nothing, invert=false) begin
+@vtk_filter threshold(
+    grid, Threshold → vtkUnstructuredGrid;
+    scalars = nothing, lower = nothing, upper = nothing, invert = false
+) begin
     scalars === nothing || SetInputArrayToProcess(
-        _cp(vtkAlgorithm, f), 0, 0, 0, 0, String(scalars))
+        _cp(vtkAlgorithm, f), 0, 0, 0, 0, String(scalars)
+    )
     lower === nothing || SetLowerThreshold(f, lower)
     upper === nothing || SetUpperThreshold(f, upper)
     SetInvert(f, invert)
@@ -320,8 +339,10 @@ seeds = VTK.line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution=10)
 lines = VTK.stream_tracer(grid, seeds; vectors="velocity")
 ```
 """
-@vtk_filter stream_tracer(grid, seeds, StreamTracer → vtkPolyData;
-                         vectors=nothing, integration_direction="forward") begin
+@vtk_filter stream_tracer(
+    grid, seeds, StreamTracer → vtkPolyData;
+    vectors = nothing, integration_direction = "forward"
+) begin
     if integration_direction == "forward"
         SetIntegrationDirection(f, 1)
     elseif integration_direction == "backward"
@@ -329,12 +350,16 @@ lines = VTK.stream_tracer(grid, seeds; vectors="velocity")
     elseif integration_direction == "both"
         SetIntegrationDirection(f, 2)
     else
-        throw(ArgumentError(
-            "integration_direction must be \"forward\", \"backward\", or \"both\"; " *
-            "got $(repr(integration_direction))"))
+        throw(
+            ArgumentError(
+                "integration_direction must be \"forward\", \"backward\", or \"both\"; " *
+                    "got $(repr(integration_direction))"
+            )
+        )
     end
     vectors === nothing || SetInputArrayToProcess(
-        _cp(vtkAlgorithm, f), 0, 0, 0, 0, String(vectors))
+        _cp(vtkAlgorithm, f), 0, 0, 0, 0, String(vectors)
+    )
     SetSourceData(f, seeds)
 end
 
@@ -344,24 +369,27 @@ end
 Internal implementation for `Experimental.particle_tracer`. `seed_source` must
 be a VTK algorithm, not the `PolyData` returned by `line_source`.
 """
-@vtk_filter _particle_tracer(grid, seed_source, ParticleTracer → vtkPolyData;
-                           vectors=nothing) begin
+@vtk_filter _particle_tracer(
+    grid, seed_source, ParticleTracer → vtkPolyData;
+    vectors = nothing
+) begin
     vectors === nothing || SetInputArrayToProcess(
-        _cp(vtkAlgorithm, f), 0, 0, 0, 0, String(vectors))
+        _cp(vtkAlgorithm, f), 0, 0, 0, 0, String(vectors)
+    )
     AddSourceConnection(_cp(vtkParticleTracerBase, f), GetOutputPort(seed_source))
 end
 
 module Experimental
-using ..VTK: _particle_tracer
+    using ..VTK: _particle_tracer
 
-"""
-    Experimental.particle_tracer(args...; kwargs...)
+    """
+        Experimental.particle_tracer(args...; kwargs...)
 
-Unvalidated particle-tracer execution. This API is explicitly experimental:
-the static-grid crash is unresolved and no temporal execution path is
-advertised. Use `VTK.stream_tracer` for static vector fields.
-"""
-particle_tracer(args...; kwargs...) = _particle_tracer(args...; kwargs...)
+    Unvalidated particle-tracer execution. This API is explicitly experimental:
+    the static-grid crash is unresolved and no temporal execution path is
+    advertised. Use `VTK.stream_tracer` for static vector fields.
+    """
+    particle_tracer(args...; kwargs...) = _particle_tracer(args...; kwargs...)
 end
 
 """
@@ -376,9 +404,12 @@ as seed points for `stream_tracer` or as a probe line for `sample_over_line`.
 line = VTK.line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution=50)
 ```
 """
-function line_source(p1, p2; resolution=100)
-    resolution isa Integer && resolution >= 1 || throw(ArgumentError(
-        "resolution must be a positive integer, got $(repr(resolution))"))
+function line_source(p1, p2; resolution = 100)
+    resolution isa Integer && resolution >= 1 || throw(
+        ArgumentError(
+            "resolution must be a positive integer, got $(repr(resolution))"
+        )
+    )
     src = LineSource_new()
     SetPoint1(src, _coordinates3(p1, "p1")...)
     SetPoint2(src, _coordinates3(p2, "p2")...)
@@ -405,20 +436,20 @@ passed through. Array selection never modifies the source dataset.
 profile = VTK.sample_over_line(grid, (0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution=50)
 ```
 """
-function sample_over_line(grid, p1, p2; resolution=100, scalars=nothing)
+function sample_over_line(grid, p1, p2; resolution = 100, scalars = nothing)
     selected = Set{String}()
     if scalars !== nothing
         names = (scalars isa AbstractString || scalars isa Symbol) ? (scalars,) : scalars
         for name in names
             name = String(name)
-            if !HasArray(point_data(grid), name) && !HasArray(cell_data(grid), name)
+            if !haskey(point_data(grid), name) && !haskey(cell_data(grid), name)
                 throw(ArgumentError("array '$name' not found in source point or cell data"))
             end
             push!(selected, name)
         end
     end
 
-    line = line_source(p1, p2; resolution=resolution)
+    line = line_source(p1, p2; resolution = resolution)
     probe = ProbeFilter_new()
     SetInputData(probe, line)   # points to probe at
     SetSourceData(probe, grid)  # dataset to probe from
@@ -426,11 +457,10 @@ function sample_over_line(grid, p1, p2; resolution=100, scalars=nothing)
     output = downcast(checked_output(probe))
 
     if scalars !== nothing
-        for fd in (point_data(output), cell_data(output))
-            for name in field_array_names(fd)
-                name = String(name)
+        for data in (point_data(output), cell_data(output))
+            for name in keys(data)
                 if name != "vtkValidPointMask" && !(name in selected)
-                    RemoveArray(fd, name)
+                    delete!(data, name)
                 end
             end
         end

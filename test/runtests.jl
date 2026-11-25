@@ -6,6 +6,7 @@ using Test
     include("smartptr.jl")
     include("typedarray.jl")
     include("cells.jl")
+    include("field_data.jl")
     include("filters.jl")
     include("oracle.jl")
     include("io_structured.jl")

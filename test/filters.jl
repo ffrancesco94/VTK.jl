@@ -5,8 +5,10 @@ using Test
 function hex_mesh_with_temperature()
     pts = VTK.Points()
     VTK.npoints!(pts, 8)
-    coords = [(0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0),
-        (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)]
+    coords = [
+        (0, 0, 0), (1, 0, 0), (1, 1, 0), (0, 1, 0),
+        (0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1),
+    ]
     for (i, c) in enumerate(coords)
         pts[i] = c
     end
@@ -43,8 +45,10 @@ function filter_vector_array(name, values)
 end
 
 function filter_field_snapshot(fd)
-    return Dict(String(name) => copy(vec(VTK.data(VTK.field_array(fd, name))))
-                for name in VTK.field_array_names(fd))
+    return Dict(
+        String(name) => copy(vec(VTK.data(VTK.field_array(fd, name))))
+            for name in VTK.field_array_names(fd)
+    )
 end
 
 @testset "XML I/O roundtrip" begin
@@ -82,7 +86,7 @@ end
     @test VTK.ncells(clipped) == 1
     @test VTK.npoints(clipped) == 4
     c = VTK.data(VTK.points_array(VTK.points(clipped)))
-    @test maximum(c[1, :] .+ c[2, :] .+ c[3, :]) <= 1.0 + 1e-12
+    @test maximum(c[1, :] .+ c[2, :] .+ c[3, :]) <= 1.0 + 1.0e-12
 
     # the default side keeps the complement (contains the (1,1,1) vertex)
     other = VTK.clip(ug, p)
@@ -114,15 +118,17 @@ end
     surf = VTK.contour(ug, [1.5]; scalars = "temperature")
     @test VTK.npoints(surf) > 0
     cs = VTK.data(VTK.points_array(VTK.points(surf)))
-    @test all(isapprox.(cs[1, :] .+ cs[2, :] .+ cs[3, :], 1.5; atol = 1e-8))
+    @test all(isapprox.(cs[1, :] .+ cs[2, :] .+ cs[3, :], 1.5; atol = 1.0e-8))
 
     # external surface of the hex
     ext = VTK.extract_surface(ug)
     @test VTK.npoints(ext) == 8
 
     # calculator: double the temperature field
-    calc = VTK.calculator(ug; scalars = "temperature",
-                          expression = "temperature * 2", result = "T2")
+    calc = VTK.calculator(
+        ug; scalars = "temperature",
+        expression = "temperature * 2", result = "T2"
+    )
     arr = VTK.field_array(VTK.point_data(calc), "T2")
     @test arr !== nothing
     @test vec(VTK.data(arr)) ≈ 2 .* [0, 1, 2, 1, 1, 2, 3, 2]
@@ -134,9 +140,9 @@ end
     @test garr !== nothing
     gdata = VTK.data(garr)
     @test size(gdata) == (3, 8)
-    @test all(isapprox.(gdata[1, :], 1.0; atol = 1e-6))
-    @test all(isapprox.(gdata[2, :], 1.0; atol = 1e-6))
-    @test all(isapprox.(gdata[3, :], 1.0; atol = 1e-6))
+    @test all(isapprox.(gdata[1, :], 1.0; atol = 1.0e-6))
+    @test all(isapprox.(gdata[2, :], 1.0; atol = 1.0e-6))
+    @test all(isapprox.(gdata[3, :], 1.0; atol = 1.0e-6))
 
     # threshold: keep cells where all points have T in [1.5, 3.0]
     # The hex has points with T < 1.5, so this should be empty
@@ -157,7 +163,7 @@ end
     # sampled values should be close to x+y+z along the diagonal
     parr = VTK.field_array(VTK.point_data(profile), "temperature")
     @test parr !== nothing
-    @test isapprox(vec(VTK.data(parr)), [0.0, 0.6, 1.2, 1.8, 2.4, 3.0]; atol = 1e-6)
+    @test isapprox(vec(VTK.data(parr)), [0.0, 0.6, 1.2, 1.8, 2.4, 3.0]; atol = 1.0e-6)
     mask = VTK.field_array(VTK.point_data(profile), "vtkValidPointMask")
     @test mask !== nothing
     @test all(==(1), vec(VTK.data(mask)))
@@ -187,39 +193,46 @@ end
     ug = hex_mesh_with_temperature()
     tvals = [0.0, 1.0, 2.0, 1.0, 1.0, 2.0, 3.0, 2.0]
     VTK.add_array!(VTK.point_data(ug), filter_scalar_array("other", 10 .* tvals))
-    VTK.add_array!(VTK.point_data(ug),
-                   filter_vector_array("velocity", repeat([1.0, 0.0, 0.0], 1, 8)))
-    VTK.add_array!(VTK.point_data(ug),
-                   filter_vector_array("cross_velocity", repeat([0.0, 1.0, 0.0], 1, 8)))
+    VTK.add_array!(
+        VTK.point_data(ug),
+        filter_vector_array("velocity", repeat([1.0, 0.0, 0.0], 1, 8))
+    )
+    VTK.add_array!(
+        VTK.point_data(ug),
+        filter_vector_array("cross_velocity", repeat([0.0, 1.0, 0.0], 1, 8))
+    )
     VTK.activate_point_data!(ug, "other")
-    VTK.SetActiveVectors(VTK.point_data(ug), "cross_velocity")
+    VTK.SetActiveVectors(VTK.GetPointData(ug), "cross_velocity")
     point_arrays_before = filter_field_snapshot(VTK.point_data(ug))
 
     # Selection is local to each algorithm; the decoy active scalar is retained.
     surf = VTK.contour(ug, [1.5]; scalars = "temperature")
     cs = VTK.data(VTK.points_array(VTK.points(surf)))
     @test VTK.npoints(surf) > 0
-    @test all(isapprox.(cs[1, :] .+ cs[2, :] .+ cs[3, :], 1.5; atol = 1e-8))
-    @test VTK.name(VTK.GetScalars(VTK.point_data(ug))) == "other"
+    @test all(isapprox.(cs[1, :] .+ cs[2, :] .+ cs[3, :], 1.5; atol = 1.0e-8))
+    @test VTK.name(VTK.GetScalars(VTK.GetPointData(ug))) == "other"
 
     thresh = VTK.threshold(ug; scalars = "temperature", lower = 0.0, upper = 3.0)
     @test VTK.ncells(thresh) == 1
-    @test VTK.name(VTK.GetScalars(VTK.point_data(ug))) == "other"
+    @test VTK.name(VTK.GetScalars(VTK.GetPointData(ug))) == "other"
 
     # The selected x-velocity leaves y fixed even though y-velocity is active.
     seeds = VTK.line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution = 2)
     for direction in ("forward", "backward", "both")
-        stream = VTK.stream_tracer(ug, seeds; vectors = "velocity",
-                                   integration_direction = direction)
+        stream = VTK.stream_tracer(
+            ug, seeds; vectors = "velocity",
+            integration_direction = direction
+        )
         @test VTK.npoints(stream) > 0
         @test VTK.name(VTK.GetVectors(VTK.point_data(ug))) == "cross_velocity"
         if direction == "forward"
             stream_coords = VTK.data(VTK.points_array(VTK.points(stream)))
-            @test all(isapprox.(stream_coords[2, :], 0.5; atol = 1e-8))
+            @test all(isapprox.(stream_coords[2, :], 0.5; atol = 1.0e-8))
         end
     end
     @test_throws ArgumentError VTK.stream_tracer(
-        ug, seeds; vectors = "velocity", integration_direction = "sideways")
+        ug, seeds; vectors = "velocity", integration_direction = "sideways"
+    )
 
     @test VTK.name(VTK.GetScalars(VTK.point_data(ug))) == "other"
     @test VTK.name(VTK.GetVectors(VTK.point_data(ug))) == "cross_velocity"
@@ -235,45 +248,65 @@ end
     point_arrays_before = filter_field_snapshot(VTK.point_data(ug))
     cell_arrays_before = filter_field_snapshot(VTK.cell_data(ug))
     has_sampled_array = (output, name) ->
-        VTK.HasArray(VTK.point_data(output), name) || VTK.HasArray(VTK.cell_data(output), name)
+    haskey(VTK.point_data(output), name) || VTK.haskey(VTK.cell_data(output), name)
 
-    profile = VTK.sample_over_line(ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0);
-                                   resolution = 4, scalars = "temperature")
+    profile = VTK.sample_over_line(
+        ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0);
+        resolution = 4, scalars = "temperature"
+    )
     @test sort(VTK.field_array_names(VTK.point_data(profile))) ==
-          ["temperature", "vtkValidPointMask"]
-    @test isapprox(vec(VTK.data(VTK.field_array(VTK.point_data(profile), "temperature"))),
-                   [0.0, 0.75, 1.5, 2.25, 3.0]; atol = 1e-6)
-    @test all(==(1), vec(VTK.data(
-        VTK.field_array(VTK.point_data(profile), "vtkValidPointMask"))))
+        ["temperature", "vtkValidPointMask"]
+    @test isapprox(
+        vec(VTK.data(VTK.field_array(VTK.point_data(profile), "temperature"))),
+        [0.0, 0.75, 1.5, 2.25, 3.0]; atol = 1.0e-6
+    )
+    @test all(
+        ==(1), vec(
+            VTK.data(
+                VTK.field_array(VTK.point_data(profile), "vtkValidPointMask")
+            )
+        )
+    )
     @test !has_sampled_array(profile, "other")
     @test !has_sampled_array(profile, "cell_constant")
 
     # Collections retain every requested array while still removing the rest.
-    multi = VTK.sample_over_line(ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0);
-                                 resolution = 2, scalars = ("temperature", "other"))
+    multi = VTK.sample_over_line(
+        ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0);
+        resolution = 2, scalars = ("temperature", "other")
+    )
     @test sort(VTK.field_array_names(VTK.point_data(multi))) ==
-          ["other", "temperature", "vtkValidPointMask"]
-    @test isapprox(vec(VTK.data(VTK.field_array(VTK.point_data(multi), "temperature"))),
-                   [0.0, 1.5, 3.0]; atol = 1e-6)
-    @test isapprox(vec(VTK.data(VTK.field_array(VTK.point_data(multi), "other"))),
-                   [0.0, 3.0, 6.0]; atol = 1e-6)
+        ["other", "temperature", "vtkValidPointMask"]
+    @test isapprox(
+        vec(VTK.data(VTK.field_array(VTK.point_data(multi), "temperature"))),
+        [0.0, 1.5, 3.0]; atol = 1.0e-6
+    )
+    @test isapprox(
+        vec(VTK.data(VTK.field_array(VTK.point_data(multi), "other"))),
+        [0.0, 3.0, 6.0]; atol = 1.0e-6
+    )
     @test !has_sampled_array(multi, "cell_constant")
 
     # A cell-data-only name is valid, and the validity mask survives filtering.
-    cell_only = VTK.sample_over_line(ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0);
-                                     resolution = 2, scalars = ["cell_constant"])
+    cell_only = VTK.sample_over_line(
+        ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0);
+        resolution = 2, scalars = ["cell_constant"]
+    )
     @test has_sampled_array(cell_only, "vtkValidPointMask")
     @test !has_sampled_array(cell_only, "temperature")
 
     # Omitting scalars preserves the existing pass-all behavior.
-    pass_all = VTK.sample_over_line(ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0);
-                                    resolution = 2)
+    pass_all = VTK.sample_over_line(
+        ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0);
+        resolution = 2
+    )
     @test has_sampled_array(pass_all, "temperature")
     @test has_sampled_array(pass_all, "other")
     @test has_sampled_array(pass_all, "vtkValidPointMask")
 
     @test_throws ArgumentError VTK.sample_over_line(
-        ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0); scalars = "absent")
+        ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0); scalars = "absent"
+    )
     @test VTK.name(VTK.GetScalars(VTK.point_data(ug))) == "other"
     @test filter_field_snapshot(VTK.point_data(ug)) == point_arrays_before
     @test filter_field_snapshot(VTK.cell_data(ug)) == cell_arrays_before
@@ -301,8 +334,10 @@ end
     f = VTK.TableBasedClipDataSet_new()
     VTK.SetInputData(VTK._cp(VTK.vtkAlgorithm, f), VTK._cp(VTK.vtkDataObject, ug))
     p = VTK.plane((1.0, 0.0, 0.0), (1.0, 1.0, 1.0))
-    VTK.SetClipFunction(VTK._cp(VTK.vtkTableBasedClipDataSet, f),
-                        VTK._cp(VTK.vtkImplicitFunction, p))
+    VTK.SetClipFunction(
+        VTK._cp(VTK.vtkTableBasedClipDataSet, f),
+        VTK._cp(VTK.vtkImplicitFunction, p)
+    )
     # vtkBooleanMacro: On/Off + typed getter
     VTK.InsideOutOn(VTK._cp(VTK.vtkTableBasedClipDataSet, f))
     @test VTK.GetInsideOut(VTK._cp(VTK.vtkTableBasedClipDataSet, f)) == 1

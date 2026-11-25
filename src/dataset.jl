@@ -242,7 +242,7 @@ _cell_data_handle(grid) = GetCellData(grid)
 
 function _association_view(grid::VTKSmartPointer{<:vtkDataSet}, association::Symbol)
     association === :point && return DataAssociation(GetPointData(grid), grid, :point)
-    associaation === :cell && return (GetCellData(grid), grid, :cell)
+    association === :cell && return (GetCellData(grid), grid, :cell)
 
     throw(ArgumentError("Association must be :point or :cell"))
 end
@@ -336,6 +336,24 @@ function add_array!(fd, da)
     return da
 end
 
+function add_array!(
+        data::DataAssociation,
+        array::VTKDataArray
+    )
+    array_name = name(array)
+    isempty(array_name) && throw(ArgumentError("An array added with add_array! must have a name"))
+    data[array_name] = array
+    return array
+end
+
+# This lets stuff like `add_array!(point_data(grid), da.obj` work
+function add_array!(
+        data::DataAssociation,
+        array::VTKSmartPointer{<:vtkDataArray}
+    )
+    return add_array!(data, VTKDataArray(array))
+end
+
 # ---- shared assignment ----
 
 _assignment_array(values::VTKDataArray) = values
@@ -343,7 +361,65 @@ _assignment_array(values::VTKSmartPointer{<:vtkDataArray}) = VTKDataArray(values
 _assignment_array(values::AbstractArray) = data_array(values)
 _assignment_array(values) = throw(ArgumentError("Field assignments expects an AbstractArray or VTKDataArray. Got $(typeof(values))"))
 
-# TODO: implement set_array!()
+"""
+    set_array!(grid, name, values; association=:point) -> VTKDataArray
+
+Attach `values` to the grid's point or cell data. Ordinary Julia arrays are
+copied into a VTK array, otherwise existing VTK arrays are attached without
+being copied. The assigned name becomes the VTK array name. 
+
+Point arrays must have `npoints(grid)` tuples and cell arrays must have `ncells(grid)` tuples. 
+"""
+function set_array!(grid::VTKSmartPointer{<:vtkDataSet}, name::AbstractString, values; association::Symbol = :point)
+    data = _association_view(grid, association)
+    array = _assignment_array(values)
+    expected = data.kind === :point ? npoints(grid) : ncells(grid)
+    ntuples(array) === expected || throw(
+        DimensionMismatch(
+            "$(data.kind) array '$name' has $(ntuples(array)) tuples; expected $expected"
+        )
+    )
+
+    name!(array, name)
+    AddArray(data.handle, array.obj)
+    return array
+end
+
+# Now the cool part: association-oriented assignment
+# point_data(grid)["temperature"] = values
+# cell_data(grid)["density"] = values
+function Base.setindex!(
+        data::DataAssociation,
+        values,
+        name::AbstractString
+    )
+    set_array!(data.dataset, name, values; association = data.kind)
+    return data
+end
+
+# Even cooler: grid lookup and assignment
+# grid["temperature", :point]
+# grid["density", :cell]
+function Base.getindex(
+        grid::VTKSmartPointer{<:vtkDataSet},
+        name::AbstractString,
+        association::Symbol
+    )
+    return _association_view(grid, association)[name]
+end
+
+# grid["temperature", :point] = values
+# grid["density", :cell] = values
+function Base.setindex!(
+        grid::vtkSmartPointer{<:vtkDataSet},
+        values,
+        name::AbstractString,
+        association::Symbol
+    )
+    set_array!(grid, name, values; association)
+    return grid
+end
+
 
 """
     remove_array!(grid, name; point=true, cell=true)
@@ -352,20 +428,27 @@ Remove the named array from point data, cell data, or both. Searches point
 data first, then cell data. Throws an error if the array is not found.
 """
 function remove_array!(grid, name; point = true, cell = true)
-    point || cell || throw(ArgumentError("at least one of point or cell must be true"))
+    point || cell || throw(ArgumentError("At least one of point or cell must be true"))
     name = String(name)
     removed = false
-    if point && HasArray(point_data(grid), name)
-        RemoveArray(point_data(grid), name)
+
+    point_association = point_data(grid)
+    cell_association = cell_data(grid)
+
+    if point && haskey(point_association, name)
+        delete!(point_association, name)
         removed = true
     end
-    if cell && HasArray(cell_data(grid), name)
-        RemoveArray(cell_data(grid), name)
+
+    if cell && haskey(cell_data, name)
+        delete!(cell_association, name)
         removed = true
     end
+
     removed && return grid
+
     error(
-        "array '$name' not found in " *
+        "Array '$name' not found in " *
             (point && cell ? "point or cell data" : point ? "point data" : "cell data")
     )
 end
@@ -377,9 +460,9 @@ end
 Mark a field-data array as the active scalar for filters like `contour`.
 """
 activate_point_data!(grid, name) =
-    SetActiveScalars(point_data(grid), String(name))
+    SetActiveScalars(GetPointData(grid), String(name))
 activate_cell_data!(grid, name) =
-    SetActiveScalars(cell_data(grid), String(name))
+    SetActiveScalars(GetCellData(grid), String(name))
 
 
 # ---- multiblock accessors ---------------------------------------------------

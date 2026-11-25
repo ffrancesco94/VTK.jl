@@ -46,9 +46,10 @@ struct NotAVTKHandle end
     @test_throws ArgumentError VTK.plane((0, 0), (1, 0, 0))
     @test_throws ArgumentError VTK.plane((0, 0, 0), (1, 0))
     @test_throws ArgumentError VTK.line_source((0, 0), (1, 1, 1))
-    @test_throws ArgumentError VTK.line_source((0, 0, 0), (1, 1, 1); resolution=0)
+    @test_throws ArgumentError VTK.line_source((0, 0, 0), (1, 1, 1); resolution = 0)
     @test_throws ArgumentError VTK.sample_over_line(
-        grid, (0, 0, 0), (1, 1, 1); resolution=-1)
+        grid, (0, 0, 0), (1, 1, 1); resolution = -1
+    )
     @test !isdefined(VTK, :particle_tracer)
     @test isdefined(VTK.Experimental, :particle_tracer)
 end
@@ -70,12 +71,14 @@ end
     VTK.remove_array!(grid, "shared")
     @test VTK.field_array(VTK.point_data(grid), "shared") === nothing
     @test VTK.field_array(VTK.cell_data(grid), "shared") === nothing
-    @test_throws ArgumentError VTK.remove_array!(grid, "shared"; point=false, cell=false)
+    @test_throws ArgumentError VTK.remove_array!(grid, "shared"; point = false, cell = false)
 
-    child = VTK.block(let parent = VTK.MultiBlockDataSet(1)
-        VTK.set_block!(parent, 1, grid)
-        parent
-    end, 1)
+    child = VTK.block(
+        let parent = VTK.MultiBlockDataSet(1)
+            VTK.set_block!(parent, 1, grid)
+            parent
+        end, 1
+    )
     grid = nothing
     for _ in 1:3
         GC.gc(true)
@@ -104,9 +107,9 @@ end
     @test_throws VTK.VTKTypeError VTK.PolyData(VTK.UnstructuredGrid())
 
     grid = VTK.UnstructuredGrid()
-    VTK.AddStringArrayForTesting(VTK.point_data(grid), "labels")
-    @test VTK.HasArray(VTK.point_data(grid), "labels")
+    VTK.AddStringArrayForTesting(VTK.GetPointData(grid), "labels")
+    @test haskey(VTK.point_data(grid), "labels")
     @test_throws VTK.VTKUnsupportedTypeError VTK.field_array(VTK.point_data(grid), "labels")
     @test_throws VTK.VTKUnsupportedTypeError VTK.field_array_raw(VTK.point_data(grid), "labels")
-   
+
 end
