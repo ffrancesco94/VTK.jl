@@ -242,7 +242,7 @@ _cell_data_handle(grid) = GetCellData(grid)
 
 function _association_view(grid::VTKSmartPointer{<:vtkDataSet}, association::Symbol)
     association === :point && return DataAssociation(GetPointData(grid), grid, :point)
-    association === :cell && return (GetCellData(grid), grid, :cell)
+    association === :cell && return DataAssociation(GetCellData(grid), grid, :cell)
 
     throw(ArgumentError("Association must be :point or :cell"))
 end
@@ -288,6 +288,10 @@ function Base.iterate(data::DataAssociation, state::Int = 0)
     return (name => data[name]), state + 1
 end
 
+function Base.get(data::DataAssociation, name::AbstractString, default)
+    return haskey(data, name) ? data[name] : default
+end
+
 function Base.delete!(data::DataAssociation, name::AbstractString)
     haskey(data, name) || return data
     RemoveArray(data.handle, String(name))
@@ -307,7 +311,7 @@ field_array_names(fd) =
 
 function _numeric_field_array(fd, name)
     abstract_array = GetAbstractArray(fd, String(name))
-    IsA(abstract, "vtkDataArray") != 0 || throw(VTKUnsupportedTypeError(GetClassName(abstract_array)))
+    IsA(abstract_array, "vtkDataArray") != 0 || throw(VTKUnsupportedTypeError(GetClassName(abstract_array)))
     return GetArray(fd, String(name))
 end
 
@@ -342,7 +346,9 @@ function add_array!(
     )
     array_name = name(array)
     isempty(array_name) && throw(ArgumentError("An array added with add_array! must have a name"))
-    data[array_name] = array
+    # Attach directly: unlike dictionary assignment, add_array! does not
+    # validate the tuple count against the owning dataset.
+    AddArray(data.handle, array.obj)
     return array
 end
 
@@ -440,7 +446,7 @@ function remove_array!(grid, name; point = true, cell = true)
         removed = true
     end
 
-    if cell && haskey(cell_data, name)
+    if cell && haskey(cell_association, name)
         delete!(cell_association, name)
         removed = true
     end

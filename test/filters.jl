@@ -224,7 +224,7 @@ end
             integration_direction = direction
         )
         @test VTK.npoints(stream) > 0
-        @test VTK.name(VTK.GetVectors(VTK.point_data(ug))) == "cross_velocity"
+        @test VTK.name(VTK.GetVectors(VTK.GetPointData(ug))) == "cross_velocity"
         if direction == "forward"
             stream_coords = VTK.data(VTK.points_array(VTK.points(stream)))
             @test all(isapprox.(stream_coords[2, :], 0.5; atol = 1.0e-8))
@@ -234,8 +234,8 @@ end
         ug, seeds; vectors = "velocity", integration_direction = "sideways"
     )
 
-    @test VTK.name(VTK.GetScalars(VTK.point_data(ug))) == "other"
-    @test VTK.name(VTK.GetVectors(VTK.point_data(ug))) == "cross_velocity"
+    @test VTK.name(VTK.GetScalars(VTK.GetPointData(ug))) == "other"
+    @test VTK.name(VTK.GetVectors(VTK.GetPointData(ug))) == "cross_velocity"
     @test filter_field_snapshot(VTK.point_data(ug)) == point_arrays_before
 end
 
@@ -307,7 +307,7 @@ end
     @test_throws ArgumentError VTK.sample_over_line(
         ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0); scalars = "absent"
     )
-    @test VTK.name(VTK.GetScalars(VTK.point_data(ug))) == "other"
+    @test VTK.name(VTK.GetScalars(VTK.GetPointData(ug))) == "other"
     @test filter_field_snapshot(VTK.point_data(ug)) == point_arrays_before
     @test filter_field_snapshot(VTK.cell_data(ug)) == cell_arrays_before
 end
