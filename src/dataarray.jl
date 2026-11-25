@@ -8,21 +8,24 @@
 # Ownership: this module hands out OWNING handles. `data` returns a
 # VTKDataArray wrapper (holds the smart pointer as a field); `raw_data`
 # returns a flat view derived from that wrapper. The derivation chain
-# (ReshapedArray -> VTKDataArray -> SmartPointer) keeps the C++ object
-# alive structurally — no finalizers are attached to views (see §4.1 of
-# STATUS.md: C++ VTK objects must not be destroyed from GC finalizer
-# threads). Dropping all references releases through CxxWrap's standard
-# SmartPointer finalizer, the baseline behavior this package has always had.
+# (ReshapedArray -> VTKDataArray -> SmartPointer) keeps the C++ object alive
+# structurally — no finalizers are attached to views. Once the last chain is
+# collected, the specialized smart-pointer finalizer queues the native wrapper;
+# actual UnRegister/destruction occurs only at a safe deferred-deletion drain.
 
 # Convert a wrapped object (smart pointer) to a raw C++ pointer of the
 # requested static type, for calling low-level methods that take T*.
 _cp(::Type{T}, x) where {T} = CxxPtr{T}(x[])
+_cp(::Type{T}, x::CxxWrap.CxxWrapCore.CxxPtr) where {T} =
+    CxxPtr{T}(x.cpp_object)
 
 ntuples(da) = GetNumberOfTuples(da)
 ncomponents(da) = GetNumberOfComponents(da)
 
-Base.size(da) = (ncomponents(da), ntuples(da))
-Base.length(da) = ncomponents(da) * ntuples(da)
+const VTKSmartPointer = CxxWrap.CxxWrapCore.SmartPointer
+
+Base.size(da::VTKSmartPointer{<:vtkDataArray}) = (ncomponents(da), ntuples(da))
+Base.length(da::VTKSmartPointer{<:vtkDataArray}) = ncomponents(da) * ntuples(da)
 
 """
     raw_data(da) -> AbstractVector
@@ -52,6 +55,7 @@ name!(da, s) = SetArrayName(da, String(s))
 Set the number of tuples. Call before writing through a `data`/`raw_data` view.
 """
 function Base.resize!(da::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataArray}, n::Integer)
+    n >= 0 || throw(ArgumentError("number of tuples must be nonnegative, got $n"))
     SetNumberOfTuples(da, n)
     return da
 end

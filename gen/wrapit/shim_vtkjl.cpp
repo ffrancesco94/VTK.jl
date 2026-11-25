@@ -3,7 +3,7 @@
 // generator cannot express for VTK:
 //   * ownership (factories/outputs return owning vtkSmartPointer; getters
 //     are take_ref'd; zero-copy views via vtkArrayDispatch),
-//   * the output-window error hook (install_error_window/vtk_last_error),
+//   * per-operation diagnostic capture through vtkCommand observers,
 //   * macro-generated and convenience accessors (SetFileName, SetInsideOut,
 //     SetInputData, EnableCompression, ...),
 //   * downcasts and the typed-array factory.
@@ -14,8 +14,11 @@
 #include <jlcxx/jlcxx.hpp>
 #include <jlcxx/smart_pointers.hpp>
 #include <jlcxx/stl.hpp>
+#include <mutex>
 #include <stdexcept>
 #include <string>
+#include <tuple>
+#include <utility>
 #include <vector>
 #include <vtkAbstractArray.h>
 #include <vtkAlgorithm.h>
@@ -23,6 +26,7 @@
 #include <vtkCGNSReader.h>
 #include <vtkCellData.h>
 #include <vtkCellDataToPointData.h>
+#include <vtkCommand.h>
 #include <vtkContourFilter.h>
 #include <vtkCutter.h>
 #include <vtkDataArray.h>
@@ -51,7 +55,6 @@
 #include <vtkObject.h>
 #include <vtkObjectBase.h>
 #include <vtkObjectFactory.h>
-#include <vtkOutputWindow.h>
 #include <vtkPlane.h>
 #include <vtkPointData.h>
 #include <vtkPointDataToCellData.h>
@@ -65,6 +68,7 @@
 #include <vtkRectilinearGridWriter.h>
 #include <vtkSmartPointer.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkStringArray.h>
 #include <vtkStructuredGrid.h>
 #include <vtkStructuredGridReader.h>
 #include <vtkStructuredGridWriter.h>
@@ -72,8 +76,10 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkUnstructuredGridReader.h>
 #include <vtkUnstructuredGridWriter.h>
+#include <vtkWriter.h>
 #include <vtkXMLImageDataReader.h>
 #include <vtkXMLImageDataWriter.h>
+#include <vtkXMLWriterBase.h>
 #include <vtkXMLMultiBlockDataReader.h>
 #include <vtkXMLMultiBlockDataWriter.h>
 #include <vtkXMLPDataObjectReader.h>
@@ -93,38 +99,200 @@
 
 namespace {
 
-// Redirect VTK's error/warning output into a buffer that Julia can inspect.
-class vtkJuliaOutputWindow : public vtkOutputWindow {
-public:
-  static vtkJuliaOutputWindow *New();
-  vtkTypeMacro(vtkJuliaOutputWindow, vtkOutputWindow);
+struct PendingVTKSmartPointerDeletion {
+  void *Pointer;
+  void (*Deleter)(void *);
+};
 
-  void DisplayText(const char *text) override { this->Append(text); }
-  void DisplayErrorText(const char *text) override { this->Append(text); }
-  void DisplayWarningText(const char *text) override { this->Append(text); }
-  void DisplayGenericWarningText(const char *text) override {
-    this->Append(text);
+std::mutex DeferredDeletionMutex;
+std::vector<PendingVTKSmartPointerDeletion> DeferredDeletions;
+
+uint64_t drain_deferred_deletions() {
+  std::vector<PendingVTKSmartPointerDeletion> pending;
+  {
+    std::lock_guard<std::mutex> lock(DeferredDeletionMutex);
+    pending.swap(DeferredDeletions);
   }
-  void DisplayDebugText(const char *text) override { this->Append(text); }
+  for (const auto &entry : pending) {
+    entry.Deleter(entry.Pointer);
+  }
+  return static_cast<uint64_t>(pending.size());
+}
 
-  static std::string GetAndReset() {
-    std::string result = vtkJuliaOutputWindow::LastMessage;
-    vtkJuliaOutputWindow::LastMessage.clear();
-    return result;
+uint64_t deferred_deletion_count() {
+  std::lock_guard<std::mutex> lock(DeferredDeletionMutex);
+  return static_cast<uint64_t>(DeferredDeletions.size());
+}
+
+// Diagnostic severity values are mirrored by _VTK_SEVERITIES in
+// src/diagnostics.jl. Keep errors at zero so a failed Update can be detected
+// without inspecting message contents.
+enum ScopedDiagnosticSeverity {
+  ScopedDiagnosticError = 0,
+  ScopedDiagnosticWarning = 1,
+  ScopedDiagnosticText = 2,
+  ScopedDiagnosticDebug = 3,
+};
+
+// VTK (including 9.7) has Error/Warning/Text events but no DebugEvent. Give
+// the deterministic debug channel a private event id rather than mislabeling
+// debug messages as text.
+constexpr unsigned long ScopedDebugEvent = vtkCommand::UserEvent + 0x56444A;
+
+struct ScopedDiagnostic {
+  int severity;
+  std::string message;
+};
+
+using ScopedDiagnosticResult =
+    std::tuple<int, std::vector<int>, std::vector<std::string>>;
+
+// A collector belongs to exactly one scoped operation. VTK may invoke events
+// from worker threads, so each collector protects its own records; there is no
+// process-global diagnostic state or lock.
+class vtkJuliaDiagnosticCollector : public vtkCommand {
+public:
+  static vtkJuliaDiagnosticCollector *New();
+
+  vtkJuliaDiagnosticCollector() { this->PassiveObserverOn(); }
+
+  void Execute(vtkObject *, unsigned long eventId, void *callData) override {
+    int severity;
+    switch (eventId) {
+    case vtkCommand::ErrorEvent:
+      severity = ScopedDiagnosticError;
+      break;
+    case vtkCommand::WarningEvent:
+      severity = ScopedDiagnosticWarning;
+      break;
+    case vtkCommand::TextEvent:
+      severity = ScopedDiagnosticText;
+      break;
+    case ScopedDebugEvent:
+      severity = ScopedDiagnosticDebug;
+      break;
+    default:
+      return;
+    }
+
+    const char *text = static_cast<const char *>(callData);
+    std::lock_guard<std::mutex> lock(this->Mutex);
+    this->Diagnostics.push_back(
+        {severity, text == nullptr ? std::string() : std::string(text)});
+  }
+
+  std::vector<ScopedDiagnostic> Snapshot() const {
+    std::lock_guard<std::mutex> lock(this->Mutex);
+    return this->Diagnostics;
   }
 
 private:
-  static void Append(const char *text) {
-    if (text != nullptr) {
-      vtkJuliaOutputWindow::LastMessage += text;
-      vtkJuliaOutputWindow::LastMessage += "\n";
-    }
-  }
-  static std::string LastMessage;
+  mutable std::mutex Mutex;
+  std::vector<ScopedDiagnostic> Diagnostics;
 };
 
-std::string vtkJuliaOutputWindow::LastMessage;
-vtkStandardNewMacro(vtkJuliaOutputWindow);
+vtkStandardNewMacro(vtkJuliaDiagnosticCollector);
+
+// Attach for the lifetime of one native call and remove every observer on all
+// exits. Tag-based removal leaves independent/nested observers untouched.
+class ScopedDiagnosticCapture {
+public:
+  explicit ScopedDiagnosticCapture(vtkAlgorithm *algorithm)
+      : Algorithm(algorithm) {
+    if (algorithm == nullptr) {
+      throw std::runtime_error("Scoped diagnostics: null algorithm");
+    }
+    this->Collector = vtkSmartPointer<vtkJuliaDiagnosticCollector>::New();
+    try {
+      this->Tags[0] = algorithm->AddObserver(vtkCommand::ErrorEvent,
+                                             this->Collector);
+      this->Tags[1] = algorithm->AddObserver(vtkCommand::WarningEvent,
+                                             this->Collector);
+      this->Tags[2] = algorithm->AddObserver(vtkCommand::TextEvent,
+                                             this->Collector);
+      this->Tags[3] = algorithm->AddObserver(ScopedDebugEvent,
+                                             this->Collector);
+    } catch (...) {
+      this->RemoveObservers();
+      throw;
+    }
+  }
+
+  ~ScopedDiagnosticCapture() { this->RemoveObservers(); }
+
+  ScopedDiagnosticCapture(const ScopedDiagnosticCapture &) = delete;
+  ScopedDiagnosticCapture &
+  operator=(const ScopedDiagnosticCapture &) = delete;
+
+  bool HasError() const {
+    const auto records = this->Collector->Snapshot();
+    for (const auto &record : records) {
+      if (record.severity == ScopedDiagnosticError) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  ScopedDiagnosticResult Result(int status) const {
+    const auto records = this->Collector->Snapshot();
+    std::vector<int> severities;
+    std::vector<std::string> messages;
+    severities.reserve(records.size());
+    messages.reserve(records.size());
+    for (const auto &record : records) {
+      severities.push_back(record.severity);
+      messages.push_back(record.message);
+    }
+    return std::make_tuple(status, std::move(severities), std::move(messages));
+  }
+
+private:
+  void RemoveObservers() noexcept {
+    if (this->Algorithm != nullptr) {
+      for (const unsigned long tag : this->Tags) {
+        if (tag != 0) {
+          this->Algorithm->RemoveObserver(tag);
+        }
+      }
+    }
+    this->Tags = {{0, 0, 0, 0}};
+  }
+
+  vtkAlgorithm *Algorithm = nullptr;
+  vtkSmartPointer<vtkJuliaDiagnosticCollector> Collector;
+  std::array<unsigned long, 4> Tags = {{0, 0, 0, 0}};
+};
+
+unsigned long diagnostic_event(std::string severity) {
+  if (!severity.empty() && severity.front() == ':') {
+    severity.erase(severity.begin());
+  }
+  if (severity == "error") {
+    return vtkCommand::ErrorEvent;
+  }
+  if (severity == "warning") {
+    return vtkCommand::WarningEvent;
+  }
+  if (severity == "text") {
+    return vtkCommand::TextEvent;
+  }
+  if (severity == "debug") {
+    return ScopedDebugEvent;
+  }
+  throw std::invalid_argument(
+      "EmitDiagnostic: severity must be error, warning, text, or debug");
+}
+
+int write_algorithm(vtkAlgorithm *algorithm) {
+  if (auto *writer = dynamic_cast<vtkXMLWriterBase *>(algorithm)) {
+    return writer->Write();
+  }
+  if (auto *writer = dynamic_cast<vtkWriter *>(algorithm)) {
+    return writer->Write();
+  }
+  throw std::runtime_error("ScopedWrite: algorithm does not support Write");
+}
 
 // Borrow a raw VTK pointer into a smart pointer without upsetting the
 // reference count: Register first, then Take (Take does not Register).
@@ -193,7 +361,26 @@ jl_value_t *zero_copy_matrix(vtkDataArray *da) {
   return zero_copy_impl(da, ZeroCopyMatrixWorker{});
 }
 
+// Concrete unregistered subclass used to verify hierarchy-aware downcasting.
+class vtkJuliaDerivedPolyData : public vtkPolyData {
+public:
+  static vtkJuliaDerivedPolyData *New();
+  vtkTypeMacro(vtkJuliaDerivedPolyData, vtkPolyData);
+};
+vtkStandardNewMacro(vtkJuliaDerivedPolyData);
+
 } // namespace
+
+namespace jlcxx {
+void defer_vtk_smart_pointer_deletion(void *pointer,
+                                      void (*deleter)(void *)) {
+  if (pointer == nullptr) {
+    return;
+  }
+  std::lock_guard<std::mutex> lock(DeferredDeletionMutex);
+  DeferredDeletions.push_back({pointer, deleter});
+}
+} // namespace jlcxx
 
 // Force-register the smart-pointer methods (dereference, casts) for a
 
@@ -225,13 +412,53 @@ void register_shim_methods(jlcxx::Module &mod) {
   mod.method("upcast_dataarray", [](const vtkSmartPointer<vtkIntArray> &p) {
     return vtkSmartPointer<vtkDataArray>(p);
   });
+  mod.method("DrainVTKDeletions", []() { return drain_deferred_deletions(); });
+  mod.method("PendingVTKDeletionCount",
+             []() { return deferred_deletion_count(); });
 
-  // ---- error capture ----
-  mod.method("install_error_window", []() {
-    vtkOutputWindow::SetInstance(vtkJuliaOutputWindow::New());
+  // ---- scoped diagnostic capture ----
+  // The raw Update/Write bindings below intentionally remain unchanged.
+  mod.method("ScopedUpdate", [](vtkAlgorithm *a) {
+    ScopedDiagnosticCapture capture(a);
+    // Update historically returns void (and some VTK versions now return a
+    // status). The scoped API uses a uniform sentinel: any captured error is
+    // failure, otherwise the operation completed successfully.
+    a->Update();
+    return capture.Result(capture.HasError() ? 0 : 1);
   });
-  mod.method("vtk_last_error",
-             []() { return vtkJuliaOutputWindow::GetAndReset(); });
+  mod.method("ScopedUpdateInformation", [](vtkAlgorithm *a) {
+    ScopedDiagnosticCapture capture(a);
+    const int status = a->UpdateInformation() ? 1 : 0;
+    return capture.Result(status);
+  });
+  mod.method("ScopedUpdateTimeStep", [](vtkAlgorithm *a, double time) {
+    ScopedDiagnosticCapture capture(a);
+    const int status = a->UpdateTimeStep(time);
+    return capture.Result(status);
+  });
+  mod.method("ScopedWrite", [](vtkAlgorithm *a) {
+    ScopedDiagnosticCapture capture(a);
+    const int status = write_algorithm(a);
+    return capture.Result(status);
+  });
+  // Deterministic event source for tests. The std::string payload stays alive
+  // until InvokeEvent has returned, including all synchronous observers.
+  mod.method("EmitDiagnostic", [](vtkAlgorithm *a, const std::string &severity,
+                                  const std::string &message) {
+    if (a == nullptr) {
+      throw std::runtime_error("EmitDiagnostic: null algorithm");
+    }
+    std::string payload(message);
+    a->InvokeEvent(diagnostic_event(severity), payload.data());
+  });
+  mod.method("EmitScopedDiagnosticForTesting",
+             [](vtkAlgorithm *a, const std::string &severity,
+                const std::string &message) {
+               ScopedDiagnosticCapture capture(a);
+               std::string payload(message);
+               a->InvokeEvent(diagnostic_event(severity), payload.data());
+               return capture.Result(capture.HasError() ? 0 : 1);
+             });
 
   // ---- vtkDataArray ----
   // All parameters take vtkSmartPointer by value so that Julia's smart-pointer
@@ -263,10 +490,26 @@ void register_shim_methods(jlcxx::Module &mod) {
              [](vtkDataArray *a) { return zero_copy_matrix(a); });
 
   // Deep copy stuff
+  mod.method("TakeRefDataObject", [](vtkDataObject *object) {
+    if (object == nullptr) {
+      throw std::runtime_error("TakeRefDataObject: null pointer");
+    }
+    return take_ref<vtkDataObject>(object);
+  });
   mod.method("DeepCopyDataObject", [](vtkDataObject *source) {
     auto destination = take_ref(source->NewInstance());
     destination->DeepCopy(source);
     return destination;
+  });
+  mod.method("GenericDataObjectForTesting", []() {
+    return vtkSmartPointer<vtkDataObject>::New();
+  });
+  mod.method("DerivedPolyDataForTesting", []() {
+    auto object = vtkSmartPointer<vtkJuliaDerivedPolyData>::New();
+    return vtkSmartPointer<vtkDataObject>(object);
+  });
+  mod.method("NullDataObjectForTesting", []() -> vtkDataObject * {
+    return nullptr;
   });
 
   // array factories
@@ -322,6 +565,13 @@ void register_shim_methods(jlcxx::Module &mod) {
   });
   mod.method("HasArray", [](vtkFieldData *f, const std::string &name) {
     return f->GetAbstractArray(name.c_str()) != nullptr;
+  });
+  mod.method("AddStringArrayForTesting", [](vtkFieldData *f,
+                                             const std::string &name) {
+    vtkNew<vtkStringArray> array;
+    array->SetName(name.c_str());
+    array->InsertNextValue("nonnumeric");
+    f->AddArray(array);
   });
   // Generic typed array factory over the VTK scalar type ids (see vtkType.h).
   mod.method("CreateDataArray", [](int dataType, int64_t ncomp) {

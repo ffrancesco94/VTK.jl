@@ -20,6 +20,25 @@ struct ConstructorPointerType<vtkSmartPointer<T>>
 {
   typedef vtkSmartPointer<T> type;
 };
+
+// CxxWrap's default smart-pointer finalizer deletes the C++ wrapper directly.
+// For VTK that can call UnRegister/vtkGarbageCollector on a GC finalizer
+// thread while another thread is executing VTK. Specialize the finalizer to
+// transfer the wrapper to a synchronized deferred-deletion queue instead.
+void defer_vtk_smart_pointer_deletion(void *pointer,
+                                      void (*deleter)(void *));
+
+template <typename T>
+struct Finalizer<vtkSmartPointer<T>, SpecializedFinalizer>
+{
+  static void finalize(vtkSmartPointer<T> *pointer)
+  {
+    defer_vtk_smart_pointer_deletion(
+        static_cast<void *>(pointer), [](void *wrapped) {
+          delete static_cast<vtkSmartPointer<T> *>(wrapped);
+        });
+  }
+};
 }
 
 void register_shim_methods(jlcxx::Module& mod);

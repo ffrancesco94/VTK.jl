@@ -67,60 +67,128 @@ function _typed_view(::Type{T}, obj) where {T}
     ncomp = GetNumberOfComponents(obj)
     nt = GetNumberOfTuples(obj)
     nt == 0 && return Matrix{T}(undef, ncomp, 0)
-    return zero_copy_matrix(obj)
+    try
+        return zero_copy_matrix(obj)
+    catch exception
+        exception isa InterruptException && rethrow()
+        throw(VTKUnsupportedTypeError(GetClassName(obj)))
+    end
 end
 
 """
     VTKDataArray{T} <: AbstractMatrix{T}
 
-Typed, zero-copy view of a VTK data array with `ncomponents` columns and
-`ntuples` rows... i.e. `size` is `(ncomponents, ntuples)` (component-fastest,
-matching VTK's AOS storage). Construct from any wrapped array object with
-`VTKDataArray(obj)` (the element type is discovered from the array), or
-create a new array with `data_array(T, ncomponents)`.
+Typed, zero-copy view of a VTK data array whose `size` is
+`(ncomponents, ntuples)` (component-fastest, matching VTK's AOS storage).
+Construct from any wrapped array object with `VTKDataArray(obj)` (the element
+type is discovered from the array), or create a new array with
+`data_array(T, ncomponents)`.
 """
 mutable struct VTKDataArray{T} <: AbstractMatrix{T}
     obj::CxxWrap.CxxWrapCore.SmartPointer{vtkDataArray}
     view::Matrix{T}
+    mtime::UInt64
+    data_pointer::Ptr{Nothing}
 
     function VTKDataArray{T}(obj::CxxWrap.CxxWrapCore.SmartPointer) where {T}
         p = _as_dataarray_sp(obj)
         actual = scalar_type(p)
         actual == T || throw(ArgumentError("array stores $actual values, not $T"))
-        return new{T}(p, _typed_view(T, p))
+        return new{T}(p, _typed_view(T, p), GetMTime(p), GetVoidPointer(p, 0))
     end
 end
 
 VTKDataArray(obj::CxxWrap.CxxWrapCore.SmartPointer) =
     VTKDataArray{scalar_type(_as_dataarray_sp(obj))}(obj)
 
-Base.size(a::VTKDataArray) = size(a.view)
-Base.getindex(a::VTKDataArray, i::Int, j::Int) = a.view[i, j]
-Base.setindex!(a::VTKDataArray{T}, v, i::Int, j::Int) where {T} = (a.view[i, j] = v)
+"""
+    refresh!(a::VTKDataArray)
 
-raw_data(a::VTKDataArray) = vec(a)
+Rebuild the cached zero-copy view from the underlying VTK array and record
+its current structural signature. Array operations do this automatically when
+the modification time, dimensions, or data-buffer address change; call
+`refresh!` directly only when explicit control is needed. Independently
+obtained views of an old buffer remain invalid after reallocation.
+"""
+function refresh!(a::VTKDataArray{T}) where {T}
+    a.view = _typed_view(T, a.obj)
+    a.mtime = GetMTime(a.obj)
+    a.data_pointer = GetVoidPointer(a.obj, 0)
+    return a
+end
+
+function _sync!(a::VTKDataArray)
+    # SetNumberOfTuples does not necessarily call Modified in VTK, so MTime
+    # alone cannot detect a resize. Check the shape and buffer address too;
+    # the latter also catches reallocation that restores the original shape.
+    unchanged = GetMTime(a.obj) == a.mtime &&
+        GetNumberOfComponents(a.obj) == size(a.view, 1) &&
+        GetNumberOfTuples(a.obj) == size(a.view, 2) &&
+        GetVoidPointer(a.obj, 0) == a.data_pointer
+    unchanged || refresh!(a)
+    return nothing
+end
+
+function Base.size(a::VTKDataArray)
+    _sync!(a)
+    return size(a.view)
+end
+
+function Base.getindex(a::VTKDataArray, i::Int, j::Int)
+    _sync!(a)
+    return a.view[i, j]
+end
+
+function Base.setindex!(a::VTKDataArray, v, i::Int, j::Int)
+    _sync!(a)
+    a.view[i, j] = v
+end
+
+function raw_data(a::VTKDataArray)
+    _sync!(a)
+    return vec(a)
+end
+
 data(a::VTKDataArray) = a
 name(a::VTKDataArray) = name(a.obj)
 name!(a::VTKDataArray, s) = name!(a.obj, s)
-ntuples(a::VTKDataArray) = size(a.view, 2)
-ncomponents(a::VTKDataArray) = size(a.view, 1)
-Base.length(a::VTKDataArray) = length(a.view)
+
+function ntuples(a::VTKDataArray)
+    _sync!(a)
+    return size(a.view, 2)
+end
+
+function ncomponents(a::VTKDataArray)
+    _sync!(a)
+    return size(a.view, 1)
+end
+
+function Base.length(a::VTKDataArray)
+    _sync!(a)
+    return length(a.view)
+end
 
 # The typed wrapper is accepted anywhere the underlying smart pointer is.
 _cp(::Type{T}, a::VTKDataArray) where {T} = _cp(T, a.obj)
 add_array!(fd, a::VTKDataArray) = add_array!(fd, a.obj)
 
-Base.Array(a::VTKDataArray{T}) where {T} = Matrix{T}(a.view)
+function Base.Array(a::VTKDataArray{T}) where {T}
+    _sync!(a)
+    return Matrix{T}(a.view)
+end
 
 """
     resize!(a::VTKDataArray, ntuples)
 
-Resize the array. The zero-copy view is refreshed afterwards; previously
-obtained views of the same array are invalidated.
+Resize the array to a nonnegative number of tuples and refresh its zero-copy
+view. Other `VTKDataArray` wrappers of the same VTK object refresh on their
+next array operation. Previously obtained independent views are invalidated
+by reallocation, and newly grown storage is uninitialized.
 """
-function Base.resize!(a::VTKDataArray{T}, n::Integer) where {T}
+function Base.resize!(a::VTKDataArray, n::Integer)
+    n >= 0 || throw(ArgumentError("number of tuples must be nonnegative, got $n"))
     SetNumberOfTuples(a.obj, n)
-    a.view = _typed_view(T, a.obj)
+    refresh!(a)
     return a
 end
 
@@ -133,6 +201,9 @@ given number of components, initially holding zero tuples.
 function data_array(::Type{T}, ncomp::Integer = 1) where {T}
     haskey(JULIA_TO_VTK_TYPE, T) ||
         throw(ArgumentError("no VTK array type for Julia type $T"))
+    ncomp >= 1 || throw(ArgumentError(
+        "number of components must be positive, got $ncomp"))
+    _drain_vtk_deletions_if_serial()
     obj = CreateDataArray(JULIA_TO_VTK_TYPE[T], ncomp)
     return VTKDataArray{T}(obj)
 end

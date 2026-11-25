@@ -1,15 +1,16 @@
 # filters.jl — Julian conveniences over the wrapped VTK filters.
 
-"""
-    update!(algo)
-
-Execute `algo` and throw if VTK reported any error/warning while doing so.
-"""
-function update!(algo)
-    Update(algo)
-    msg = vtk_last_error()
-    isempty(msg) || error(msg)
-    return algo
+function _coordinates3(value, label)
+    values = try
+        Tuple(value)
+    catch
+        throw(ArgumentError("$label must contain exactly three real coordinates"))
+    end
+    length(values) == 3 || throw(ArgumentError(
+        "$label must contain exactly three coordinates, got $(length(values))"))
+    all(x -> x isa Real, values) ||
+        throw(ArgumentError("$label coordinates must be real numbers"))
+    return Float64.(values)
 end
 
 """
@@ -19,8 +20,8 @@ Implicit plane through `origin` with `normal`.
 """
 function plane(origin, normal)
     p = Plane_new()
-    SetOrigin(p, origin...)
-    SetNormal(p, normal...)
+    SetOrigin(p, _coordinates3(origin, "origin")...)
+    SetNormal(p, _coordinates3(normal, "normal")...)
     return p
 end
 
@@ -40,7 +41,7 @@ end
 #   end
 #
 # Output annotations:
-#   → pass_through   : output type matches input (uses downcast)
+#   → pass_through   : recover the concrete output type with generic downcast
 #   → vtkPolyData    : fixed output type (uses PolyData(...))
 #   → auto           : generic downcast (same as pass_through)
 #
@@ -50,7 +51,7 @@ end
 #       SetInputData(f, grid)
 #       # config block
 #       update!(f)
-#       return OutputConstructor(GetOutput(f))
+#       return OutputConstructor(checked_output(f))
 #   end
 
 """
@@ -67,8 +68,8 @@ to `f` (the filter object), all positional arguments, and all keyword arguments.
     # no extra configuration
 end
 
-# Two positional args, with kwargs
-@vtk_filter clip(grid, implicitfn, TableBasedClipDataSet → pass_through;
+# Two positional args, with kwargs and a fixed output type
+@vtk_filter clip(grid, implicitfn, TableBasedClipDataSet → vtkUnstructuredGrid;
                 insideout=false) begin
     SetClipFunction(f, implicitfn)
     SetInsideOut(f, insideout)
@@ -77,7 +78,8 @@ end
 # Fixed output type, with kwargs
 @vtk_filter contour(grid, values, ContourFilter → vtkPolyData;
                    scalars=nothing) begin
-    scalars === nothing || activate_point_data!(grid, scalars)
+    scalars === nothing || SetInputArrayToProcess(
+        _cp(vtkAlgorithm, f), 0, 0, 0, 0, String(scalars))
     for (i, v) in enumerate(values)
         SetContourValue(f, i - 1, v)
     end
@@ -124,11 +126,11 @@ macro vtk_filter(sig, config)
     # Determine output constructor
     output_str = string(output)
     output_expr = if output_str == "pass_through" || output_str == "auto"
-        :(downcast(GetOutput(f)))
+        :(downcast(checked_output(f)))
     else
         # Strip vtk prefix for the Julia constructor (e.g. vtkPolyData → PolyData)
         ctor_name = replace(output_str, r"^vtk" => "")
-        :($(Symbol(ctor_name))(GetOutput(f)))
+        :($(Symbol(ctor_name))(checked_output(f)))
     end
 
     # Build the function body
@@ -157,13 +159,13 @@ end
 # ---- filters ----------------------------------------------------------------
 
 """
-    clip(grid, implicitfn; insideout=false) -> vtkDataObject (downcast to access)
+    clip(grid, implicitfn; insideout=false) -> vtkUnstructuredGrid
 
 Clip `grid` by an implicit function (see `plane`). Keeps the region where the
-function evaluates negative unless `insideout=true`. The output type matches
-the input grid type (unstructured, poly, image, structured).
+function evaluates negative unless `insideout=true`. The output is always an
+unstructured grid, regardless of the input grid type.
 """
-@vtk_filter clip(grid, implicitfn, TableBasedClipDataSet → pass_through;
+@vtk_filter clip(grid, implicitfn, TableBasedClipDataSet → vtkUnstructuredGrid;
                 insideout=false) begin
     SetClipFunction(f, implicitfn)
     SetInsideOut(f, insideout)
@@ -219,11 +221,12 @@ end
     contour(grid, values; scalars=nothing) -> vtkPolyData
 
 Isosurface(s) of the active scalar at the given value(s). Pass `scalars` to
-select the point-data array by name (it is activated automatically).
+select the point-data array by name without changing the input's active scalar.
 """
 @vtk_filter contour(grid, values, ContourFilter → vtkPolyData;
                    scalars=nothing) begin
-    scalars === nothing || activate_point_data!(grid, scalars)
+    scalars === nothing || SetInputArrayToProcess(
+        _cp(vtkAlgorithm, f), 0, 0, 0, 0, String(scalars))
     for (i, v) in enumerate(values)
         SetContourValue(f, i - 1, v)
     end
@@ -260,11 +263,12 @@ grid2 = VTK.calculator(grid; scalars="temperature", expression="temperature * 2"
 end
 
 """
-    gradient(grid; scalars, result="Gradients") -> vtkUnstructuredGrid
+    gradient(grid; scalars, result="Gradients") -> vtkDataObject
 
 Compute the gradient of a scalar field. Pass `scalars` to select the input
 array by name (default: active scalars). The result is stored as a new
-point-data array named `result` (3-component vectors).
+point-data array named `result` (3-component vectors). The concrete output
+type is recovered with generic downcast.
 
 # Example
 
@@ -272,7 +276,7 @@ point-data array named `result` (3-component vectors).
 grid2 = VTK.gradient(grid; scalars="temperature", result="grad_T")
 ```
 """
-@vtk_filter gradient(grid, GradientFilter → vtkUnstructuredGrid;
+@vtk_filter gradient(grid, GradientFilter → pass_through;
                     scalars=nothing, result="Gradients") begin
     scalars === nothing || SetInputScalars(f, 0, String(scalars))
     SetResultArrayName(f, String(result))
@@ -283,8 +287,8 @@ end
     threshold(grid; scalars, lower=nothing, upper=nothing, invert=false) -> vtkUnstructuredGrid
 
 Extract cells where the scalar value is within [lower, upper]. Pass `scalars`
-to select the input array by name (default: active scalars). Set `invert=true`
-to extract cells *outside* the range.
+to select the input array by name without changing the input's active scalar
+(default: active scalars). Set `invert=true` to extract cells *outside* the range.
 
 # Example
 
@@ -294,7 +298,8 @@ hot = VTK.threshold(grid; scalars="temperature", lower=1.5, upper=3.0)
 """
 @vtk_filter threshold(grid, Threshold → vtkUnstructuredGrid;
                      scalars=nothing, lower=nothing, upper=nothing, invert=false) begin
-    scalars === nothing || activate_point_data!(grid, scalars)
+    scalars === nothing || SetInputArrayToProcess(
+        _cp(vtkAlgorithm, f), 0, 0, 0, 0, String(scalars))
     lower === nothing || SetLowerThreshold(f, lower)
     upper === nothing || SetUpperThreshold(f, upper)
     SetInvert(f, invert)
@@ -305,7 +310,8 @@ end
 
 Trace streamlines through a vector field. `seeds` is a vtkDataSet with seed
 points (e.g. from `line_source`). Pass `vectors` to select the vector array
-by name (default: active vectors).
+by name without changing the input's active vectors (default: active vectors).
+`integration_direction` must be `"forward"`, `"backward"`, or `"both"`.
 
 # Example
 
@@ -316,29 +322,46 @@ lines = VTK.stream_tracer(grid, seeds; vectors="velocity")
 """
 @vtk_filter stream_tracer(grid, seeds, StreamTracer → vtkPolyData;
                          vectors=nothing, integration_direction="forward") begin
-    vectors === nothing || SetActiveVectors(point_data(grid), String(vectors))
-    SetSourceData(f, seeds)
-    if integration_direction == "backward"
+    if integration_direction == "forward"
+        SetIntegrationDirection(f, 1)
+    elseif integration_direction == "backward"
         SetIntegrationDirection(f, 0)
     elseif integration_direction == "both"
         SetIntegrationDirection(f, 2)
     else
-        SetIntegrationDirection(f, 1)  # forward
+        throw(ArgumentError(
+            "integration_direction must be \"forward\", \"backward\", or \"both\"; " *
+            "got $(repr(integration_direction))"))
     end
+    vectors === nothing || SetInputArrayToProcess(
+        _cp(vtkAlgorithm, f), 0, 0, 0, 0, String(vectors))
+    SetSourceData(f, seeds)
 end
 
 """
-    particle_tracer(grid, seed_source; vectors) -> vtkPolyData
+    _particle_tracer(grid, seed_source; vectors) -> vtkPolyData
 
-Experimental particle-tracer wrapper. `seed_source` must be a VTK algorithm
-(for example, `LineSource_new()`), not the `PolyData` returned by
-`line_source`. There is currently no validated execution example; use
-`stream_tracer` for static vector fields.
+Internal implementation for `Experimental.particle_tracer`. `seed_source` must
+be a VTK algorithm, not the `PolyData` returned by `line_source`.
 """
-@vtk_filter particle_tracer(grid, seed_source, ParticleTracer → vtkPolyData;
+@vtk_filter _particle_tracer(grid, seed_source, ParticleTracer → vtkPolyData;
                            vectors=nothing) begin
-    vectors === nothing || SetActiveVectors(point_data(grid), String(vectors))
+    vectors === nothing || SetInputArrayToProcess(
+        _cp(vtkAlgorithm, f), 0, 0, 0, 0, String(vectors))
     AddSourceConnection(_cp(vtkParticleTracerBase, f), GetOutputPort(seed_source))
+end
+
+module Experimental
+using ..VTK: _particle_tracer
+
+"""
+    Experimental.particle_tracer(args...; kwargs...)
+
+Unvalidated particle-tracer execution. This API is explicitly experimental:
+the static-grid crash is unresolved and no temporal execution path is
+advertised. Use `VTK.stream_tracer` for static vector fields.
+"""
+particle_tracer(args...; kwargs...) = _particle_tracer(args...; kwargs...)
 end
 
 """
@@ -354,12 +377,14 @@ line = VTK.line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution=50)
 ```
 """
 function line_source(p1, p2; resolution=100)
+    resolution isa Integer && resolution >= 1 || throw(ArgumentError(
+        "resolution must be a positive integer, got $(repr(resolution))"))
     src = LineSource_new()
-    SetPoint1(src, Float64.(p1)...)
-    SetPoint2(src, Float64.(p2)...)
+    SetPoint1(src, _coordinates3(p1, "p1")...)
+    SetPoint2(src, _coordinates3(p2, "p2")...)
     SetResolution(src, resolution)
     update!(src)
-    return PolyData(GetOutput(src))
+    return PolyData(checked_output(src))
 end
 
 """
@@ -369,6 +394,11 @@ Sample a dataset along a line from `p1` to `p2` with `resolution` points.
 Returns a dataset with the sampled values. This is the VTK equivalent of
 ParaView's "Plot Over Line".
 
+`scalars` may be one point- or cell-data array name, or a collection of names,
+to retain only those sampled arrays. Every selected name must exist in the
+source. `vtkValidPointMask` is always retained. By default all arrays are
+passed through. Array selection never modifies the source dataset.
+
 # Example
 
 ```julia
@@ -376,10 +406,34 @@ profile = VTK.sample_over_line(grid, (0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolutio
 ```
 """
 function sample_over_line(grid, p1, p2; resolution=100, scalars=nothing)
+    selected = Set{String}()
+    if scalars !== nothing
+        names = (scalars isa AbstractString || scalars isa Symbol) ? (scalars,) : scalars
+        for name in names
+            name = String(name)
+            if !HasArray(point_data(grid), name) && !HasArray(cell_data(grid), name)
+                throw(ArgumentError("array '$name' not found in source point or cell data"))
+            end
+            push!(selected, name)
+        end
+    end
+
     line = line_source(p1, p2; resolution=resolution)
     probe = ProbeFilter_new()
     SetInputData(probe, line)   # points to probe at
     SetSourceData(probe, grid)  # dataset to probe from
     update!(probe)
-    return downcast(GetOutput(probe))
+    output = downcast(checked_output(probe))
+
+    if scalars !== nothing
+        for fd in (point_data(output), cell_data(output))
+            for name in field_array_names(fd)
+                name = String(name)
+                if name != "vtkValidPointMask" && !(name in selected)
+                    RemoveArray(fd, name)
+                end
+            end
+        end
+    end
+    return output
 end

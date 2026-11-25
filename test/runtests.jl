@@ -12,4 +12,7 @@ using Test
     include("io_multiblock.jl")
     include("io_cfd.jl")
     include("io_legacy.jl")
+    include("stage0_validation.jl")
+    include("diagnostics.jl")
+    include("concurrency.jl")
 end

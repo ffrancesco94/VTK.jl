@@ -26,6 +26,27 @@ function hex_mesh_with_temperature()
     return ug
 end
 
+function filter_scalar_array(name, values)
+    da = VTK.DoubleArray_new(1)
+    VTK.name!(da, name)
+    VTK.resize!(da, length(values))
+    vec(VTK.data(da)) .= values
+    return da
+end
+
+function filter_vector_array(name, values)
+    da = VTK.DoubleArray_new(size(values, 1))
+    VTK.name!(da, name)
+    VTK.resize!(da, size(values, 2))
+    VTK.data(da) .= values
+    return da
+end
+
+function filter_field_snapshot(fd)
+    return Dict(String(name) => copy(vec(VTK.data(VTK.field_array(fd, name))))
+                for name in VTK.field_array_names(fd))
+end
+
 @testset "XML I/O roundtrip" begin
     ug = hex_mesh_with_temperature()
     mktempdir() do dir
@@ -57,6 +78,7 @@ end
     # clip: keep x+y+z <= 1 with insideout -> tetrahedron of volume 1/6
     p = VTK.plane((1.0, 0.0, 0.0), (1.0, 1.0, 1.0))
     clipped = VTK.clip(ug, p; insideout = true)
+    @test clipped isa VTK.vtkSmartPointerAllocated{VTK.vtkUnstructuredGrid}
     @test VTK.ncells(clipped) == 1
     @test VTK.npoints(clipped) == 4
     c = VTK.data(VTK.points_array(VTK.points(clipped)))
@@ -107,6 +129,7 @@ end
 
     # gradient of linear field T = x+y+z is constant (1,1,1)
     grad = VTK.gradient(ug; scalars = "temperature", result = "grad_T")
+    @test grad isa VTK.vtkSmartPointerAllocated{VTK.vtkUnstructuredGrid}
     garr = VTK.field_array(VTK.point_data(grad), "grad_T")
     @test garr !== nothing
     gdata = VTK.data(garr)
@@ -134,8 +157,12 @@ end
     # sampled values should be close to x+y+z along the diagonal
     parr = VTK.field_array(VTK.point_data(profile), "temperature")
     @test parr !== nothing
+    @test isapprox(vec(VTK.data(parr)), [0.0, 0.6, 1.2, 1.8, 2.4, 3.0]; atol = 1e-6)
+    mask = VTK.field_array(VTK.point_data(profile), "vtkValidPointMask")
+    @test mask !== nothing
+    @test all(==(1), vec(VTK.data(mask)))
 
-    # stream_tracer: vectors= must activate VTK's vectors, not its scalars
+    # stream_tracer: vectors= selects VTK's vectors without activating them
     velocity = VTK.data_array(Float64, 3)
     VTK.resize!(velocity, 8)
     for i in 1:8
@@ -154,6 +181,117 @@ end
     end
     GC.gc(true)
     @test VTK.npoints(ug) == 8
+end
+
+@testset "named filter selection preserves input attributes" begin
+    ug = hex_mesh_with_temperature()
+    tvals = [0.0, 1.0, 2.0, 1.0, 1.0, 2.0, 3.0, 2.0]
+    VTK.add_array!(VTK.point_data(ug), filter_scalar_array("other", 10 .* tvals))
+    VTK.add_array!(VTK.point_data(ug),
+                   filter_vector_array("velocity", repeat([1.0, 0.0, 0.0], 1, 8)))
+    VTK.add_array!(VTK.point_data(ug),
+                   filter_vector_array("cross_velocity", repeat([0.0, 1.0, 0.0], 1, 8)))
+    VTK.activate_point_data!(ug, "other")
+    VTK.SetActiveVectors(VTK.point_data(ug), "cross_velocity")
+    point_arrays_before = filter_field_snapshot(VTK.point_data(ug))
+
+    # Selection is local to each algorithm; the decoy active scalar is retained.
+    surf = VTK.contour(ug, [1.5]; scalars = "temperature")
+    cs = VTK.data(VTK.points_array(VTK.points(surf)))
+    @test VTK.npoints(surf) > 0
+    @test all(isapprox.(cs[1, :] .+ cs[2, :] .+ cs[3, :], 1.5; atol = 1e-8))
+    @test VTK.name(VTK.GetScalars(VTK.point_data(ug))) == "other"
+
+    thresh = VTK.threshold(ug; scalars = "temperature", lower = 0.0, upper = 3.0)
+    @test VTK.ncells(thresh) == 1
+    @test VTK.name(VTK.GetScalars(VTK.point_data(ug))) == "other"
+
+    # The selected x-velocity leaves y fixed even though y-velocity is active.
+    seeds = VTK.line_source((0.5, 0.5, 0.0), (0.5, 0.5, 1.0); resolution = 2)
+    for direction in ("forward", "backward", "both")
+        stream = VTK.stream_tracer(ug, seeds; vectors = "velocity",
+                                   integration_direction = direction)
+        @test VTK.npoints(stream) > 0
+        @test VTK.name(VTK.GetVectors(VTK.point_data(ug))) == "cross_velocity"
+        if direction == "forward"
+            stream_coords = VTK.data(VTK.points_array(VTK.points(stream)))
+            @test all(isapprox.(stream_coords[2, :], 0.5; atol = 1e-8))
+        end
+    end
+    @test_throws ArgumentError VTK.stream_tracer(
+        ug, seeds; vectors = "velocity", integration_direction = "sideways")
+
+    @test VTK.name(VTK.GetScalars(VTK.point_data(ug))) == "other"
+    @test VTK.name(VTK.GetVectors(VTK.point_data(ug))) == "cross_velocity"
+    @test filter_field_snapshot(VTK.point_data(ug)) == point_arrays_before
+end
+
+@testset "sample_over_line scalar allowlist" begin
+    ug = hex_mesh_with_temperature()
+    tvals = [0.0, 1.0, 2.0, 1.0, 1.0, 2.0, 3.0, 2.0]
+    VTK.add_array!(VTK.point_data(ug), filter_scalar_array("other", 2 .* tvals))
+    VTK.add_array!(VTK.cell_data(ug), filter_scalar_array("cell_constant", [7.0]))
+    VTK.activate_point_data!(ug, "other")
+    point_arrays_before = filter_field_snapshot(VTK.point_data(ug))
+    cell_arrays_before = filter_field_snapshot(VTK.cell_data(ug))
+    has_sampled_array = (output, name) ->
+        VTK.HasArray(VTK.point_data(output), name) || VTK.HasArray(VTK.cell_data(output), name)
+
+    profile = VTK.sample_over_line(ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0);
+                                   resolution = 4, scalars = "temperature")
+    @test sort(VTK.field_array_names(VTK.point_data(profile))) ==
+          ["temperature", "vtkValidPointMask"]
+    @test isapprox(vec(VTK.data(VTK.field_array(VTK.point_data(profile), "temperature"))),
+                   [0.0, 0.75, 1.5, 2.25, 3.0]; atol = 1e-6)
+    @test all(==(1), vec(VTK.data(
+        VTK.field_array(VTK.point_data(profile), "vtkValidPointMask"))))
+    @test !has_sampled_array(profile, "other")
+    @test !has_sampled_array(profile, "cell_constant")
+
+    # Collections retain every requested array while still removing the rest.
+    multi = VTK.sample_over_line(ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0);
+                                 resolution = 2, scalars = ("temperature", "other"))
+    @test sort(VTK.field_array_names(VTK.point_data(multi))) ==
+          ["other", "temperature", "vtkValidPointMask"]
+    @test isapprox(vec(VTK.data(VTK.field_array(VTK.point_data(multi), "temperature"))),
+                   [0.0, 1.5, 3.0]; atol = 1e-6)
+    @test isapprox(vec(VTK.data(VTK.field_array(VTK.point_data(multi), "other"))),
+                   [0.0, 3.0, 6.0]; atol = 1e-6)
+    @test !has_sampled_array(multi, "cell_constant")
+
+    # A cell-data-only name is valid, and the validity mask survives filtering.
+    cell_only = VTK.sample_over_line(ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0);
+                                     resolution = 2, scalars = ["cell_constant"])
+    @test has_sampled_array(cell_only, "vtkValidPointMask")
+    @test !has_sampled_array(cell_only, "temperature")
+
+    # Omitting scalars preserves the existing pass-all behavior.
+    pass_all = VTK.sample_over_line(ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0);
+                                    resolution = 2)
+    @test has_sampled_array(pass_all, "temperature")
+    @test has_sampled_array(pass_all, "other")
+    @test has_sampled_array(pass_all, "vtkValidPointMask")
+
+    @test_throws ArgumentError VTK.sample_over_line(
+        ug, (0.0, 0.0, 0.0), (1.0, 1.0, 1.0); scalars = "absent")
+    @test VTK.name(VTK.GetScalars(VTK.point_data(ug))) == "other"
+    @test filter_field_snapshot(VTK.point_data(ug)) == point_arrays_before
+    @test filter_field_snapshot(VTK.cell_data(ug)) == cell_arrays_before
+end
+
+@testset "gradient and clip concrete output types" begin
+    line = VTK.line_source((0.0, 0.0, 0.0), (1.0, 0.0, 0.0); resolution = 2)
+    VTK.add_array!(VTK.point_data(line), filter_scalar_array("temperature", [0.0, 0.5, 1.0]))
+
+    grad = VTK.gradient(line; scalars = "temperature")
+    @test grad isa VTK.vtkSmartPointerAllocated{VTK.vtkPolyData}
+    @test VTK.GetClassName(VTK._cp(VTK.vtkObjectBase, grad)) == "vtkPolyData"
+    @test VTK.npoints(grad) == 3
+
+    clipped = VTK.clip(line, VTK.plane((0.25, 0.0, 0.0), (1.0, 0.0, 0.0)))
+    @test clipped isa VTK.vtkSmartPointerAllocated{VTK.vtkUnstructuredGrid}
+    @test VTK.GetClassName(VTK._cp(VTK.vtkObjectBase, clipped)) == "vtkUnstructuredGrid"
+    @test VTK.npoints(clipped) > 0
 end
 
 # Auto-generated shim (gen/wrapit/auto_shim.jl): factories and macro

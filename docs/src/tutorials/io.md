@@ -71,8 +71,10 @@ VTK.set_block!(mb2, 2, poly)
 VTK.write_vtm(mb2, "out.vtm")
 ```
 
-Blocks are borrowed views owned by the multiblock dataset, so you need to keep
-`mb` alive while using them. Note that files written by other tools may nest
+Blocks own a VTK reference and can outlive the multiblock handle. They are not
+detached copies: parent and child handles still refer to the same mutable
+object. Likewise, `set_block!` retains the child, so its original handle need
+not be kept alive. Note that files written by other tools may nest
 blocks one level deeper than expected (e.g. WriteVTK puts each named group in
 its own sub-block); `nblocks`/`block` compose, so just descend until you reach
 a data grid.
@@ -99,13 +101,14 @@ Each call returns the reader's output downcast to its concrete type (a
 `vtkMultiBlockDataSet` for both formats), exactly like `read_ensight`/
 `read_cgns`. Two things to know:
 
-- The result is a *borrowed* view of the reader's pipeline output — reading
-  another timestep overwrites it. Pass `copy = true` for a detached deep copy
-  that survives later reads:
+- Results are detached deep copies by default and survive later reads. Pass
+  `copy = false` only for a borrowed pipeline result that you consume before
+  the next update:
 
   ```julia
-  snapshot = VTK.read_timestep(reader, 1; copy = true)
+  snapshot = VTK.read_timestep(reader, 1)
   VTK.read_timestep(reader, 2)        # `snapshot` is unaffected
+  current = VTK.read_timestep(reader, 2; copy = false)  # borrowed
   ```
 
 - `read_at(reader, t; atol=0, rtol=0)` matches `t` approximately and throws an

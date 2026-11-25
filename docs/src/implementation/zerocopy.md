@@ -8,7 +8,7 @@ rests on three deliberate mechanisms.
 `vtkDataArray` is abstract; its data lives in subclasses
 (`vtkDoubleArray`, …). Calling `GetVoidPointer()` through the virtual API
 would be type-erased, but the *address* of the buffer is type-independent.
-The C++ side (`wrapper/src/vtk_julia.cpp`) uses `vtkArrayDispatch` to get
+The C++ side (`gen/wrapit/shim_vtkjl.cpp`) uses `vtkArrayDispatch` to get
 the statically-typed array, extracts `ValueType*`, and hands that pointer to
 Julia:
 
@@ -45,8 +45,8 @@ One CxxWrap subtlety: Julia wrapper types are pre-registered only for
 ## 3. The AOS caveat
 
 Zero-copy is offered **only for AOS (array-of-structs) arrays**, mirroring
-VTK's own buffer-protocol caveat: SOA/variant arrays are rejected with a
-clear error ("array is not AOS"). This is the right trade-off — VTK's
+VTK's own buffer-protocol caveat: SOA/variant arrays and nonnumeric field
+arrays are rejected with `VTKUnsupportedTypeError`. This is the right trade-off — VTK's
 writers/readers and most filters produce AOS anyway.
 
 ## The typed wrapper's cached view
@@ -56,12 +56,21 @@ writers/readers and most filters produce AOS anyway.
 - **discovers** `T` from the array's VTK scalar-type id
   (`GetDataType` → `VTK_TO_JULIA_TYPE`) — so `VTKDataArray(obj)` is always
   honest about the element type, and `VTKDataArray{WrongType}(obj)` throws;
-- caches the zero-copy `Matrix{T}` and implements `getindex`/`setindex!`
-  against it — type-stable, `@inferred`-able;
-- refreshes the cache in `resize!`.
+- caches the zero-copy `Matrix{T}` together with VTK's `GetMTime` modification
+  stamp, dimensions, and data-buffer address, and implements
+  `getindex`/`setindex!` against it — type-stable, `@inferred`-able;
+- checks that structural signature before array operations and rebuilds the
+  matrix if an alias or raw VTK call changed the array (VTK resizes do not
+  necessarily advance the modification stamp);
+- refreshes immediately in `resize!`; `refresh!(a)` forces a rebuild manually.
 
-Element access thus costs a bounds check + a load — no virtual calls, no
-conversion.
+Steady-state element access adds structural-signature checks to the bounds
+check and load. The buffer is not reconstructed while the signature is
+unchanged, and no element conversion is needed. Synchronization applies to
+the wrapper, not to old independently obtained buffers or derived views:
+those still dangle
+after reallocation and must be recreated. Newly grown tuples are
+uninitialized.
 
 ## When to use what
 
@@ -69,4 +78,4 @@ conversion.
 |---|---|
 | typed, ergonomic access | `VTK.field_array`, `VTK.points_array`, `VTK.coordinates` → `VTKDataArray{T}` |
 | untyped bulk view | `VTK.data`/`VTK.raw_data` on a smart pointer |
-| copy out | `Matrix(vtk_arr)` / `vec(...)` |
+| copy out | `Array(typed_array)` / `copy(raw_data(typed_array))` |

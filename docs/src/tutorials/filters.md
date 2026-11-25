@@ -155,9 +155,10 @@ lines = VTK.stream_tracer(grid, seeds; vectors = "velocity")
 
 ## Particle tracer
 
-`vtkParticleTracer` is registered and the `particle_tracer` wrapper is
-experimental, but there is not yet a validated execution example for it. Use
-`stream_tracer` for static vector fields like the one in this tutorial.
+`vtkParticleTracer` is registered, but its wrapper is quarantined as
+`VTK.Experimental.particle_tracer`; there is not yet a validated execution
+example. Use `stream_tracer` for static vector fields like the one in this
+tutorial.
 
 ## Line source & sampling
 

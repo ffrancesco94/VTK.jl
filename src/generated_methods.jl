@@ -212,6 +212,11 @@ if isdefined(@__MODULE__, Symbol("AddSourceConnection")) && isdefined(@__MODULE_
         AddSourceConnection(_cp(vtkParticleTracerBase, a1), _cp(vtkAlgorithmOutput, a2))
 end
 
+if isdefined(@__MODULE__, Symbol("AddStringArrayForTesting")) && isdefined(@__MODULE__, :vtkFieldData)
+    AddStringArrayForTesting(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkFieldData}, a2) =
+        AddStringArrayForTesting(_cp(vtkFieldData, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("AddVectorArrayName")) && isdefined(@__MODULE__, :vtkArrayCalculator)
     AddVectorArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkArrayCalculator}, a2) =
         AddVectorArrayName(_cp(vtkArrayCalculator, a1), a2)
@@ -1405,6 +1410,16 @@ end
 if isdefined(@__MODULE__, Symbol("EditableOn")) && isdefined(@__MODULE__, :vtkPointSet)
     EditableOn(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPointSet}) =
         EditableOn(_cp(vtkPointSet, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("EmitDiagnostic")) && isdefined(@__MODULE__, :vtkAlgorithm)
+    EmitDiagnostic(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2, a3) =
+        EmitDiagnostic(_cp(vtkAlgorithm, a1), a2, a3)
+end
+
+if isdefined(@__MODULE__, Symbol("EmitScopedDiagnosticForTesting")) && isdefined(@__MODULE__, :vtkAlgorithm)
+    EmitScopedDiagnosticForTesting(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2, a3) =
+        EmitScopedDiagnosticForTesting(_cp(vtkAlgorithm, a1), a2, a3)
 end
 
 if isdefined(@__MODULE__, Symbol("EnableAllBases")) && isdefined(@__MODULE__, :vtkCGNSReader)
@@ -8312,6 +8327,26 @@ if isdefined(@__MODULE__, Symbol("ReverseCell")) && isdefined(@__MODULE__, :vtkP
         ReverseCell(_cp(vtkPolyData, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("ScopedUpdate")) && isdefined(@__MODULE__, :vtkAlgorithm)
+    ScopedUpdate(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}) =
+        ScopedUpdate(_cp(vtkAlgorithm, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ScopedUpdateInformation")) && isdefined(@__MODULE__, :vtkAlgorithm)
+    ScopedUpdateInformation(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}) =
+        ScopedUpdateInformation(_cp(vtkAlgorithm, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("ScopedUpdateTimeStep")) && isdefined(@__MODULE__, :vtkAlgorithm)
+    ScopedUpdateTimeStep(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2) =
+        ScopedUpdateTimeStep(_cp(vtkAlgorithm, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("ScopedWrite")) && isdefined(@__MODULE__, :vtkAlgorithm)
+    ScopedWrite(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}) =
+        ScopedWrite(_cp(vtkAlgorithm, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("SetAbortExecute")) && isdefined(@__MODULE__, :vtkAlgorithm)
     SetAbortExecute(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2) =
         SetAbortExecute(_cp(vtkAlgorithm, a1), a2)
@@ -10892,6 +10927,11 @@ if isdefined(@__MODULE__, Symbol("SurfaceStreamlinesOn")) && isdefined(@__MODULE
         SurfaceStreamlinesOn(_cp(vtkStreamTracer, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("TakeRefDataObject")) && isdefined(@__MODULE__, :vtkDataObject)
+    TakeRefDataObject(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
+        TakeRefDataObject(_cp(vtkDataObject, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("ToAOSDataArray")) && isdefined(@__MODULE__, :vtkDataArray)
     ToAOSDataArray(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataArray}) =
         ToAOSDataArray(_cp(vtkDataArray, a1))
@@ -11942,8 +11982,17 @@ end
 AddArray(a1::CxxWrap.CxxWrapCore.SmartPointer, a2::CxxWrap.CxxWrapCore.SmartPointer) =
     AddArray(_cp(vtkFieldData, a1), _cp(vtkDataArray, a2))
 
+AddStringArrayForTesting(a1::CxxWrap.CxxWrapCore.SmartPointer, a2) =
+    AddStringArrayForTesting(_cp(vtkFieldData, a1), a2)
+
 DeepCopyDataObject(a1::CxxWrap.CxxWrapCore.SmartPointer) =
     DeepCopyDataObject(_cp(vtkDataObject, a1))
+
+EmitDiagnostic(a1::CxxWrap.CxxWrapCore.SmartPointer, a2, a3) =
+    EmitDiagnostic(_cp(vtkAlgorithm, a1), a2, a3)
+
+EmitScopedDiagnosticForTesting(a1::CxxWrap.CxxWrapCore.SmartPointer, a2, a3) =
+    EmitScopedDiagnosticForTesting(_cp(vtkAlgorithm, a1), a2, a3)
 
 GetArray(a1::CxxWrap.CxxWrapCore.SmartPointer, a2) =
     GetArray(_cp(vtkFieldData, a1), a2)
@@ -12005,6 +12054,18 @@ GetTimeSteps(a1::CxxWrap.CxxWrapCore.SmartPointer) =
 HasArray(a1::CxxWrap.CxxWrapCore.SmartPointer, a2) =
     HasArray(_cp(vtkFieldData, a1), a2)
 
+ScopedUpdate(a1::CxxWrap.CxxWrapCore.SmartPointer) =
+    ScopedUpdate(_cp(vtkAlgorithm, a1))
+
+ScopedUpdateInformation(a1::CxxWrap.CxxWrapCore.SmartPointer) =
+    ScopedUpdateInformation(_cp(vtkAlgorithm, a1))
+
+ScopedUpdateTimeStep(a1::CxxWrap.CxxWrapCore.SmartPointer, a2) =
+    ScopedUpdateTimeStep(_cp(vtkAlgorithm, a1), a2)
+
+ScopedWrite(a1::CxxWrap.CxxWrapCore.SmartPointer) =
+    ScopedWrite(_cp(vtkAlgorithm, a1))
+
 SetArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer, a2) =
     SetArrayName(_cp(vtkDataArray, a1), a2)
 
@@ -12019,6 +12080,9 @@ SetNumberOfTuples(a1::CxxWrap.CxxWrapCore.SmartPointer, a2) =
 
 SetPoints(a1::CxxWrap.CxxWrapCore.SmartPointer, a2::CxxWrap.CxxWrapCore.SmartPointer) =
     SetPoints(_cp(vtkPointSet, a1), _cp(vtkPoints, a2))
+
+TakeRefDataObject(a1::CxxWrap.CxxWrapCore.SmartPointer) =
+    TakeRefDataObject(_cp(vtkDataObject, a1))
 
 Update(a1::CxxWrap.CxxWrapCore.SmartPointer) =
     Update(_cp(vtkAlgorithm, a1))

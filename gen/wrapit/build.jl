@@ -86,7 +86,9 @@ function check_shim_types_registered!()
     classes = read(joinpath(BUILD_DIR, "cxx", "JlClasses.cxx"), String)
     used = Set(m.match for m in eachmatch(r"vtk[A-Z]\w+", shim))
     internal = ("vtkIdType", "vtkTypeBool", "vtkNew", "vtkOutputWindow",
-                "vtkJuliaOutputWindow", "vtkSmartPointer", "vtkArrayDispatch",
+                "vtkJuliaOutputWindow", "vtkJuliaDiagnosticCollector",
+                "vtkJuliaDerivedPolyData", "vtkStringArray", "vtkWriter",
+                "vtkSmartPointer", "vtkArrayDispatch",
                 # macros / includes / comments, never boxed as class types
                 "vtkAOSDataArrayTemplate", "vtkArrayTypes", "vtkObjectFactory",
                 "vtkStandardNewMacro", "vtkTypeMacro", "vtkType", "vtkInformation", "vtkStreamingDemandDrivenPipeline")
@@ -302,6 +304,9 @@ function compile!()
                     "-Wl,-rpath,$(joinpath(VTK_jll.artifact_dir, "lib"))"]
     mpi = mpi_include_dir()
     mpi === nothing || push!(common, "-I$mpi")
+    sanitizers = get(ENV, "VTKJL_SANITIZE", "")
+    isempty(sanitizers) || append!(common,
+        ["-g", "-O1", "-fno-omit-frame-pointer", "-fsanitize=$sanitizers"])
     libs = vtk_libs()
     cc = compiler()
     # ONE merged library: WrapIt-generated code + the hand-written

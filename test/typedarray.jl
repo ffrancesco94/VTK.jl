@@ -53,6 +53,35 @@ using Test
     @test a[1, 6] == 99.0
     @test sum(a) ≈ 1.0 + 2.0 + 3.0 - 7.5 + 99.0
 
+    # Structural changes through raw VTK calls and other wrappers invalidate
+    # the cached buffer. The original wrapper must refresh before using it.
+    VTK.resize!(a.obj, 7)
+    VTK.SetComponent(a.obj, 6, 0, 12.5)
+    @test a[1, 7] == 12.5
+    @test size(a) == (3, 7)
+
+    second = VTK.VTKDataArray(a.obj)
+    VTK.resize!(second, 8)
+    a[1, 8] = 42.25
+    @test second[1, 8] == 42.25
+    @test size(a) == (3, 8)
+
+    VTK.resize!(second, 9)
+    @test VTK.ntuples(a) == 9
+    @test VTK.ncomponents(a) == 3
+    VTK.resize!(second, 10)
+    @test size(Array(a)) == (3, 10)
+    VTK.resize!(second, 11)
+    @test length(VTK.raw_data(a)) == 33
+
+    # Explicit refresh is also available after a raw structural change.
+    VTK.resize!(a.obj, 12)
+    VTK.refresh!(a)
+    @test size(a) == (3, 12)
+    @test_throws ArgumentError VTK.resize!(a, -1)
+    @test size(a) == (3, 12)
+    @inferred a[1, 1]
+
     # field_array returns the typed wrapper
     ug = VTK.UnstructuredGrid()
     pts = VTK.Points()

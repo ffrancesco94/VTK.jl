@@ -87,3 +87,7 @@ jobs:
 
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
+      - name: Concurrent pipeline and GC stress tests
+        env:
+          JULIA_NUM_THREADS: 4
+        run: julia --project=. --gcthreads=2 -e 'using Test; include("test/filters.jl"); include("test/diagnostics.jl"); include("test/concurrency.jl")'

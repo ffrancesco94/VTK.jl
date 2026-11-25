@@ -52,13 +52,14 @@ load_vtk_libraries()
 function __init__()
     load_vtk_libraries()
     @initcxx
-    install_error_window()
     _init_downcast_registry!()
 end
 
 # Include order matters: dataarray.jl defines helpers used by the rest.
 include("dataarray.jl")
 include("generated_methods.jl")
+include("diagnostics.jl")
+include("ownership.jl")
 include("typedarray.jl")
 include("dataset.jl")
 include("cells.jl")
