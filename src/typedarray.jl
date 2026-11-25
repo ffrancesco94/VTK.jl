@@ -6,7 +6,7 @@
 # does, and element access is plain Julia array indexing (type-stable).
 
 # VTK scalar type ids (vtkType.h) -> Julia storage types
-const VTK_TO_JULIA_TYPE = Dict{Int,Type}(
+const VTK_TO_JULIA_TYPE = Dict{Int, Type}(
     2 => Cchar,    # VTK_CHAR
     15 => Int8,    # VTK_SIGNED_CHAR
     3 => UInt8,    # VTK_UNSIGNED_CHAR
@@ -23,7 +23,7 @@ const VTK_TO_JULIA_TYPE = Dict{Int,Type}(
     17 => UInt64,  # VTK_UNSIGNED_LONG_LONG
 )
 
-const JULIA_TO_VTK_TYPE = Dict{Type,Int}(
+const JULIA_TO_VTK_TYPE = Dict{Type, Int}(
     Cchar => 2,
     Int8 => 15,
     UInt8 => 3,
@@ -141,7 +141,7 @@ end
 
 function Base.setindex!(a::VTKDataArray, v, i::Int, j::Int)
     _sync!(a)
-    a.view[i, j] = v
+    return a.view[i, j] = v
 end
 
 function raw_data(a::VTKDataArray)
@@ -201,9 +201,33 @@ given number of components, initially holding zero tuples.
 function data_array(::Type{T}, ncomp::Integer = 1) where {T}
     haskey(JULIA_TO_VTK_TYPE, T) ||
         throw(ArgumentError("no VTK array type for Julia type $T"))
-    ncomp >= 1 || throw(ArgumentError(
-        "number of components must be positive, got $ncomp"))
+    ncomp >= 1 || throw(
+        ArgumentError(
+            "number of components must be positive, got $ncomp"
+        )
+    )
     _drain_vtk_deletions_if_serial()
     obj = CreateDataArray(JULIA_TO_VTK_TYPE[T], ncomp)
     return VTKDataArray{T}(obj)
+end
+
+"""
+    data_array(values::AbstractArray) -> VTKDataArray
+
+Copy a Julia vector or `components × tuples` matrix into a new VTK array. 
+"""
+function data_array(values::AbstractArray{T}) where {T}
+    ndims(values) <= 2 || throw(
+        ArgumentError(
+            "Field input must be a vector or a components × tuples zero_copy_matrix"
+        )
+    )
+
+    ncomp = ndims(values) == 1 ? 1 : size(values, 1)
+    nt = ndims(values) == 1 ? length(values) : size(values, 2)
+
+    result = data_array(T, ncomp)
+    resize!(result, nt)
+    copyto!(result.view, values)
+    return result
 end

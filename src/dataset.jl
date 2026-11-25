@@ -1,4 +1,4 @@
-# dataset.jl — grid construction, field data access, XML I/O.
+# dataset.jl — grid construction, field data access
 
 const VTKDataObjectHandle = Union{
     CxxWrap.CxxWrapCore.SmartPointer,
@@ -27,17 +27,23 @@ function UnstructuredGrid()
     return UnstructuredGrid_new()
 end
 UnstructuredGrid(obj::VTKDataObjectHandle) = _forced_downcast(
-    obj, "vtkUnstructuredGrid", downcast_unstructuredgrid)
+    obj, "vtkUnstructuredGrid", downcast_unstructuredgrid
+)
 PolyData(obj::VTKDataObjectHandle) = _forced_downcast(
-    obj, "vtkPolyData", downcast_polydata)
+    obj, "vtkPolyData", downcast_polydata
+)
 ImageData(obj::VTKDataObjectHandle) = _forced_downcast(
-    obj, "vtkImageData", downcast_imagedata)
+    obj, "vtkImageData", downcast_imagedata
+)
 RectilinearGrid(obj::VTKDataObjectHandle) = _forced_downcast(
-    obj, "vtkRectilinearGrid", downcast_rectilineargrid)
+    obj, "vtkRectilinearGrid", downcast_rectilineargrid
+)
 StructuredGrid(obj::VTKDataObjectHandle) = _forced_downcast(
-    obj, "vtkStructuredGrid", downcast_structuredgrid)
+    obj, "vtkStructuredGrid", downcast_structuredgrid
+)
 MultiBlockDataSet(obj::VTKDataObjectHandle) = _forced_downcast(
-    obj, "vtkMultiBlockDataSet", downcast_multiblock)
+    obj, "vtkMultiBlockDataSet", downcast_multiblock
+)
 function Points()
     _drain_vtk_deletions_if_serial()
     return Points_new()
@@ -100,34 +106,43 @@ const VTK_TETRA = 10
 # cells have a minimum arity instead. Other cell families need a dedicated
 # connectivity representation and are rejected rather than passed blindly to
 # vtkUnstructuredGrid::InsertNextCell.
-const VTK_FIXED_CELL_ARITY = Dict{Int,Int}(
+const VTK_FIXED_CELL_ARITY = Dict{Int, Int}(
     0 => 0, 1 => 1, 3 => 2, 5 => 3, 8 => 4, 9 => 4,
     10 => 4, 11 => 8, 12 => 8, 13 => 6, 14 => 5, 15 => 10, 16 => 12,
     21 => 3, 22 => 6, 23 => 8, 24 => 10, 25 => 20, 26 => 15,
     27 => 13, 28 => 9, 29 => 27, 30 => 6, 31 => 12, 32 => 18,
     33 => 24, 34 => 7, 35 => 4,
 )
-const VTK_VARIABLE_CELL_MIN_ARITY = Dict{Int,Int}(
+const VTK_VARIABLE_CELL_MIN_ARITY = Dict{Int, Int}(
     2 => 1, 4 => 2, 6 => 3, 7 => 3, 36 => 3,
 )
 
 function _validate_cell(celltype::Int, ids, np::Integer)
     if haskey(VTK_FIXED_CELL_ARITY, celltype)
         expected = VTK_FIXED_CELL_ARITY[celltype]
-        length(ids) == expected || throw(ArgumentError(
-            "VTK cell type $celltype requires $expected point ids, got $(length(ids))"))
+        length(ids) == expected || throw(
+            ArgumentError(
+                "VTK cell type $celltype requires $expected point ids, got $(length(ids))"
+            )
+        )
     elseif haskey(VTK_VARIABLE_CELL_MIN_ARITY, celltype)
         minimum = VTK_VARIABLE_CELL_MIN_ARITY[celltype]
-        length(ids) >= minimum || throw(ArgumentError(
-            "VTK cell type $celltype requires at least $minimum point ids, got $(length(ids))"))
+        length(ids) >= minimum || throw(
+            ArgumentError(
+                "VTK cell type $celltype requires at least $minimum point ids, got $(length(ids))"
+            )
+        )
     else
         throw(ArgumentError("unsupported VTK cell type $celltype"))
     end
     all(id -> id isa Integer, ids) ||
         throw(ArgumentError("cell point ids must be integers"))
     for id in ids
-        0 <= id < np || throw(ArgumentError(
-            "cell point id $id is outside the valid 0-based range 0:$(np - 1)"))
+        0 <= id < np || throw(
+            ArgumentError(
+                "cell point id $id is outside the valid 0-based range 0:$(np - 1)"
+            )
+        )
     end
     return nothing
 end
@@ -139,8 +154,10 @@ Insert a cell of `celltype` (e.g. `VTK_HEXAHEDRON`) referencing 0-based
 integer `point_ids`. Connectivity and cell arity are validated before VTK is
 called.
 """
-function insert_cell!(grid::VTKSmartPointer{<:vtkUnstructuredGrid},
-                      celltype::Integer, point_ids)
+function insert_cell!(
+        grid::VTKSmartPointer{<:vtkUnstructuredGrid},
+        celltype::Integer, point_ids
+    )
     ids = collect(point_ids)
     _validate_cell(Int(celltype), ids, npoints(grid))
     native_ids = CxxWrap.StdLib.StdVector(Int64.(ids))
@@ -151,8 +168,11 @@ end
 function Base.setindex!(pts::VTKSmartPointer{<:vtkPoints}, coord, i::Integer)
     1 <= i <= npoints(pts) || throw(BoundsError(pts, i))
     values = Tuple(coord)
-    length(values) == 3 || throw(ArgumentError(
-        "a point needs exactly three coordinates, got $(length(values))"))
+    length(values) == 3 || throw(
+        ArgumentError(
+            "a point needs exactly three coordinates, got $(length(values))"
+        )
+    )
     all(x -> x isa Real, values) ||
         throw(ArgumentError("point coordinates must be real numbers"))
     SetPoint(pts, i - 1, values...)
@@ -196,28 +216,106 @@ The coordinate array of a vtkPoints object (3 components).
 """
 function points_array(pts)
     array = VTKDataArray(GetPointData(pts))
-    ncomponents(array) == 3 || throw(ArgumentError(
-        "point coordinates must have three components, got $(ncomponents(array))"))
+    ncomponents(array) == 3 || throw(
+        ArgumentError(
+            "point coordinates must have three components, got $(ncomponents(array))"
+        )
+    )
     return array
 end
-point_data(grid) = GetPointData(grid)
-cell_data(grid) = GetCellData(grid)
+
+# We get our cell_data and point_data wrappers to use a DataAssociation struct to have visibility into the owning dataset
+"""
+    DataAssociation 
+
+Internal owner-aware view of a dataset's point or cell data. 
+The users can obtain it through `point_data(grid)` or `cell_data(grid)`. 
+"""
+struct DataAssociation{H, D} <: AbstractDict{String, Any}
+    handle::H
+    dataset::D
+    kind::Symbol
+end
+
+_point_data_handle(grid) = GetPointData(grid)
+_cell_data_handle(grid) = GetCellData(grid)
+
+function _association_view(grid::VTKSmartPointer{<:vtkDataSet}, association::Symbol)
+    association === :point && return DataAssociation(GetPointData(grid), grid, :point)
+    associaation === :cell && return (GetCellData(grid), grid, :cell)
+
+    throw(ArgumentError("Association must be :point or :cell"))
+end
+
+"""
+    point_data(grid) -> DataAssociation
+
+Dictionary-like access to the grid's point-associated arrays. Ordinary Julia
+arrays into this association are copied. Existing VTK arrays are attached
+without another copy. 
+"""
+point_data(grid::VTKSmartPointer{<:vtkDataSet}) = _association_view(grid, :point)
+
+"""
+    cell_data(grid) -> DataAssociation 
+
+Dictionary-like access to the grid's cell-associated arrays.  Ordinary Julia
+arrays into this association are copied. Existing VTK arrays are attached
+without another copy. 
+"""
+cell_data(grid::VTKSmartPointer{<:vtkDataSet}) = _association_view(grid, :cell)
+
+# Base overrides needed for dictionary-like access
+
+Base.length(data::DataAssociation) = Int(GetNumberOfArrays(data.handle))
+Base.haskey(data::DataAssociation, name::AbstractString) = HasArray(data.handle, String(name))
+
+function Base.keys(data::DataAssociation)
+    return [
+        String(GetArrayNameOf(data.handle, i)) for i in 0:(length(data) - 1)
+    ]
+end
+
+function Base.getindex(data::DataAssociation, name::AbstractString)
+    haskey(data, name) || throw(KeyError(String(name)))
+    return field_array(data.handle, name)
+end
+
+function Base.iterate(data::DataAssociation, state::Int = 0)
+    state >= length(data) && return nothing
+
+    name = String(GetArrayNameOf(data.handle, state))
+    return (name => data[name]), state + 1
+end
+
+function Base.delete!(data::DataAssociation, name::AbstractString)
+    haskey(data, name) || return data
+    RemoveArray(data.handle, String(name))
+    return data
+end
+
+# Make sure nothing breaks with existing Julian helpers
+
+field_array(data::DataAssociation, name) = haskey(data, name) ? field_array(data.handle, name) : nothing
+
+field_array_raw(data::DataAssociation, name) = haskey(data, name) ? field_array_raw(data.handle, name) : nothing
+
+field_array_names(data::DataAssociation) = keys(data)
 
 field_array_names(fd) =
     [GetArrayNameOf(fd, i) for i in 0:(GetNumberOfArrays(fd) - 1)]
+
+function _numeric_field_array(fd, name)
+    abstract_array = GetAbstractArray(fd, String(name))
+    IsA(abstract, "vtkDataArray") != 0 || throw(VTKUnsupportedTypeError(GetClassName(abstract_array)))
+    return GetArray(fd, String(name))
+end
 
 """
     field_array(fd, name) -> VTKDataArray{T} or nothing
 
 Typed zero-copy view of the named array in field data `fd`.
 """
-function _numeric_field_array(fd, name)
-    abstract = GetAbstractArray(fd, String(name))
-    IsA(abstract, "vtkDataArray") != 0 || throw(
-        VTKUnsupportedTypeError(GetClassName(abstract)))
-    return GetArray(fd, String(name))
-end
-
 function field_array(fd, name)
     HasArray(fd, String(name)) || return nothing
     return VTKDataArray(_numeric_field_array(fd, name))
@@ -237,6 +335,15 @@ function add_array!(fd, da)
     AddArray(fd, da)
     return da
 end
+
+# ---- shared assignment ----
+
+_assignment_array(values::VTKDataArray) = values
+_assignment_array(values::VTKSmartPointer{<:vtkDataArray}) = VTKDataArray(values)
+_assignment_array(values::AbstractArray) = data_array(values)
+_assignment_array(values) = throw(ArgumentError("Field assignments expects an AbstractArray or VTKDataArray. Got $(typeof(values))"))
+
+# TODO: implement set_array!()
 
 """
     remove_array!(grid, name; point=true, cell=true)
@@ -274,181 +381,6 @@ activate_point_data!(grid, name) =
 activate_cell_data!(grid, name) =
     SetActiveScalars(cell_data(grid), String(name))
 
-# ---- XML I/O ----
-
-"""
-    read_vtu(path) -> vtkUnstructuredGrid
-    read_vtp(path) -> vtkPolyData
-    read_vti(path) -> vtkImageData
-    read_vtr(path) -> vtkRectilinearGrid
-    read_vts(path) -> vtkStructuredGrid
-"""
-function read_vtu(path)
-    reader = XMLUnstructuredGridReader_new()
-    SetFileName(reader, String(path))
-    update!(reader; filename = path)
-    return UnstructuredGrid(checked_output(reader; filename = path))
-end
-
-function read_vtp(path)
-    reader = XMLPolyDataReader_new()
-    SetFileName(reader, String(path))
-    update!(reader; filename = path)
-    return PolyData(checked_output(reader; filename = path))
-end
-
-function read_vti(path)
-    reader = XMLImageDataReader_new()
-    SetFileName(reader, String(path))
-    update!(reader; filename = path)
-    return ImageData(checked_output(reader; filename = path))
-end
-
-function read_vtr(path)
-    reader = XMLRectilinearGridReader_new()
-    SetFileName(reader, String(path))
-    update!(reader; filename = path)
-    return RectilinearGrid(checked_output(reader; filename = path))
-end
-
-function read_vts(path)
-    reader = XMLStructuredGridReader_new()
-    SetFileName(reader, String(path))
-    update!(reader; filename = path)
-    return StructuredGrid(checked_output(reader; filename = path))
-end
-
-"""
-    write_vtu(grid, path)
-    write_vtp(polydata, path)
-    write_vti(imagedata, path)
-    write_vtr(rectilineargrid, path)
-    write_vts(structuredgrid, path)
-"""
-function write_vtu(grid, path; raw_appended = false)
-    writer = XMLUnstructuredGridWriter_new()
-    if raw_appended
-        SetRawAppendedData(writer)
-    else
-        EnableCompression(writer)
-    end
-    SetInputData(writer, grid)
-    SetFileName(writer, String(path))
-    checked_write(writer, path)
-       return path
-end
-
-function write_vtp(pd, path)
-    writer = XMLPolyDataWriter_new()
-    EnableCompression(writer)
-    SetInputData(writer, pd)
-    SetFileName(writer, String(path))
-    checked_write(writer, path)
-       return path
-end
-
-function write_vti(img, path)
-    writer = XMLImageDataWriter_new()
-    EnableCompression(writer)
-    SetInputData(writer, img)
-    SetFileName(writer, String(path))
-    checked_write(writer, path)
-       return path
-end
-
-function write_vtr(rg, path)
-    writer = XMLRectilinearGridWriter_new()
-    EnableCompression(writer)
-    SetInputData(writer, rg)
-    SetFileName(writer, String(path))
-    checked_write(writer, path)
-       return path
-end
-
-function write_vts(sg, path)
-    writer = XMLStructuredGridWriter_new()
-    EnableCompression(writer)
-    SetInputData(writer, sg)
-    SetFileName(writer, String(path))
-    checked_write(writer, path)
-       return path
-end
-
-"""
-    read_vtm(path) -> vtkMultiBlockDataSet
-
-Read a multiblock XML file (`.vtm`, a container referencing `.vtu`/`.vtp`/
-… blocks). Access blocks with `nblocks`/`block(mb, i)`. Returned blocks own a
-VTK reference and may outlive the multiblock handle; parent and child still
-refer to the same mutable VTK object.
-"""
-function read_vtm(path)
-    reader = XMLMultiBlockDataReader_new()
-    SetFileName(reader, String(path))
-    update!(reader; filename = path)
-    return MultiBlockDataSet(checked_output(reader; filename = path))
-end
-
-
-# ---- parallel XML readers ----
-
-"""
-    read_pvtp(path) -> vtkPolyData
-
-Read a parallel PVTK XML PolyData summary file (`.pvtp`), which references
-per-piece `.vtp` files. Returns the merged poly data.
-"""
-function read_pvtp(path)
-    reader = XMLPPolyDataReader_new()
-    SetFileName(reader, String(path))
-    update!(reader; filename = path)
-    return PolyData(checked_output(reader; filename = path))
-end
-
-# ---- legacy VTK I/O (.vtk format) ----
-
-"""
-    read_legacy_vtk(path) -> vtkDataObject (downcast to access)
-
-Read a legacy VTK file (`.vtk`). The output type depends on the dataset
-type stored in the file (unstructured grid, poly data, structured grid,
-rectilinear grid, or image data). Use `downcast` on the result or access
-it through the generic `vtkDataObject` API.
-"""
-function read_legacy_vtk(path)
-    reader = GenericDataObjectReader_new()
-    SetFileName(reader, String(path))
-    update!(reader; filename = path)
-    return downcast(checked_output(reader; filename = path))
-end
-
-"""
-    write_legacy_vtk(grid, path)
-
-Write any dataset to a legacy VTK file (`.vtk`). The format is chosen
-automatically based on the concrete type of `grid`.
-"""
-function write_legacy_vtk(grid, path)
-    writer = GenericDataObjectWriter_new()
-    SetInputData(writer, grid)
-    SetFileName(writer, String(path))
-    checked_write(writer, path)
-       return path
-end
-
-"""
-    write_vtm(mb, path)
-
-Write a multiblock dataset (`.vtm` + its block files).
-"""
-function write_vtm(mb, path)
-    writer = XMLMultiBlockDataWriter_new()
-    EnableCompression(writer)
-    SetInputData(writer, mb)
-    SetFileName(writer, String(path))
-    checked_write(writer, path)
-       return path
-end
 
 # ---- multiblock accessors ---------------------------------------------------
 
@@ -487,4 +419,3 @@ function MultiBlockDataSet(n::Integer)
     SetNumberOfBlocks(mb, n)
     return mb
 end
-
