@@ -30,6 +30,7 @@ input = [
   "vtkDataSetAttributes.h",
   "vtkPointData.h",
   "vtkCellData.h",
+  "vtkMatrix3x3.h",
   # implicit function + filters (full vtkAlgorithm chain)
   "vtkAlgorithm.h",
   "vtkDataObjectAlgorithm.h",

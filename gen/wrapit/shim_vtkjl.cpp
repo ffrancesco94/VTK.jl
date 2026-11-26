@@ -94,6 +94,7 @@
 #include <vtkXMLStructuredGridWriter.h>
 #include <vtkXMLUnstructuredGridReader.h>
 #include <vtkXMLUnstructuredGridWriter.h>
+#include <vtkMatrix3x3.h>
 
 #include "shim_vtkjl.h"
 
@@ -489,6 +490,16 @@ void register_shim_methods(jlcxx::Module &mod) {
   mod.method("zero_copy_matrix",
              [](vtkDataArray *a) { return zero_copy_matrix(a); });
 
+  mod.method("GetArrayRangeValues", [](vtkDataArray *array, int64_t component, bool finite) {
+          std::vector<double> values(2);
+          if (finite) {
+            array->GetFiniteRange(values.data(), static_cast<int>(component));
+          } else {
+            array->GetRange(values.data(), static_cast<int>(component));
+          }
+          return values;
+          });
+
   // Deep copy stuff
   mod.method("TakeRefDataObject", [](vtkDataObject *object) {
     if (object == nullptr) {
@@ -572,6 +583,9 @@ void register_shim_methods(jlcxx::Module &mod) {
     array->SetName(name.c_str());
     array->InsertNextValue("nonnumeric");
     f->AddArray(array);
+  });
+  mod.method("GetFieldDataOwned", [](vtkDataObject *object) {
+          return take_ref<vtkFieldData>(object->GetFieldData());
   });
   // Generic typed array factory over the VTK scalar type ids (see vtkType.h).
   mod.method("CreateDataArray", [](int dataType, int64_t ncomp) {
@@ -900,4 +914,36 @@ void register_shim_methods(jlcxx::Module &mod) {
     const char *name = o->GetClassName();
     return name == nullptr ? std::string() : std::string(name);
   });
+  // --- DataSetAttributes bindings ---- 
+  mod.method("HasAttributeArray", [](vtkDataSetAttributes* attributes, int64_t attribute) {
+          return attributes->GetArray(static_cast<int>(attribute)) != nullptr;
+          });
+  mod.method("GetAttributeArrayOwned", [](vtkDataSetAttributes* attributes, int64_t attribute){
+          return take_ref<vtkDataArray>(attributes->GetArray(static_cast<int>(attribute)));
+          });
+  // ---- Stuff related to extents ---- 
+  mod.method("GetBoundsValues", [](vtkDataSet* dataset) {
+          std::vector<double> values(6);
+          dataset->GetBounds(values.data());
+          return values;
+          });
+  mod.method("GetDimensionsValues", [](vtkStructuredGrid* grid) {
+          std::vector<int> values(3);
+          grid->GetDimensions(values.data());
+          return values;
+          });
+  mod.method("GetExtentValues", [](vtkStructuredGrid* grid) {
+          std::vector<int> values(6);
+          grid->GetExtent(values.data());
+          return values;
+          });
+  mod.method("GetOriginValues", [](vtkImageData* image) {
+          std::vector<double> values(3);
+          image->GetSpacing(values.data());
+          return values;
+          });
+  mod.method("GetDirectionValues", [](vtkImageData* image) {
+          double *data = image->GetDirectionMatrix()->GetData();
+          return std::vector<double>(data, data+9);
+          });
 }

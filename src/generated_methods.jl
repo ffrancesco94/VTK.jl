@@ -257,6 +257,11 @@ if isdefined(@__MODULE__, Symbol("AddVectorVariable")) && isdefined(@__MODULE__,
         AddVectorVariable(_cp(vtkArrayCalculator, a1), a2, a3, a4, a5, a6)
 end
 
+if isdefined(@__MODULE__, Symbol("Adjoint")) && isdefined(@__MODULE__, :vtkMatrix3x3) && isdefined(@__MODULE__, :vtkMatrix3x3) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    Adjoint(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}) =
+        Adjoint(_cp(vtkMatrix3x3, a1), _cp(vtkMatrix3x3, a2), _cp(vtkMatrix3x3, a3))
+end
+
 if isdefined(@__MODULE__, Symbol("AllScalarsOff")) && isdefined(@__MODULE__, :vtkThreshold)
     AllScalarsOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
         AllScalarsOff(_cp(vtkThreshold, a1))
@@ -1257,6 +1262,16 @@ if isdefined(@__MODULE__, Symbol("DeepCopy")) && isdefined(@__MODULE__, :vtkImag
         DeepCopy(_cp(vtkImageData, a1), _cp(vtkDataObject, a2))
 end
 
+if isdefined(@__MODULE__, Symbol("DeepCopy")) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    DeepCopy(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}, a2) =
+        DeepCopy(_cp(vtkMatrix3x3, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("DeepCopy")) && isdefined(@__MODULE__, :vtkMatrix3x3) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    DeepCopy(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}) =
+        DeepCopy(_cp(vtkMatrix3x3, a1), _cp(vtkMatrix3x3, a2))
+end
+
 if isdefined(@__MODULE__, Symbol("DeepCopy")) && isdefined(@__MODULE__, :vtkPlane) && isdefined(@__MODULE__, :vtkPlane)
     DeepCopy(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPlane}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPlane}) =
         DeepCopy(_cp(vtkPlane, a1), _cp(vtkPlane, a2))
@@ -1340,6 +1355,11 @@ end
 if isdefined(@__MODULE__, Symbol("DeletePoint")) && isdefined(@__MODULE__, :vtkPolyData)
     DeletePoint(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyData}, a2) =
         DeletePoint(_cp(vtkPolyData, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("Determinant")) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    Determinant(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}) =
+        Determinant(_cp(vtkMatrix3x3, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("DetermineEnSightVersion")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
@@ -1952,6 +1972,11 @@ if isdefined(@__MODULE__, Symbol("GetArrayPointerForExtent")) && isdefined(@__MO
         GetArrayPointerForExtent(_cp(vtkImageData, a1), _cp(vtkDataArray, a2), a3)
 end
 
+if isdefined(@__MODULE__, Symbol("GetArrayRangeValues")) && isdefined(@__MODULE__, :vtkDataArray)
+    GetArrayRangeValues(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataArray}, a2, a3) =
+        GetArrayRangeValues(_cp(vtkDataArray, a1), a2, a3)
+end
+
 if isdefined(@__MODULE__, Symbol("GetAssemblyTag")) && isdefined(@__MODULE__, :vtkXMLMultiBlockDataReader)
     GetAssemblyTag(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkXMLMultiBlockDataReader}) =
         GetAssemblyTag(_cp(vtkXMLMultiBlockDataReader, a1))
@@ -1960,6 +1985,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetAttribute")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
     GetAttribute(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}, a2) =
         GetAttribute(_cp(vtkDataSetAttributes, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetAttributeArrayOwned")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
+    GetAttributeArrayOwned(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}, a2) =
+        GetAttributeArrayOwned(_cp(vtkDataSetAttributes, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("GetAttributeIndices")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
@@ -2065,6 +2095,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetBounds")) && isdefined(@__MODULE__, :vtkPoints)
     GetBounds(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPoints}, a2) =
         GetBounds(_cp(vtkPoints, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetBoundsValues")) && isdefined(@__MODULE__, :vtkDataSet)
+    GetBoundsValues(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSet}) =
+        GetBoundsValues(_cp(vtkDataSet, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetByteOrder")) && isdefined(@__MODULE__, :vtkGenericEnSightReader)
@@ -2812,6 +2847,11 @@ if isdefined(@__MODULE__, Symbol("GetData")) && isdefined(@__MODULE__, :vtkDataA
         GetData(_cp(vtkDataArray, a1), a2, a3, a4, a5, _cp(vtkDoubleArray, a6))
 end
 
+if isdefined(@__MODULE__, Symbol("GetData")) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    GetData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}) =
+        GetData(_cp(vtkMatrix3x3, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetData")) && isdefined(@__MODULE__, :vtkPoints)
     GetData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPoints}) =
         GetData(_cp(vtkPoints, a1))
@@ -2992,6 +3032,21 @@ if isdefined(@__MODULE__, Symbol("GetDimensions")) && isdefined(@__MODULE__, :vt
         GetDimensions(_cp(vtkStructuredGrid, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetDimensionsValues")) && isdefined(@__MODULE__, :vtkStructuredGrid)
+    GetDimensionsValues(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGrid}) =
+        GetDimensionsValues(_cp(vtkStructuredGrid, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetDirectionMatrix")) && isdefined(@__MODULE__, :vtkImageData)
+    GetDirectionMatrix(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkImageData}) =
+        GetDirectionMatrix(_cp(vtkImageData, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetDirectionValues")) && isdefined(@__MODULE__, :vtkImageData)
+    GetDirectionValues(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkImageData}) =
+        GetDirectionValues(_cp(vtkImageData, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetDistinctCellTypes")) && isdefined(@__MODULE__, :vtkDataSet) && isdefined(@__MODULE__, :vtkCellTypes)
     GetDistinctCellTypes(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSet}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCellTypes}) =
         GetDistinctCellTypes(_cp(vtkDataSet, a1), _cp(vtkCellTypes, a2))
@@ -3082,6 +3137,11 @@ if isdefined(@__MODULE__, Symbol("GetExtentType")) && isdefined(@__MODULE__, :vt
         GetExtentType(_cp(vtkStructuredGrid, a1))
 end
 
+if isdefined(@__MODULE__, Symbol("GetExtentValues")) && isdefined(@__MODULE__, :vtkStructuredGrid)
+    GetExtentValues(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGrid}) =
+        GetExtentValues(_cp(vtkStructuredGrid, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetFaceArrayName")) && isdefined(@__MODULE__, :vtkCGNSReader)
     GetFaceArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
         GetFaceArrayName(_cp(vtkCGNSReader, a1), a2)
@@ -3140,6 +3200,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetFieldDataName")) && isdefined(@__MODULE__, :vtkDataWriter)
     GetFieldDataName(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataWriter}) =
         GetFieldDataName(_cp(vtkDataWriter, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("GetFieldDataOwned")) && isdefined(@__MODULE__, :vtkDataObject)
+    GetFieldDataOwned(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataObject}) =
+        GetFieldDataOwned(_cp(vtkDataObject, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetFileMajorVersion")) && isdefined(@__MODULE__, :vtkDataReader)
@@ -4387,6 +4452,11 @@ if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined
         GetNumberOfGenerationsFromBase(_cp(vtkLineSource, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}, a2) =
+        GetNumberOfGenerationsFromBase(_cp(vtkMatrix3x3, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("GetNumberOfGenerationsFromBase")) && isdefined(@__MODULE__, :vtkMultiBlockDataSet)
     GetNumberOfGenerationsFromBase(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMultiBlockDataSet}, a2) =
         GetNumberOfGenerationsFromBase(_cp(vtkMultiBlockDataSet, a1), a2)
@@ -4910,6 +4980,11 @@ end
 if isdefined(@__MODULE__, Symbol("GetOrigin")) && isdefined(@__MODULE__, :vtkPlane)
     GetOrigin(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPlane}, a2) =
         GetOrigin(_cp(vtkPlane, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("GetOriginValues")) && isdefined(@__MODULE__, :vtkImageData)
+    GetOriginValues(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkImageData}) =
+        GetOriginValues(_cp(vtkImageData, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("GetOriginalCellIdsName")) && isdefined(@__MODULE__, :vtkDataSetSurfaceFilter)
@@ -6532,6 +6607,11 @@ if isdefined(@__MODULE__, Symbol("HasArray")) && isdefined(@__MODULE__, :vtkFiel
         HasArray(_cp(vtkFieldData, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("HasAttributeArray")) && isdefined(@__MODULE__, :vtkDataSetAttributes)
+    HasAttributeArray(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataSetAttributes}, a2) =
+        HasAttributeArray(_cp(vtkDataSetAttributes, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("HasExecutive")) && isdefined(@__MODULE__, :vtkAlgorithm)
     HasExecutive(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}) =
         HasExecutive(_cp(vtkAlgorithm, a1))
@@ -6555,6 +6635,11 @@ end
 if isdefined(@__MODULE__, Symbol("HasObserver")) && isdefined(@__MODULE__, :vtkObject) && isdefined(@__MODULE__, :vtkCommand)
     HasObserver(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObject}, a2, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCommand}) =
         HasObserver(_cp(vtkObject, a1), a2, _cp(vtkCommand, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("Identity")) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    Identity(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}) =
+        Identity(_cp(vtkMatrix3x3, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("IgnoreFlowSolutionPointersOff")) && isdefined(@__MODULE__, :vtkCGNSReader)
@@ -6997,6 +7082,11 @@ if isdefined(@__MODULE__, Symbol("IntersectWithLine")) && isdefined(@__MODULE__,
         IntersectWithLine(_cp(vtkPlane, a1), a2, a3, a4, a5)
 end
 
+if isdefined(@__MODULE__, Symbol("Invert")) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    Invert(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}) =
+        Invert(_cp(vtkMatrix3x3, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("InvertOff")) && isdefined(@__MODULE__, :vtkThreshold)
     InvertOff(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkThreshold}) =
         InvertOff(_cp(vtkThreshold, a1))
@@ -7180,6 +7270,11 @@ end
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkLineSource)
     IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkLineSource}, a2) =
         IsA(_cp(vtkLineSource, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    IsA(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}, a2) =
+        IsA(_cp(vtkMatrix3x3, a1), a2)
 end
 
 if isdefined(@__MODULE__, Symbol("IsA")) && isdefined(@__MODULE__, :vtkMultiBlockDataSet)
@@ -7512,6 +7607,11 @@ if isdefined(@__MODULE__, Symbol("IsId")) && isdefined(@__MODULE__, :vtkIdList)
         IsId(_cp(vtkIdList, a1), a2)
 end
 
+if isdefined(@__MODULE__, Symbol("IsIdentity")) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    IsIdentity(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}) =
+        IsIdentity(_cp(vtkMatrix3x3, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("IsPointUsedByCell")) && isdefined(@__MODULE__, :vtkPolyData)
     IsPointUsedByCell(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPolyData}, a2, a3) =
         IsPointUsedByCell(_cp(vtkPolyData, a1), a2, a3)
@@ -7590,6 +7690,11 @@ end
 if isdefined(@__MODULE__, Symbol("ModifyRequest")) && isdefined(@__MODULE__, :vtkAlgorithm) && isdefined(@__MODULE__, :vtkInformation)
     ModifyRequest(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkAlgorithm}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkInformation}, a3) =
         ModifyRequest(_cp(vtkAlgorithm, a1), _cp(vtkInformation, a2), a3)
+end
+
+if isdefined(@__MODULE__, Symbol("MultiplyPoint")) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    MultiplyPoint(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}, a2, a3) =
+        MultiplyPoint(_cp(vtkMatrix3x3, a1), a2, a3)
 end
 
 if isdefined(@__MODULE__, Symbol("NeedToBuildCells")) && isdefined(@__MODULE__, :vtkPolyData)
@@ -8967,6 +9072,11 @@ if isdefined(@__MODULE__, Symbol("SetCutFunction")) && isdefined(@__MODULE__, :v
         SetCutFunction(_cp(vtkCutter, a1), _cp(vtkImplicitFunction, a2))
 end
 
+if isdefined(@__MODULE__, Symbol("SetData")) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    SetData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}, a2) =
+        SetData(_cp(vtkMatrix3x3, a1), a2)
+end
+
 if isdefined(@__MODULE__, Symbol("SetData")) && isdefined(@__MODULE__, :vtkPoints) && isdefined(@__MODULE__, :vtkDataArray)
     SetData(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPoints}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataArray}) =
         SetData(_cp(vtkPoints, a1), _cp(vtkDataArray, a2))
@@ -9087,6 +9197,11 @@ if isdefined(@__MODULE__, Symbol("SetDirectionMatrix")) && isdefined(@__MODULE__
         SetDirectionMatrix(_cp(vtkImageData, a1), a2, a3, a4, a5, a6, a7, a8, a9, a10)
 end
 
+if isdefined(@__MODULE__, Symbol("SetDirectionMatrix")) && isdefined(@__MODULE__, :vtkImageData) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    SetDirectionMatrix(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkImageData}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}) =
+        SetDirectionMatrix(_cp(vtkImageData, a1), _cp(vtkMatrix3x3, a2))
+end
+
 if isdefined(@__MODULE__, Symbol("SetDistributeBlocks")) && isdefined(@__MODULE__, :vtkCGNSReader)
     SetDistributeBlocks(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkCGNSReader}, a2) =
         SetDistributeBlocks(_cp(vtkCGNSReader, a1), a2)
@@ -9110,6 +9225,11 @@ end
 if isdefined(@__MODULE__, Symbol("SetEditable")) && isdefined(@__MODULE__, :vtkPointSet)
     SetEditable(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkPointSet}, a2) =
         SetEditable(_cp(vtkPointSet, a1), a2)
+end
+
+if isdefined(@__MODULE__, Symbol("SetElement")) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    SetElement(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}, a2, a3, a4) =
+        SetElement(_cp(vtkMatrix3x3, a1), a2, a3, a4)
 end
 
 if isdefined(@__MODULE__, Symbol("SetEnableParticleWriting")) && isdefined(@__MODULE__, :vtkParticleTracerBase)
@@ -10977,6 +11097,11 @@ if isdefined(@__MODULE__, Symbol("TransformPhysicalPointToContinuousIndex")) && 
         TransformPhysicalPointToContinuousIndex(_cp(vtkImageData, a1), a2, a3, a4, a5)
 end
 
+if isdefined(@__MODULE__, Symbol("Transpose")) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    Transpose(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}) =
+        Transpose(_cp(vtkMatrix3x3, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("UnBlankCell")) && isdefined(@__MODULE__, :vtkStructuredGrid)
     UnBlankCell(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkStructuredGrid}, a2) =
         UnBlankCell(_cp(vtkStructuredGrid, a1), a2)
@@ -11275,6 +11400,11 @@ end
 if isdefined(@__MODULE__, Symbol("WriteVoidPointer")) && isdefined(@__MODULE__, :vtkDataArray)
     WriteVoidPointer(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkDataArray}, a2, a3) =
         WriteVoidPointer(_cp(vtkDataArray, a1), a2, a3)
+end
+
+if isdefined(@__MODULE__, Symbol("Zero")) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    Zero(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}) =
+        Zero(_cp(vtkMatrix3x3, a1))
 end
 
 if isdefined(@__MODULE__, Symbol("begin")) && isdefined(@__MODULE__, :vtkIdList)
@@ -11580,6 +11710,26 @@ end
 if isdefined(@__MODULE__, Symbol("vtkLineSource!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
     vtkLineSource!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
         vtkLineSource!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkMatrix3x3!Invert")) && isdefined(@__MODULE__, :vtkMatrix3x3) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    vtkMatrix3x3!Invert(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}) =
+        vtkMatrix3x3!Invert(_cp(vtkMatrix3x3, a1), _cp(vtkMatrix3x3, a2))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkMatrix3x3!Multiply3x3")) && isdefined(@__MODULE__, :vtkMatrix3x3) && isdefined(@__MODULE__, :vtkMatrix3x3) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    vtkMatrix3x3!Multiply3x3(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}, a3::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}) =
+        vtkMatrix3x3!Multiply3x3(_cp(vtkMatrix3x3, a1), _cp(vtkMatrix3x3, a2), _cp(vtkMatrix3x3, a3))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkMatrix3x3!SafeDownCast")) && isdefined(@__MODULE__, :vtkObjectBase)
+    vtkMatrix3x3!SafeDownCast(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkObjectBase}) =
+        vtkMatrix3x3!SafeDownCast(_cp(vtkObjectBase, a1))
+end
+
+if isdefined(@__MODULE__, Symbol("vtkMatrix3x3!Transpose")) && isdefined(@__MODULE__, :vtkMatrix3x3) && isdefined(@__MODULE__, :vtkMatrix3x3)
+    vtkMatrix3x3!Transpose(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}, a2::CxxWrap.CxxWrapCore.SmartPointer{<:vtkMatrix3x3}) =
+        vtkMatrix3x3!Transpose(_cp(vtkMatrix3x3, a1), _cp(vtkMatrix3x3, a2))
 end
 
 if isdefined(@__MODULE__, Symbol("vtkMultiBlockDataSet!GetData")) && isdefined(@__MODULE__, :vtkInformation)
@@ -12003,6 +12153,12 @@ GetArrayName(a1::CxxWrap.CxxWrapCore.SmartPointer) =
 GetArrayNameOf(a1::CxxWrap.CxxWrapCore.SmartPointer, a2) =
     GetArrayNameOf(_cp(vtkFieldData, a1), a2)
 
+GetArrayRangeValues(a1::CxxWrap.CxxWrapCore.SmartPointer, a2, a3) =
+    GetArrayRangeValues(_cp(vtkDataArray, a1), a2, a3)
+
+GetBoundsValues(a1::CxxWrap.CxxWrapCore.SmartPointer) =
+    GetBoundsValues(_cp(vtkDataSet, a1))
+
 GetCellData(a1::CxxWrap.CxxWrapCore.SmartPointer) =
     GetCellData(_cp(vtkDataSet, a1))
 
@@ -12020,6 +12176,9 @@ GetComponent(a1::CxxWrap.CxxWrapCore.SmartPointer, a2, a3) =
 
 GetDataType(a1::CxxWrap.CxxWrapCore.SmartPointer) =
     GetDataType(_cp(vtkAbstractArray, a1))
+
+GetFieldDataOwned(a1::CxxWrap.CxxWrapCore.SmartPointer) =
+    GetFieldDataOwned(_cp(vtkDataObject, a1))
 
 GetNumberOfArrays(a1::CxxWrap.CxxWrapCore.SmartPointer) =
     GetNumberOfArrays(_cp(vtkFieldData, a1))
