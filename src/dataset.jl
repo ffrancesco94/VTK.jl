@@ -243,6 +243,7 @@ _cell_data_handle(grid) = GetCellData(grid)
 function _association_view(grid::VTKSmartPointer{<:vtkDataSet}, association::Symbol)
     association === :point && return DataAssociation(GetPointData(grid), grid, :point)
     association === :cell && return DataAssociation(GetCellData(grid), grid, :cell)
+    association === :field && return DataAssociation(GetFieldDataOwned(grid), grid, :field)
 
     throw(ArgumentError("Association must be :point or :cell"))
 end
@@ -264,6 +265,13 @@ arrays into this association are copied. Existing VTK arrays are attached
 without another copy. 
 """
 cell_data(grid::VTKSmartPointer{<:vtkDataSet}) = _association_view(grid, :cell)
+
+""" 
+    field_data(grid) -> DataAssociation 
+
+Dictionary-like access to the grid's field data. 
+"""
+field_data(grid::VTKSmartPointer{<:vtkDataSet}) = _association_view(grid, :field)
 
 # Base overrides needed for dictionary-like access
 
@@ -379,12 +387,23 @@ Point arrays must have `npoints(grid)` tuples and cell arrays must have `ncells(
 function set_array!(grid::VTKSmartPointer{<:vtkDataSet}, name::AbstractString, values; association::Symbol = :point)
     data = _association_view(grid, association)
     array = _assignment_array(values)
-    expected = data.kind === :point ? npoints(grid) : ncells(grid)
-    ntuples(array) === expected || throw(
-        DimensionMismatch(
-            "$(data.kind) array '$name' has $(ntuples(array)) tuples; expected $expected"
+    expected = if data.kind === :point
+        npoints(grid)
+    elseif data.kind === :cell
+        ncells(grid)
+    elseif data.kind === :field
+        nothing
+    else
+        error("Internal error: unknown association $(data.kind)")
+    end
+
+    if expected !== nothing && ntuples(array) != expected
+        throw(
+            DimensionMismatch(
+                "$(data.kind) array '$name' has $(ntuples(array)) tuples; expected $expected"
+            )
         )
-    )
+    end
 
     name!(array, name)
     AddArray(data.handle, array.obj)
@@ -466,9 +485,9 @@ end
 Mark a field-data array as the active scalar for filters like `contour`.
 """
 activate_point_data!(grid, name) =
-    SetActiveScalars(GetPointData(grid), String(name))
+    activate!(grid, name; association = :point, attribute = :scalars)
 activate_cell_data!(grid, name) =
-    SetActiveScalars(GetCellData(grid), String(name))
+    activate!(grid, name; association = :cell, attribute = :scalars)
 
 
 # ---- multiblock accessors ---------------------------------------------------
@@ -507,4 +526,62 @@ function MultiBlockDataSet(n::Integer)
     mb = MultiBlockDataSet_new()
     SetNumberOfBlocks(mb, n)
     return mb
+end
+
+# ---- DataSet attributes ----
+
+const ATTRIBUTE_IDS = Dict{Symbol, Int}(
+    :scalars => 0,
+    :vectors => 1,
+    :normals => 2,
+    :tcoords => 3,
+    :tensors => 4
+)
+
+function _attribute_id(attribute::Symbol)
+    haskey(ATTRIBUTE_IDS, attribute) || throw(
+        ArgumentError(
+            "The attribute has to be one of :scalars, :vectors, :normals, :tcoords or :tensors"
+        )
+    )
+    return ATTRIBUTE_IDS[attribute]
+end
+
+function _attribute_association(grid, association::Symbol)
+    association in (:point, :cell) || throw(
+        ArgumentError(
+            "Active attributes require :point or :cell association."
+        )
+    )
+    return _association_view(grid, association)
+end
+
+function activate!(
+        grid::VTKSmartPointer{<:vtkDataSet},
+        name::AbstractString;
+        association::Symbol = :point,
+        attribute::Symbol = :scalars
+    )
+    data = _attribute_association(grid, association)
+    haskey(data, name) || throw(KeyError(String(name)))
+
+    status = SetActiveAttribute(
+        data.handle,
+        String(name),
+        _attribute_id(attribute)
+    )
+    status < 0 && error("VTK could not activate '$name' as $association attribute")
+    return grid
+end
+
+function active_array(
+        grid::VTKSmartPointer{<:vtkDataSet};
+        association::Symbol = :point,
+        attribute::Symbol = :scalars
+    )
+    data = _attribute_association(grid, association)
+    id = _attribute_id(attribute)
+
+    HasAttributeArray(data.handle, id) || return nothing
+    return VTKDataArray(GetAttributeArrayOwned(data.handle, id))
 end

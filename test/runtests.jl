@@ -8,6 +8,7 @@ using Test
     include("cells.jl")
     include("field_data.jl")
     include("filters.jl")
+    include("attributes_metadata.jl")
     include("oracle.jl")
     include("io_structured.jl")
     include("io_multiblock.jl")

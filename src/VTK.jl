@@ -25,20 +25,22 @@ function load_vtk_libraries()
     # Relocatable JLL builds do not embed VTK_jll's artifact path. Load the
     # linked VTK components before @initcxx dlopens libvtk_julia.
     for component in (
-        "CommonCore",
-        "CommonDataModel",
-        "CommonExecutionModel",
-        "FiltersCore",
-        "FiltersGeneral",
-        "FiltersFlowPaths",
-        "FiltersSources",
-        "IOXML",
-        "IOEnSight",
-        "IOCGNSReader",
-        "IOLegacy",
-    )
-        lib = joinpath(VTK_jll.artifact_dir, "lib",
-                       "libvtk$(component)-9.7.$(Libdl.dlext)")
+            "CommonCore",
+            "CommonDataModel",
+            "CommonExecutionModel",
+            "FiltersCore",
+            "FiltersGeneral",
+            "FiltersFlowPaths",
+            "FiltersSources",
+            "IOXML",
+            "IOEnSight",
+            "IOCGNSReader",
+            "IOLegacy",
+        )
+        lib = joinpath(
+            VTK_jll.artifact_dir, "lib",
+            "libvtk$(component)-9.7.$(Libdl.dlext)"
+        )
         Libdl.dlopen(lib, Libdl.RTLD_GLOBAL)
     end
     return nothing
@@ -52,7 +54,7 @@ load_vtk_libraries()
 function __init__()
     load_vtk_libraries()
     @initcxx
-    _init_downcast_registry!()
+    return _init_downcast_registry!()
 end
 
 # Include order matters: dataarray.jl defines helpers used by the rest.
@@ -62,6 +64,7 @@ include("diagnostics.jl")
 include("ownership.jl")
 include("typedarray.jl")
 include("dataset.jl")
+include("metadata.jl")
 include("cells.jl")
 include("filters.jl")
 include("io.jl")
