@@ -9,5 +9,6 @@ WriteVTK = "64499a7a-5c06-52f2-abe2-ccb03c286192"
 VTK = {path = ".."}
 
 [compat]
+CGNS_jll = "4.5.2"
 Test = "1"
 julia = "1.11"
