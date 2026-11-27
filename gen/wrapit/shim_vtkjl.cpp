@@ -915,11 +915,13 @@ void register_shim_methods(jlcxx::Module &mod) {
     return name == nullptr ? std::string() : std::string(name);
   });
   // --- DataSetAttributes bindings ---- 
+  // GetAttribute (not GetArray, which indexes arrays positionally) returns
+  // the array currently active for the given attribute type.
   mod.method("HasAttributeArray", [](vtkDataSetAttributes* attributes, int64_t attribute) {
-          return attributes->GetArray(static_cast<int>(attribute)) != nullptr;
+          return attributes->GetAttribute(static_cast<int>(attribute)) != nullptr;
           });
   mod.method("GetAttributeArrayOwned", [](vtkDataSetAttributes* attributes, int64_t attribute){
-          return take_ref<vtkDataArray>(attributes->GetArray(static_cast<int>(attribute)));
+          return take_ref<vtkDataArray>(attributes->GetAttribute(static_cast<int>(attribute)));
           });
   // ---- Stuff related to extents ---- 
   mod.method("GetBoundsValues", [](vtkDataSet* dataset) {
@@ -938,6 +940,11 @@ void register_shim_methods(jlcxx::Module &mod) {
           return values;
           });
   mod.method("GetOriginValues", [](vtkImageData* image) {
+          std::vector<double> values(3);
+          image->GetOrigin(values.data());
+          return values;
+          });
+  mod.method("GetSpacingValues", [](vtkImageData* image) {
           std::vector<double> values(3);
           image->GetSpacing(values.data());
           return values;

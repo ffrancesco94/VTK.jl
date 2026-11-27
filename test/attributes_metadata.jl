@@ -18,7 +18,6 @@ end
 
 function metadata_tests_image()
     image = VTK.ImageData_new()
-    VTK.SetDimensions(image, 2, 3, 4)
     VTK.SetOrigin(image, 1.0, -2.0, 0.5)
     VTK.SetSpacing(image, 0.5, 0.25, 2.0)
 
@@ -35,60 +34,60 @@ end
 @testset "general field-data associations" begin
     grid = metadata_tests_hex_grid()
 
-    @test npoints(grid) == 8
-    @test ncells(grid) == 1
+    @test VTK.npoints(grid) == 8
+    @test VTK.ncells(grid) == 1
 
     # These tuple counts deliberately match neither points nor cells.
-    field_data(grid)["time"] = [2.5]
+    VTK.field_data(grid)["time"] = [2.5]
     grid["history", :field] = [0.0, 0.5, 1.0, 1.5]
     grid["matrix_metadata", :field] = reshape(1.0:10.0, 2, 5)
 
-    @test haskey(field_data(grid), "time")
-    @test haskey(field_data(grid), "history")
-    @test haskey(field_data(grid), "matrix_metadata")
+    @test haskey(VTK.field_data(grid), "time")
+    @test haskey(VTK.field_data(grid), "history")
+    @test haskey(VTK.field_data(grid), "matrix_metadata")
 
-    @test field_data(grid)["time"][1, 1] == 2.5
+    @test VTK.field_data(grid)["time"][1, 1] == 2.5
     @test grid["time", :field][1, 1] == 2.5
-    @test vec(VTK.data(field_data(grid)["history"])) ==
+    @test vec(VTK.data(VTK.field_data(grid)["history"])) ==
         [0.0, 0.5, 1.0, 1.5]
-    @test size(field_data(grid)["matrix_metadata"]) == (2, 5)
+    @test size(VTK.field_data(grid)["matrix_metadata"]) == (2, 5)
 
     # Both assignment paths have copying behavior.
     history = [1.0, 2.0, 3.0]
-    field_data(grid)["copied_history"] = history
+    VTK.field_data(grid)["copied_history"] = history
     history[1] = 99.0
-    @test field_data(grid)["copied_history"][1, 1] == 1.0
+    @test VTK.field_data(grid)["copied_history"][1, 1] == 1.0
 
     # Existing VTK arrays are attached without another data copy.
     attached = VTK.data_array(Float64)
     VTK.resize!(attached, 2)
     attached[1, :] .= [4.0, 5.0]
 
-    field_data(grid)["attached"] = attached
+    VTK.field_data(grid)["attached"] = attached
     attached[1, 1] = 40.0
-    @test field_data(grid)["attached"][1, 1] == 40.0
+    @test VTK.field_data(grid)["attached"][1, 1] == 40.0
 
-    field_data(grid)["attached"][1, 2] = 50.0
+    VTK.field_data(grid)["attached"][1, 2] = 50.0
     @test attached[1, 2] == 50.0
 
     # Point, cell, and general field associations are independent.
-    point_data(grid)["shared_name"] = fill(1.0, 8)
-    cell_data(grid)["shared_name"] = fill(2.0, 1)
-    field_data(grid)["shared_name"] = [3.0, 4.0, 5.0]
+    VTK.point_data(grid)["shared_name"] = fill(1.0, 8)
+    VTK.cell_data(grid)["shared_name"] = fill(2.0, 1)
+    VTK.field_data(grid)["shared_name"] = [3.0, 4.0, 5.0]
 
-    @test point_data(grid)["shared_name"][1, 1] == 1.0
-    @test cell_data(grid)["shared_name"][1, 1] == 2.0
-    @test field_data(grid)["shared_name"][1, 1] == 3.0
+    @test VTK.point_data(grid)["shared_name"][1, 1] == 1.0
+    @test VTK.cell_data(grid)["shared_name"][1, 1] == 2.0
+    @test VTK.field_data(grid)["shared_name"][1, 1] == 3.0
 
     # General field support must not weaken point/cell validation.
     @test_throws DimensionMismatch (
-        point_data(grid)["bad_points"] = [1.0, 2.0]
+        VTK.point_data(grid)["bad_points"] = [1.0, 2.0]
     )
     @test_throws DimensionMismatch (
-        cell_data(grid)["bad_cells"] = [1.0, 2.0]
+        VTK.cell_data(grid)["bad_cells"] = [1.0, 2.0]
     )
-    @test !haskey(point_data(grid), "bad_points")
-    @test !haskey(cell_data(grid), "bad_cells")
+    @test !haskey(VTK.point_data(grid), "bad_points")
+    @test !haskey(VTK.cell_data(grid), "bad_cells")
 
     returned = VTK.set_array!(
         grid,
@@ -97,27 +96,27 @@ end
         association = :field,
     )
     @test returned isa VTK.VTKDataArray
-    @test field_data(grid)["set_array_field"][1, 2] == 8.0
+    @test VTK.field_data(grid)["set_array_field"][1, 2] == 8.0
 
     @test_throws ArgumentError (
         grid["invalid", :faces] = [1.0]
     )
 
-    delete!(field_data(grid), "history")
-    @test !haskey(field_data(grid), "history")
+    delete!(VTK.field_data(grid), "history")
+    @test !haskey(VTK.field_data(grid), "history")
 
     # Deletion is idempotent.
-    delete!(field_data(grid), "history")
-    @test !haskey(field_data(grid), "history")
+    delete!(VTK.field_data(grid), "history")
+    @test !haskey(VTK.field_data(grid), "history")
 
     # Nonnumeric arrays remain discoverable but are not numeric values.
     VTK.AddStringArrayForTesting(
         VTK.GetFieldDataOwned(grid),
         "label",
     )
-    @test haskey(field_data(grid), "label")
-    @test "label" in keys(field_data(grid))
-    @test_throws VTK.VTKUnsupportedTypeError field_data(grid)["label"]
+    @test haskey(VTK.field_data(grid), "label")
+    @test "label" in keys(VTK.field_data(grid))
+    @test_throws VTK.VTKUnsupportedTypeError VTK.field_data(grid)["label"]
 end
 
 @testset "active point and cell attributes" begin
@@ -133,7 +132,7 @@ end
 
     for (attribute, array_values) in values
         array_name = String(attribute)
-        point_data(grid)[array_name] = array_values
+        VTK.point_data(grid)[array_name] = array_values
 
         returned = VTK.activate!(
             grid,
@@ -151,7 +150,8 @@ end
 
         @test active isa VTK.VTKDataArray
         @test VTK.name(active) == array_name
-        @test Array(active) == array_values
+        # Array(::VTKDataArray) is always a (ncomponents, ntuples) matrix.
+        @test Array(active) == reshape(array_values, :, 8)
     end
 
     # Activating one kind of attribute must not deactivate the others.
@@ -166,7 +166,7 @@ end
     end
 
     # Existing active-scalar conveniences delegate to the same mechanism.
-    point_data(grid)["pressure"] = collect(11.0:18.0)
+    VTK.point_data(grid)["pressure"] = collect(11.0:18.0)
     VTK.activate_point_data!(grid, "pressure")
 
     @test VTK.name(
@@ -186,7 +186,7 @@ end
     ) == "vectors"
 
     # Point and cell active attributes are independent.
-    cell_data(grid)["cell_temperature"] = [3.0]
+    VTK.cell_data(grid)["cell_temperature"] = [3.0]
     VTK.activate_cell_data!(grid, "cell_temperature")
 
     @test VTK.name(
@@ -206,7 +206,7 @@ end
     ) == "pressure"
 
     # General field data has no active dataset attributes.
-    field_data(grid)["time"] = [0.0]
+    VTK.field_data(grid)["time"] = [0.0]
 
     @test_throws ArgumentError VTK.activate!(
         grid,
@@ -250,7 +250,7 @@ end
 @testset "active-array ownership" begin
     function make_detached_active_array()
         grid = metadata_tests_hex_grid()
-        point_data(grid)["temperature"] = collect(1.0:8.0)
+        VTK.point_data(grid)["temperature"] = collect(1.0:8.0)
         VTK.activate!(grid, "temperature"; attribute = :scalars)
         return VTK.active_array(grid; attribute = :scalars)
     end
@@ -277,8 +277,13 @@ end
 
     image = metadata_tests_image()
 
-    @test VTK.dimensions(image) == (2, 3, 4)
-    @test VTK.extent(image) == (0, 1, 0, 2, 0, 3)
+    # dimensions/extent are structured-grid metadata; origin/spacing/direction
+    # are image metadata.
+    sgrid = VTK.StructuredGrid_new()
+    VTK.SetDimensions(sgrid, 2, 3, 4)
+
+    @test VTK.dimensions(sgrid) == (2, 3, 4)
+    @test VTK.extent(sgrid) == (0, 1, 0, 2, 0, 3)
     @test VTK.origin(image) == (1.0, -2.0, 0.5)
     @test VTK.spacing(image) == (0.5, 0.25, 2.0)
 
@@ -293,7 +298,7 @@ end
     image_bounds = VTK.bounds(image)
     @test image_bounds isa NTuple{6, Float64}
     @test VTK.origin(image) isa NTuple{3, Float64}
-    @test VTK.dimensions(image) isa NTuple{3, Int}
+    @test VTK.dimensions(sgrid) isa NTuple{3, Int}
 end
 
 @testset "array ranges" begin
@@ -323,9 +328,9 @@ end
 @testset "dataset show methods" begin
     grid = metadata_tests_hex_grid()
 
-    point_data(grid)["temperature"] = collect(1.0:8.0)
-    cell_data(grid)["material"] = [4.0]
-    field_data(grid)["time"] = [0.0]
+    VTK.point_data(grid)["temperature"] = collect(1.0:8.0)
+    VTK.cell_data(grid)["material"] = [4.0]
+    VTK.field_data(grid)["time"] = [0.0]
     VTK.activate_point_data!(grid, "temperature")
     VTK.activate_cell_data!(grid, "material")
 

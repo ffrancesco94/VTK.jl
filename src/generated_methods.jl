@@ -6007,6 +6007,11 @@ if isdefined(@__MODULE__, Symbol("GetSpacing")) && isdefined(@__MODULE__, :vtkIm
         GetSpacing(_cp(vtkImageData, a1), a2, a3, a4)
 end
 
+if isdefined(@__MODULE__, Symbol("GetSpacingValues")) && isdefined(@__MODULE__, :vtkImageData)
+    GetSpacingValues(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkImageData}) =
+        GetSpacingValues(_cp(vtkImageData, a1))
+end
+
 if isdefined(@__MODULE__, Symbol("GetSpatialMatch")) && isdefined(@__MODULE__, :vtkProbeFilter)
     GetSpatialMatch(a1::CxxWrap.CxxWrapCore.SmartPointer{<:vtkProbeFilter}) =
         GetSpatialMatch(_cp(vtkProbeFilter, a1))
