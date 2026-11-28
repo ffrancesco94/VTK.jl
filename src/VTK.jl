@@ -69,4 +69,26 @@ include("cells.jl")
 include("filters.jl")
 include("io.jl")
 
+
+# (Hopefully) stable, high-level API
+public DataAssociation, VTKDataArray, VTKTemporalReader
+public MeshCell, VTKCellTypes
+public data, data_array, name, name!, raw_data, refresh!, scalar_type
+public ImageData, Points, PolyData, UnstructuredGrid
+public MultiBlockDataSet, RectilinearGrid, StructuredGrid
+public downcast, points, points_array, set_points!
+public cell_data, field_array, field_data, point_data, remove_array!, set_array!
+public activate!, activate_cell_data!, activate_point_data!, active_array
+public cell, cell_connectivity, cell_type, cells, coordinates, eachcell, eachpoint
+public bounds, center, dimensions, extent, ncells, npoints
+public array_range, direction, origin, psacing
+public Reader, Writer, load, read, register_format!, save
+public CGNSReader, EnSightReader, eachstep, read_at, read_timestep, timesteps
+public calculator, clip, contour, gradient, plane, slice, threshold
+public cell_to_point, extract_surface, point_to_cell
+public line_source, sample_over_line, stream_tracer
+public Pipeline, connect!, noutputs, output, outputs, pipeline, set_input!, update!
+public cancel!, progress
+public block, block_name, eachleaf, nblocks, set_block!
+
 end

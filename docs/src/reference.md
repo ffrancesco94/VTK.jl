@@ -12,6 +12,31 @@ pipeline behavior have been validated; use `stream_tracer` for static fields.
 VTK.Experimental.particle_tracer
 ```
 
-```@autodocs
-Modules = [VTK]
+```@docs
+VTK.data_array
+VTK.point_data
+VTK.cell_data
+VTK.field_data
+vtk.UnstructuredGrid
+VTK.PolyData 
+VTK.Reader 
+VTK.Writer 
+VTK.Pipeline 
+VTK.data 
+VTK.raw_data 
+VTK.field_array 
+VTK.set_array!
+VTK.activate!
+VTK.active_array
+VTK.npoints 
+VTK.ncells 
+VTK.coordinates 
+VTK.bounds 
+VTK.center 
+VTK.dimensions 
+VTK.extent 
+VTK.origin
+VTK.spacing 
+VTK.direction
+VTK.array_range
 ```
